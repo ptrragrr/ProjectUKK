@@ -1,5 +1,3 @@
-import type { MenuItem } from "@/layouts/default-layout/config/types";
-
 const MainMenuConfig: Array<MenuItem> = [
     {
         pages: [
@@ -12,31 +10,31 @@ const MainMenuConfig: Array<MenuItem> = [
         ],
     },
 
-    // WEBSITE
+    // WEBSITE SECTION
     {
         heading: "Website",
         route: "/dashboard/website",
         name: "website",
         pages: [
-            // MASTER
+            // MASTER SECTION
             {
                 sectionTitle: "Master",
                 route: "/master",
-                keenthemesIcon: "cube-3",
+                keenthemesIcon: "bi bi-exclamation-octagon-fill",
                 name: "master",
                 sub: [
                     {
-                        sectionTitle: "User",
+                        sectionTitle: "User Management",
                         route: "/users",
                         name: "master-user",
                         sub: [
                             {
-                                heading: "Role",
+                                heading: "Roles",
                                 name: "master-role",
                                 route: "/dashboard/master/users/roles",
                             },
                             {
-                                heading: "User",
+                                heading: "Users",
                                 name: "master-user",
                                 route: "/dashboard/master/users",
                             },
@@ -45,10 +43,34 @@ const MainMenuConfig: Array<MenuItem> = [
                 ],
             },
             {
-                heading: "Setting",
+                heading: "Management",
+                route: "/dashboard/management",
+                name: "kelola",
+                keenthemesIcon: "bi bi-kanban",
+            },
+            {
+                heading: "Orders",
+                route: "/dashboard/pesanan",
+                name: "pesanan",
+                keenthemesIcon: "bi bi-list-ol",
+            },
+            {
+                heading: "Transactions",
+                route: "/dashboard/transaksi",
+                name: "transaksi",
+                keenthemesIcon: "bi bi-wallet2",
+            },
+            {
+                heading: "History",
+                route: "/dashboard/riwayat",
+                name: "riwayat",
+                keenthemesIcon: "bi bi-clock-history",
+            },
+            {
+                heading: "Settings",
                 route: "/dashboard/setting",
                 name: "setting",
-                keenthemesIcon: "setting-2",
+                keenthemesIcon: "bi bi-gear",
             },
         ],
     },

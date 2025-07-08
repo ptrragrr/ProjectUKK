@@ -64,6 +64,25 @@ const routes: Array<RouteRecordRaw> = [
                 },
             },
             {
+                path: "/dashboard/transaksi",
+                name: "dashboard.transaksi",
+                component: () =>
+                    import("@/pages/dashboard/transaksi/Index.vue"),
+                meta: {
+                    // pageTitle: "Transaksi",
+                    // breadcrumbs: ["Transaksi", "Transaksi"],
+                },
+            },
+            {
+                path: "/dashboard/management",
+                name: "dashboard.management",
+                component: () => import("@/pages/dashboard/management/Index.vue"),
+                meta: {
+                    // pageTitle: "Management",
+                    // breadcrumbs: ["Management", "Management"],
+                },
+            },
+            {
                 path: "/dashboard/master/users",
                 name: "dashboard.master.users",
                 component: () =>

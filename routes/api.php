@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\ManagementController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,4 +52,19 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
                 ->except(['index', 'store']);
         });
     });
+
+Route::get('/tickets', [TransaksiController::class, 'index']);
 });
+
+Route::get('/tickets', [ManagementController::class, 'index']);
+Route::get('/tickets/{id}', [ManagementController::class, 'show']);
+Route::post('/tickets', [ManagementController::class, 'index']);
+Route::post('/tickets/store', [ManagementController::class, 'store']);
+Route::put('/tickets/{id}', [ManagementController::class, 'update']);
+Route::delete('/tickets/{id}', [ManagementController::class, 'destroy']);
+
+// Route::get('/tickets', [ManagementController::class, 'index']);
+
+// Route::get('/tickets', [TicketController::class, 'index']);
+// Route::post('/tickets', [TicketController::class, 'store']);
+// Route::delete('/tickets/{id}', [TicketController::class, 'destroy']);
