@@ -19,19 +19,32 @@ const getTickets = async () => {
 
 onMounted(() => {
   getTickets();
+  setTimeout(() => {
+    console.log("Tiket Loaded:", tickets.value);
+  }, 1000);
 });
 </script>
 
 <template>
   <div>
     <h2>Daftar Tiket</h2>
-    <ul>
+    <!-- <ul>
       <li v-for="ticket in tickets" :key="ticket.id">
         {{ ticket.nama_ticket }} -
         Rp {{ ticket.harga_ticket.toLocaleString() }}
         <button @click="selectedTicket = ticket">Pilih</button>
       </li>
-    </ul>
+    </ul> -->
+
+    <ul v-if="tickets.length > 0">
+  <li v-for="ticket in tickets" :key="ticket.id">
+    {{ ticket.nama_ticket }} -
+    Rp {{ ticket.harga_ticket.toLocaleString() }}
+    <button @click="selectedTicket = ticket">Pilih</button>
+  </li>
+</ul>
+<div v-else class="alert alert-info mt-3">Tidak ada tiket tersedia.</div>
+
 
     <!-- ⬇️ Render form hanya kalau selectedTicket tidak null -->
     <FormTransaksi :selectedTicket="selectedTicket" @refresh="getTickets" />

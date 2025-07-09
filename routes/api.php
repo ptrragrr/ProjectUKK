@@ -6,6 +6,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\ManagementController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -57,14 +58,24 @@ Route::get('/tickets', [TransaksiController::class, 'index']);
 });
 
 Route::get('/tickets', [ManagementController::class, 'index']);
-Route::get('/tickets/{id}', [ManagementController::class, 'show']);
+Route::apiResource('tickets', ManagementController::class)
+                ->except(['index', 'store']);
+// Route::get('/tickets/{id}', [ManagementController::class, 'show']);
 Route::post('/tickets', [ManagementController::class, 'index']);
 Route::post('/tickets/store', [ManagementController::class, 'store']);
-Route::put('/tickets/{id}', [ManagementController::class, 'update']);
+// Route::put('/tickets/{id}', [ManagementController::class, 'update']);
 Route::delete('/tickets/{id}', [ManagementController::class, 'destroy']);
 
-// Route::get('/tickets', [ManagementController::class, 'index']);
+// Route::prefix('order')->group(function () {
+//     Route::get('/', [OrderController::class, 'index']);
+//     Route::post('/store', [OrderController::class, 'store']);
+//     Route::get('/{id}', [OrderController::class, 'show']);
+// });
 
-// Route::get('/tickets', [TicketController::class, 'index']);
-// Route::post('/tickets', [TicketController::class, 'store']);
-// Route::delete('/tickets/{id}', [TicketController::class, 'destroy']);
+Route::prefix('orders')->group(function () {
+    Route::get('/', [OrderController::class, 'index']);
+    Route::post('/store', [OrderController::class, 'store']);
+    Route::get('/{id}', [OrderController::class, 'show']);
+    Route::put('/{id}', [OrderController::class, 'update']);
+    Route::delete('/{id}', [OrderController::class, 'destroy']);
+});

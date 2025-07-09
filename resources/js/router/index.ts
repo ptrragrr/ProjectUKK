@@ -76,10 +76,19 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/dashboard/management",
                 name: "dashboard.management",
-                component: () => import("@/pages/dashboard/management/Index.vue"),
+                component: () => import("@/pages/dashboard/tiket/Index.vue"),
                 meta: {
                     // pageTitle: "Management",
                     // breadcrumbs: ["Management", "Management"],
+                },
+            },
+            {
+                path: "/dashboard/order",
+                name: "dashboard.pesanan",
+                component: () => import("@/pages/dashboard/order/index.vue"),
+                meta: {
+                    // pageTitle: "Order",
+                    // breadcrumbs: ["Order", "Order"],
                 },
             },
             {

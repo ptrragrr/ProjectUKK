@@ -20,9 +20,23 @@ function resolveImageUrl(foto: string): string {
     // Jika sudah URL absolut
     if (foto.startsWith("http")) return foto;
 
-    // Jika masih nama file atau path lokal
-    return `${window.location.origin}${foto.startsWith("/storage") ? foto : "/storage/" + foto}`;
+    // Pastikan path tidak double dan bisa digunakan langsung
+    if (foto.startsWith("/storage")) {
+        return `${window.location.origin}${foto}`;
+    }
+
+    return `${window.location.origin}/storage/${foto}`;
 }
+
+// function resolveImageUrl(foto: string): string {
+//     if (!foto) return "";
+
+//     // Jika sudah URL absolut
+//     if (foto.startsWith("http")) return foto;
+
+//     // Jika masih nama file atau path lokal
+//     return `${window.location.origin}${foto.startsWith("/storage") ? foto : "/storage/" + foto}`;
+// }
 
 const columns = [
     column.accessor("no", {
@@ -44,17 +58,18 @@ const columns = [
         }).format(harga).replace(/,00$/, "");
     },
 }),
-    column.accessor("foto_destinasi", {
-    header: "Foto Destinasi",
-    cell: ({ getValue }) => {
-        const url = resolveImageUrl(getValue());
-        return h("img", {
-            src: url,
-            alt: "Foto Destinasi",
-            style: "width: 60px; height: 60px; object-fit: cover; border-radius: 4px;",
-        });
-    },
-}),
+//     column.accessor("foto_destinasi", {
+//     header: "Foto Destinasi",
+//     cell: ({ getValue }) => {
+//         const url = resolveImageUrl(getValue());
+//         return h("img", {
+//             src: url,
+//             alt: "Foto Destinasi",
+//             style: "width: 60px; height: 60px; object-fit: cover; border-radius: 4px;",
+//         });
+//     },
+// }),
+
     column.accessor("stok_tiket", {
         header: "Stok Tiket",
     }),

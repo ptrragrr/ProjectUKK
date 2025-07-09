@@ -4,14 +4,11 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class PermissionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         DB::table('role_has_permissions')->delete();
@@ -20,10 +17,12 @@ class PermissionSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         $menuMaster = ['master', 'master-user', 'master-role'];
+        $menuTambah = ['tambah', 'tambah-barang', 'tambah-kategori'];
         $menuWebsite = ['website', 'setting'];
+        $custom = ['kelola'];
 
         $permissionsByRole = [
-            'admin' => ['dashboard', ...$menuMaster, ...$menuWebsite],
+            'admin' => ['dashboard', ...$menuMaster, ...$menuWebsite, ...$menuTambah],
         ];
 
         $insertPermissions = fn ($role) => collect($permissionsByRole[$role])
@@ -56,5 +55,25 @@ class PermissionSeeder extends Seeder
                     ])->toArray()
                 );
         }
+
+        $permissions = ['kelola', 'riwayat', 'pesanan', 'transaksi', 'produk', 'laporan'];
+foreach ($permissions as $name) {
+    Permission::firstOrCreate([
+        'name' => $name,
+        'guard_name' => 'api',
+    ]);
+}
+
     }
+    // public function run(): void
+    // {
+    //     $permissions = ['''kelola', 'riwayat', 'pesanan', 'transaksi', 'produk', 'laporan']; // tambahkan semua permission yang kamu pakai
+
+    //     foreach ($permissions as $name) {
+    //         Permission::firstOrCreate([
+    //             'name' => $name,
+    //             'guard_name' => 'api',
+    //         ]);
+    //     }
+    // }
 }

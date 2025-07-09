@@ -91,8 +91,10 @@ app.use(Vue3Toastify, {
 } as ToastContainerOptions);
 
 import CKEditor from "@ckeditor/ckeditor5-vue";
-import "ckeditor5-custom-build/build/ckeditor";
+// import "ckeditor5-custom-build/build/ckeditor";
+import * as ClassicEditor from "/ckeditor/build/ckeditor";
 app.use(CKEditor);
+// app.component("ckeditor", CKEditor.component); // optional: register as global component
 
 import { Form as VForm, Field, ErrorMessage } from "vee-validate";
 app.component("VForm", VForm);

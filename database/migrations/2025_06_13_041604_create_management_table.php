@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
     $table->id();
     $table->string('nama_destinasi');
-    $table->decimal('harga_tiket', 10, 2);
-    $table->string('foto_destinasi');
+    $table->decimal('harga_tiket', 10);
+    // $table->string('foto_destinasi')->nullable();
     $table->integer('stok_tiket');
     $table->timestamps();
 });
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('management');
+        Schema::dropIfExists('tickets');
     }
 };

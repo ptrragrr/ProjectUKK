@@ -49,8 +49,8 @@ const MainMenuConfig: Array<MenuItem> = [
                 keenthemesIcon: "bi bi-kanban",
             },
             {
-                heading: "Orders",
-                route: "/dashboard/pesanan",
+                heading: "Order",
+                route: "/dashboard/order",
                 name: "pesanan",
                 keenthemesIcon: "bi bi-list-ol",
             },

@@ -19,7 +19,7 @@ class ManagementController extends Controller
         $data = Ticket::when($request->search, function (Builder $query, string $search) {
             $query->where('nama_destinasi', 'like', "%$search%")
                 ->orWhere('harga_tiket', 'like', "%$search%")
-                ->orWhere('foto_destinasi', 'like', "%$search%")
+                // ->orWhere('foto_destinasi', 'like', "%$search%")
                 ->orWhere('stok_tiket', 'like', "%$search%");
         })->latest()->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
 
@@ -27,46 +27,77 @@ class ManagementController extends Controller
     }
     
     // Menampilkan detail tiket
-    public function show($id)
-    {
-        $tiket = Tiket::findOrFail($id);
-        return response()->json(['tiket' => $tiket]);
-    }
+  public function show($id)
+{
+    $ticket = Ticket::findOrFail($id);
+    return response()->json([
+        'ticket' => [
+            'nama_destinasi' => $ticket->nama_destinasi,
+            'harga_tiket' => $ticket->harga_tiket,
+            'stok_tiket' => $ticket->stok_tiket,
+            // 'foto_destinasi' => $ticket->foto_destinasi,
+        ]
+    ]);
+}
 
     // Menyimpan tiket baru
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'nama_destinasi' => 'required|string',
-            'harga_tiket' => 'required|numeric',
-            'stok_tiket' => 'required|numeric',
-            'foto_destinasi' => 'nullable|image',
-        ]);
+{
+    $validated = $request->validate([
+        'nama_destinasi' => 'required|string',
+        'harga_tiket' => 'required|numeric',
+        'stok_tiket' => 'required|numeric',
+        // 'foto_destinasi' => 'nullable|image',
+    ]);
 
-        if ($request->hasFile('foto_destinasi')) {
-            $validated['foto_destinasi'] = $request->file('foto_destinasi')->store('foto_destinasi', 'public');
-        }
+    // if ($request->hasFile('foto_destinasi')) {
+    //     $validated['foto_destinasi'] = $request->file('foto_destinasi')->store('destinasi', 'public');
+    // } else {
+    //     $validated['foto_destinasi'] = ''; // default kosong
+    // }
 
-        $tiket = Tiket::create($validated);
+    $tiket = Ticket::create($validated);
 
-        return response()->json(['message' => 'Tiket berhasil ditambahkan', 'tiket' => $tiket], 201);
-    }
+    return response()->json(['message' => 'Tiket berhasil ditambahkan', 'tiket' => $tiket], 201);
+}
+
+//     public function store(Request $request)
+// {
+//     \Log::info('Store method called', $request->all());
+
+//     $validated = $request->validate([
+//         'nama_destinasi' => 'required|string',
+//         'harga_tiket' => 'required|numeric',
+//         'stok_tiket' => 'required|numeric',
+//         'foto_destinasi' => 'nullable|image',
+//     ]);
+
+//    if ($request->hasFile('foto_destinasi')) {
+//     $validated['foto_destinasi'] = $request->file('foto_destinasi')->store('destinasi', 'public');
+//     // $validated['foto_destinasi'] = $request->file('foto_destinasi')->store('destinasi', 'public');
+// } else {
+//     $validated['foto_destinasi'] = '';
+// }
+//     $tiket = Ticket::create($validated);
+
+//     return response()->json(['message' => 'Tiket berhasil ditambahkan', 'tiket' => $tiket], 201);
+// }
 
     // Update tiket
     public function update(Request $request, $id)
     {
-        $tiket = Tiket::findOrFail($id);
+        $tiket = Ticket::findOrFail($id);
 
         $validated = $request->validate([
             'nama_destinasi' => 'required|string',
             'harga_tiket' => 'required|numeric',
             'stok_tiket' => 'required|numeric',
-            'foto_destinasi' => 'nullable|image',
+            // 'foto_destinasi' => 'nullable|image',
         ]);
 
-        if ($request->hasFile('foto_destinasi')) {
-            $validated['foto_destinasi'] = $request->file('foto_destinasi')->store('foto_destinasi', 'public');
-        }
+//         if ($request->hasFile('foto_destinasi')) {
+//     $validated['foto_destinasi'] = $request->file('foto_destinasi')->store('destinasi', 'public');
+// }
 
         $tiket->update($validated);
 
@@ -76,7 +107,7 @@ class ManagementController extends Controller
     // Menghapus tiket
     public function destroy($id)
     {
-        $tiket = Tiket::findOrFail($id);
+        $tiket = Ticket::findOrFail($id);
         $tiket->delete();
 
         return response()->json(['message' => 'Tiket berhasil dihapus']);
