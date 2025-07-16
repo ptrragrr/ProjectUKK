@@ -74,12 +74,21 @@ const routes: Array<RouteRecordRaw> = [
                 },
             },
             {
-                path: "/dashboard/management",
-                name: "dashboard.management",
+                path: "/dashboard/tambah/management/tiket",
+                name: "dashboard.tambah.management.tiket",
                 component: () => import("@/pages/dashboard/tiket/Index.vue"),
                 meta: {
-                    // pageTitle: "Management",
-                    // breadcrumbs: ["Management", "Management"],
+                    pageTitle: "Management",
+                    breadcrumbs: ["Management", "Management"],
+                },
+            },
+             {
+                path: "/dashboard/tambah/management/konser",
+                name: "dashboard.tambah.management.konser",
+                component: () => import("@/pages/dashboard/tiket/konser/index.vue"),
+                meta: {
+                    pageTitle: "Management",
+                    breadcrumbs: ["Management", "Management"],
                 },
             },
             {

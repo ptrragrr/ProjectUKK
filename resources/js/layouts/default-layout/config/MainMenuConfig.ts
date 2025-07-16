@@ -42,12 +42,37 @@ const MainMenuConfig: Array<MenuItem> = [
                     },
                 ],
             },
-            {
-                heading: "Management",
-                route: "/dashboard/management",
-                name: "kelola",
-                keenthemesIcon: "bi bi-kanban",
+             {
+                sectionTitle: "Tambah",
+                route: "/tambah",
+                keenthemesIcon: "bi bi-exclamation-octagon-fill",
+                name: "tambah",
+                sub: [
+                    {
+                        sectionTitle: " Management ",
+                        route: "/management",
+                        name: "tambah-management",
+                        sub: [
+                            {
+                                heading: "Konser",
+                                name: "tambah-konser",
+                                route: "/dashboard/tambah/management/konser",
+                            },
+                            {
+                                heading: "Tiket",
+                                name: "tambah-tiket",
+                                route: "/dashboard/tambah/management/tiket",
+                            },
+                        ],
+                    },
+                ],
             },
+            // {
+            //     heading: "Management",
+            //     route: "/dashboard/management",
+            //     name: "kelola",
+            //     keenthemesIcon: "bi bi-kanban",
+            // },
             {
                 heading: "Order",
                 route: "/dashboard/order",

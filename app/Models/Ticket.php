@@ -1,19 +1,33 @@
 <?php
-// app/Models/Ticket.php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Ticket extends Model
 {
-    use HasFactory;
-    
-    protected $table = 'tickets'; // pastikan nama tabel benar
-   protected $fillable = [
-    'nama_destinasi',
-    'harga_tiket',
-    'stok_tiket',
-    // 'foto_destinasi',
-];
+    protected $fillable = [
+        'konser_id',
+        'jenis_tiket',
+        'harga_tiket',
+        'stok_tiket',
+    ];
+
+    // Relasi ke konser
+    public function konser()
+    {
+        return $this->belongsTo(Konser::class);
+    }
+
+    // Relasi ke transaksi detail
+    public function transaksiDetails()
+    {
+        return $this->hasMany(TransaksiDetail::class);
+    }
+
+     public function transaksi()
+    {
+        return $this->belongsToMany(Transaksi::class, 'ticket_transaksi')
+            ->withPivot('jumlah')
+            ->withTimestamps();
+    }
 }

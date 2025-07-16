@@ -17,12 +17,12 @@ class PermissionSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         $menuMaster = ['master', 'master-user', 'master-role'];
-        $menuTambah = ['tambah', 'tambah-barang', 'tambah-kategori'];
+        $menuTambah = ['tambah', 'tambah-konser', 'tambah-tiket'];
         $menuWebsite = ['website', 'setting'];
-        $custom = ['kelola'];
+        $custom = ['transaksi'];
 
         $permissionsByRole = [
-            'admin' => ['dashboard', ...$menuMaster, ...$menuWebsite, ...$menuTambah],
+            'admin' => ['dashboard', ...$menuMaster, ...$menuWebsite, ...$menuTambah, ...$custom],
         ];
 
         $insertPermissions = fn ($role) => collect($permissionsByRole[$role])

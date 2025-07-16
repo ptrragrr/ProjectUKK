@@ -5,8 +5,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TransaksiController;
-use App\Http\Controllers\ManagementController;
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\KonserController;
+// use App\Http\Controllers\TicketTransaksiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,6 +28,8 @@ Route::middleware(['auth', 'json'])->prefix('auth')->group(function () {
     Route::delete('logout', [AuthController::class, 'logout']);
     Route::get('me', [AuthController::class, 'me']);
 });
+
+Route::post('auth/register', [RegisterController::class, 'register'])->withoutMiddleware('auth');
 
 Route::prefix('setting')->group(function () {
     Route::get('', [SettingController::class, 'index']);
@@ -54,28 +58,34 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
         });
     });
 
-Route::get('/tickets', [TransaksiController::class, 'index']);
+Route::get('/tickets-transaksi', [TransaksiController::class, 'index']);
 });
 
-Route::get('/tickets', [ManagementController::class, 'index']);
-Route::apiResource('tickets', ManagementController::class)
-                ->except(['index', 'store']);
-// Route::get('/tickets/{id}', [ManagementController::class, 'show']);
-Route::post('/tickets', [ManagementController::class, 'index']);
-Route::post('/tickets/store', [ManagementController::class, 'store']);
-// Route::put('/tickets/{id}', [ManagementController::class, 'update']);
-Route::delete('/tickets/{id}', [ManagementController::class, 'destroy']);
+Route::get('/tickets', [TicketController::class, 'index']);
+Route::post('/tickets', [TicketController::class, 'store']);
+Route::get('/tickets/{id}', [TicketController::class, 'show']);
+Route::put('/tickets/{id}', [TicketController::class, 'update']);
+Route::patch('/tickets/{id}', [TicketController::class, 'update']);
+Route::delete('/tickets/{id}', [TicketController::class, 'destroy']);
 
-// Route::prefix('order')->group(function () {
-//     Route::get('/', [OrderController::class, 'index']);
-//     Route::post('/store', [OrderController::class, 'store']);
-//     Route::get('/{id}', [OrderController::class, 'show']);
-// });
+Route::get('/konser', [KonserController::class, 'index']);          // 🔍 List semua konser
+Route::post('/konser', [KonserController::class, 'store']);         // ➕ Tambah konser baru
+Route::get('/konser/{id}', [KonserController::class, 'show']);      // 👁 Detail konser
+Route::put('/konser/{id}', [KonserController::class, 'update']);    // ✏️ Update konser
+Route::patch('/konser/{id}', [KonserController::class, 'update']);  // ✏️ Update parsial konser
+Route::delete('/konser/{id}', [KonserController::class, 'destroy']); // 🗑 Hapus konser
 
-Route::prefix('orders')->group(function () {
-    Route::get('/', [OrderController::class, 'index']);
-    Route::post('/store', [OrderController::class, 'store']);
-    Route::get('/{id}', [OrderController::class, 'show']);
-    Route::put('/{id}', [OrderController::class, 'update']);
-    Route::delete('/{id}', [OrderController::class, 'destroy']);
-});
+Route::get('/transaksi', [TransaksiController::class, 'index']);          // 🔍 List semua konser
+Route::post('/transaksi/store', [TransaksiController::class, 'store']);         // ➕ Tambah konser baru
+Route::get('/transaksi/{id}', [TransaksiController::class, 'show']);      // 👁 Detail konser
+Route::put('/transaksi/{id}', [TransaksiController::class, 'update']);    // ✏️ Update konser
+Route::patch('/transaksi/{id}', [TransaksiController::class, 'update']);  // ✏️ Update parsial konser
+Route::delete('/transaksi/{id}', [TransaksiController::class, 'destroy']); // 🗑 Hapus konser
+
+// Route::get('/tickettransaksi', [TicketTransaksiController::class, 'index']);          // 🔍 List semua konser
+// Route::post('/tickettransaksi', [TicketTransaksiController::class, 'store']);         // ➕ Tambah konser baru
+// Route::get('/tickettransaksi/{id}', [TicketTransaksiController::class, 'show']);      // 👁 Detail konser
+// Route::put('/tickettransaksi/{id}', [TicketTransaksiController::class, 'update']);    // ✏️ Update konser
+// Route::patch('/tickettransaksi/{id}', [TicketTransaksiController::class, 'update']);  // ✏️ Update parsial konser
+// Route::delete('/tickettransaksi/{id}', [TicketTransaksiController::class, 'destroy']); // 🗑 Hapus konser
+

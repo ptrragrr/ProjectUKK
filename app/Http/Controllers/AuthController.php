@@ -37,6 +37,7 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => true,
+            'message' => "berhasil login",
             'user' => auth()->user(),
             'token' => $token
         ]);
@@ -45,6 +46,6 @@ class AuthController extends Controller
     public function logout()
     {
         auth()->logout();
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true, 'message'=>'succes']);
     }
 }

@@ -3,3 +3,4 @@ export type { Role } from "./role";
 export type { Setting } from "./setting";
 export type { Tiket } from "./tiket";
 export type { Order } from "./order";
+export type { Transaksi } from "./transaksi";

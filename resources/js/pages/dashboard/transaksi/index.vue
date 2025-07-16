@@ -3,15 +3,15 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import FormTransaksi from "./form.vue";
-import type { Transaksi } from "@/types";
+import type { Ticket } from "@/types";
 
-const tickets = ref<Transaksi[]>([]);
-const selectedTicket = ref<Transaksi | null>(null);
+const tickets = ref<Ticket[]>([]);
+const selectedTicket = ref<Ticket | null>(null);
 
 const getTickets = async () => {
   try {
-    const res = await axios.get("/api/tickets");
-    tickets.value = res.data.data;
+    const res = await axios.get("/tickets-transaksi");
+tickets.value = res.data.data;
   } catch (err) {
     console.error("Gagal mengambil tiket:", err);
   }
@@ -38,8 +38,8 @@ onMounted(() => {
 
     <ul v-if="tickets.length > 0">
   <li v-for="ticket in tickets" :key="ticket.id">
-    {{ ticket.nama_ticket }} -
-    Rp {{ ticket.harga_ticket.toLocaleString() }}
+    {{ ticket.nama_destinasi }} -
+    Rp {{ parseInt(ticket.harga_tiket).toLocaleString() }}
     <button @click="selectedTicket = ticket">Pilih</button>
   </li>
 </ul>
