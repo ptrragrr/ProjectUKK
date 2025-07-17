@@ -52,19 +52,21 @@ class KonserController extends Controller
     // }
 
     // 👁 Tampilkan 1 konser
-    public function show(Konser $konser)
+public function show($id)
 {
+    $konser = Konser::findOrFail($id); // Ambil berdasarkan id manual
+
     return response()->json([
         'konser' => [
-            'nama_barang' => $konser->nama_konser,
-            'lokasi' => $konser->lokasi, // GANTI INI
+            'nama_konser' => $konser->nama_konser,
+            'lokasi' => $konser->lokasi,
             'tanggal' => $konser->tanggal,
             'deskripsi' => $konser->deskripsi,
             'banner' => $konser->banner,
-
         ]
     ]);
 }
+
 
     // ✏️ Update konser
     public function update(Request $request, $id)
@@ -76,7 +78,7 @@ class KonserController extends Controller
             'lokasi' => 'sometimes|string',
             'tanggal' => 'sometimes|date',
             'deskripsi' => 'nullable|string',
-            'banner' => 'nullable|string',
+            'banner' => 'nullable|file|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
     if ($request->hasFile('banner')) {

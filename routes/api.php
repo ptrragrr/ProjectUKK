@@ -63,7 +63,8 @@ Route::get('/tickets-transaksi', [TransaksiController::class, 'index']);
 
 Route::get('/tickets', [TicketController::class, 'index']);
 Route::post('/tickets', [TicketController::class, 'store']);
-Route::get('/tickets/{id}', [TicketController::class, 'show']);
+// Route::get('/tickets/{id}', [TicketController::class, 'show']);
+Route::get('/tickets/{ticket}', [TicketController::class, 'show']);
 Route::put('/tickets/{id}', [TicketController::class, 'update']);
 Route::patch('/tickets/{id}', [TicketController::class, 'update']);
 Route::delete('/tickets/{id}', [TicketController::class, 'destroy']);
@@ -72,7 +73,7 @@ Route::get('/konser', [KonserController::class, 'index']);          // 🔍 List
 Route::post('/konser', [KonserController::class, 'store']);         // ➕ Tambah konser baru
 Route::get('/konser/{id}', [KonserController::class, 'show']);      // 👁 Detail konser
 Route::put('/konser/{id}', [KonserController::class, 'update']);    // ✏️ Update konser
-Route::patch('/konser/{id}', [KonserController::class, 'update']);  // ✏️ Update parsial konser
+// Route::patch('/konser/{id}', [KonserController::class, 'update']);  // ✏️ Update parsial konser
 Route::delete('/konser/{id}', [KonserController::class, 'destroy']); // 🗑 Hapus konser
 
 Route::get('/transaksi', [TransaksiController::class, 'index']);          // 🔍 List semua konser

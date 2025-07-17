@@ -60,11 +60,24 @@ public function index(Request $request)
     // }
 
     // 👁 Show single ticket
-    public function show($id)
-    {
-        $ticket = Ticket::findOrFail($id);
-        return response()->json($ticket);
+   public function show($id)
+{
+    $ticket = Ticket::find($id);
+
+    if (!$ticket) {
+        return response()->json(['message' => 'Tiket tidak ditemukan'], 404);
     }
+
+    return response()->json([
+        'tiket' => [
+            'id' => $ticket->id,
+            'jenis_tiket' => $ticket->jenis_tiket,
+            'harga_tiket' => $ticket->harga_tiket,
+            'stok_tiket' => $ticket->stok_tiket,      // ✅ sesuai dengan kolom model
+            'konser_id' => $ticket->konser_id,        // ✅ sesuai dengan kolom model
+        ]
+    ]);
+}
 
     // ✏️ Update ticket
     public function update(Request $request, $id)

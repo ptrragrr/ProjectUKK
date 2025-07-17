@@ -45,6 +45,9 @@ const columns = [
         day: "numeric",
       }),
   }),
+   column.accessor("deskripsi", {
+    header: "Deskripsi",
+  }),
   column.accessor("banner", {
     header: "Banner",
     cell: ({ getValue }) => {
