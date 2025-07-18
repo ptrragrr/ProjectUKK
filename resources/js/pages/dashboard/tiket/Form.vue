@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import * as Yup from "yup";
-import { Field, Form as VForm, ErrorMessage, useForm } from "vee-validate";
 import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
 import { block, unblock } from "@/libs/utils";
 import { ref, onMounted, watch } from "vue";
+import { Field, ErrorMessage, useForm, Form as VForm } from "vee-validate";
 
+// Props & Emits
 const props = defineProps({
   selected: {
     type: [String, Number],
@@ -14,19 +15,25 @@ const props = defineProps({
 });
 const emit = defineEmits(["close", "refresh"]);
 
+// Options
 const konserOptions = ref<{ id: number; nama_konser: string }[]>([]);
+
+// Display value
+const hargaTiketDisplay = ref("");
 
 // Yup Schema
 const formSchema = Yup.object({
   konser_id: Yup.string().required("Konser wajib dipilih"),
   jenis_tiket: Yup.string().required("Jenis tiket wajib diisi"),
-  harga_tiket: Yup.string().required("Harga tiket wajib diisi"),
+  harga_tiket: Yup.number()
+    .typeError("Harga harus berupa angka")
+    .required("Harga tiket wajib diisi"),
   stok_tiket: Yup.number()
     .typeError("Stok harus berupa angka")
     .required("Stok tiket wajib diisi"),
 });
 
-// Init Form
+// Form
 const {
   values,
   setValues,
@@ -43,7 +50,37 @@ const {
   },
 });
 
-// Load dropdown konser
+// Format ke Rupiah
+function formatRupiah(angka: string | number): string {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(Number(angka || 0));
+}
+
+// Handle tampilan harga saat berubah
+watch(
+  () => values.harga_tiket,
+  (val) => {
+    if (val === null || val === "") {
+      hargaTiketDisplay.value = "";
+    } else {
+      hargaTiketDisplay.value = formatRupiah(val.toString());
+    }
+  },
+  { immediate: true }
+);
+
+// Input harga format rupiah
+const onHargaInput = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  const raw = target.value.replace(/\D/g, "");
+  hargaTiketDisplay.value = formatRupiah(raw);
+  values.harga_tiket = raw ? Number(raw) : 0;
+};
+
+// Load konser untuk select
 async function loadKonserOptions() {
   try {
     const { data } = await axios.get("/konser");
@@ -53,32 +90,15 @@ async function loadKonserOptions() {
   }
 }
 
-// Format ke Rupiah
-function formatInput(value: number | string): string {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    minimumFractionDigits: 0,
-  }).format(Number(value));
+// Clean string format
+function cleanCurrency(value: string | number): number {
+  if (!value) return 0;
+  return parseInt(value.toString().replace(/\D/g, ""), 10);
 }
 
-// Bersihkan angka dari format Rupiah
-function cleanCurrency(value: string): number {
-  return parseInt(value.replace(/[^\d]/g, "")) || 0;
-}
-
-// Handle input harga
-function onHargaInput(e: Event) {
-  const input = e.target as HTMLInputElement;
-  const rawValue = input.value.replace(/\D/g, "");
-  const formatted = formatInput(rawValue);
-  values.harga_tiket = formatted;
-}
-
-// Ambil data untuk edit
+// Ambil data edit
 const getEdit = async () => {
   if (!props.selected) return;
-
   const formEl = document.getElementById("form-tiket");
   if (formEl) block(formEl);
 
@@ -89,7 +109,7 @@ const getEdit = async () => {
     setValues({
       konser_id: tiket.konser_id?.toString() || "",
       jenis_tiket: tiket.jenis_tiket || "",
-      harga_tiket: formatInput(tiket.harga_tiket),
+      harga_tiket: cleanCurrency(tiket.harga_tiket),
       stok_tiket: tiket.stok_tiket || "",
     });
   } catch (err) {
@@ -106,7 +126,7 @@ async function submit(values: any) {
   const formData = new FormData();
   formData.append("konser_id", values.konser_id);
   formData.append("jenis_tiket", values.jenis_tiket);
-  formData.append("harga_tiket", cleanCurrency(values.harga_tiket).toString());
+  formData.append("harga_tiket", values.harga_tiket.toString());
   formData.append("stok_tiket", values.stok_tiket.toString());
 
   block(document.getElementById("form-tiket"));
@@ -115,14 +135,14 @@ async function submit(values: any) {
       props.selected
         ? `/tickets/${props.selected}?_method=PUT`
         : "/tickets",
-      formData,
-      { headers: { "Content-Type": "multipart/form-data" } }
+      formData
     );
+
     toast.success("Tiket berhasil disimpan");
     emit("refresh");
     emit("close");
     resetForm();
-  } catch (err) {
+  } catch (err: any) {
     setErrors(err.response?.data?.errors || {});
     toast.error(err.response?.data?.message || "Gagal menyimpan tiket");
   } finally {
@@ -192,15 +212,14 @@ onMounted(() => {
         <!-- Harga Tiket -->
         <div class="col-md-6 mb-7">
           <label class="form-label fw-bold fs-6 required ps-2">Harga Tiket</label>
-          <Field name="harga_tiket" v-model="values.harga_tiket">
-            <input
-              type="text"
-              class="form-control form-control-lg form-control-solid"
-              :value="values.harga_tiket"
-              placeholder="Masukkan harga tiket"
-              @input="onHargaInput"
-            />
-          </Field>
+          <input
+            :value="hargaTiketDisplay"
+            @input="onHargaInput"
+            type="text"
+            class="form-control form-control-lg form-control-solid"
+            placeholder="Masukkan harga tiket"
+            autocomplete="off"
+          />
           <ErrorMessage name="harga_tiket" class="text-danger ps-2 text-sm" />
         </div>
 

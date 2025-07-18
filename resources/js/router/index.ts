@@ -91,15 +91,15 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Management", "Management"],
                 },
             },
-            {
-                path: "/dashboard/order",
-                name: "dashboard.pesanan",
-                component: () => import("@/pages/dashboard/order/index.vue"),
-                meta: {
-                    // pageTitle: "Order",
-                    // breadcrumbs: ["Order", "Order"],
-                },
-            },
+            // {
+            //     path: "/dashboard/order",
+            //     name: "dashboard.pesanan",
+            //     component: () => import("@/pages/dashboard/order/index.vue"),
+            //     meta: {
+            //         // pageTitle: "Order",
+            //         // breadcrumbs: ["Order", "Order"],
+            //     },
+            // },
             {
                 path: "/dashboard/master/users",
                 name: "dashboard.master.users",

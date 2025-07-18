@@ -73,14 +73,14 @@ const MainMenuConfig: Array<MenuItem> = [
             //     name: "kelola",
             //     keenthemesIcon: "bi bi-kanban",
             // },
+            // {
+            //     heading: "Order",
+            //     route: "/dashboard/order",
+            //     name: "pesanan",
+            //     keenthemesIcon: "bi bi-list-ol",
+            // },
             {
-                heading: "Order",
-                route: "/dashboard/order",
-                name: "pesanan",
-                keenthemesIcon: "bi bi-list-ol",
-            },
-            {
-                heading: "Transactions",
+                heading: "Transaksi",
                 route: "/dashboard/transaksi",
                 name: "transaksi",
                 keenthemesIcon: "bi bi-wallet2",

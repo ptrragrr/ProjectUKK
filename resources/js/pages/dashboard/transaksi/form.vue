@@ -1,207 +1,113 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import type { Transaksi } from "@/types";
-import axios from "axios";
-import { useRouter } from "vue-router";
-import { useAuthStore } from "@/stores/auth";
+import { Field, ErrorMessage, Form as VForm, useForm } from 'vee-validate';
+import * as Yup from 'yup';
+import axios from '@/libs/axios';
+import { ref, reactive, watch } from 'vue';
+import { toast } from 'vue3-toastify';
 
-const props = defineProps<{
-  selectedTicket: Transaksi | null;
-}>();
+const emit = defineEmits(['close', 'refresh']);
 
-const emit = defineEmits(["refresh"]);
-const router = useRouter();
-
-const jumlah = ref(1);
-const keranjang = ref<{ ticket: Transaksi; jumlah: number }[]>([]);
-const metodePembayaran = ref("Tunai");
-const nama_kasir = ref("Kasir");
-
-// Ambil nama user saat mount
-onMounted(async () => {
-  const token = localStorage.getItem("token");
-  try {
-    const res = await axios.get("/api/user", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    nama_kasir.value = res.data.name || res.data.nama || "Kasir";
-  } catch (error: any) {
-    console.warn("Gagal mengambil user, fallback ke 'Kasir'");
-    nama_kasir.value = "Kasir";
-  }
+const props = defineProps({
+  selected: {
+    type: String,
+    default: '',
+  },
 });
 
-const totalHarga = computed(() =>
-  keranjang.value.reduce(
-    (total, item) => total + item.ticket.harga_ticket * item.jumlah,
-    0
-  )
-);
+const formValues = reactive({
+  user_id: '',
+  kode_transaksi: '',
+  metode_pembayaran: '',
+  total_harga: '',
+  bayar: '',
+  status: 'pending',
+});
 
-const tambahKeKeranjang = () => {
-  if (!props.selectedTicket || jumlah.value < 1) return;
+const schema = Yup.object({
+  user_id: Yup.number().required(),
+  kode_transaksi: Yup.string().required(),
+  metode_pembayaran: Yup.string().required(),
+  total_harga: Yup.number().required(),
+  bayar: Yup.number().required(),
+  status: Yup.string().oneOf(['pending', 'paid', 'cancelled']).required(),
+});
 
-  const idx = keranjang.value.findIndex(
-    (item) => item.ticket.id === props.selectedTicket!.id
-  );
+useForm({ validationSchema: schema, initialValues: formValues });
 
-  if (idx !== -1) {
-    keranjang.value[idx].jumlah += jumlah.value;
-  } else {
-    keranjang.value.push({
-      ticket: props.selectedTicket,
-      jumlah: jumlah.value,
-    });
-  }
-
-  jumlah.value = 1;
-  emit("refresh");
-};
-
-const hapusItem = (id: number) => {
-  keranjang.value = keranjang.value.filter((item) => item.ticket.id !== id);
-};
-
-const batalTransaksi = () => {
-  keranjang.value = [];
-  jumlah.value = 1;
-  metodePembayaran.value = "Tunai";
-};
-
-const simpanSemuaTransaksi = async () => {
-  if (metodePembayaran.value === "Tunai" && totalHarga.value <= 0) {
-    alert("Total harga tidak valid");
-    return;
-  }
-
-  const token = localStorage.getItem("token");
-
-  const payload = {
-    nama_kasir: nama_kasir.value,
-    metode_pembayaran: metodePembayaran.value,
-    keranjang: JSON.stringify(
-      keranjang.value.map((item) => ({
-        id_ticket: item.ticket.id,
-        jumlah: item.jumlah,
-        harga_ticket: item.ticket.harga_ticket,
-        total_harga: item.ticket.harga_ticket * item.jumlah,
-      }))
-    ),
-    total: totalHarga.value,
-    bayar: totalHarga.value,
-  };
-
+const getData = async () => {
+  if (!props.selected) return;
   try {
-    const response = await axios.post("/tickets/store", payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const { data } = await axios.get(`/transaksi/${props.selected}`);
+    Object.assign(formValues, data);
+  } catch (err) {
+    toast.error('Gagal mengambil data transaksi');
+  }
+};
 
-    if (response.data.success) {
-      router.push({
-        path: "/tickets/struk",
-        query: {
-          nama_kasir: nama_kasir.value,
-          total_harga: totalHarga.value.toString(),
-          detail_tiket: JSON.stringify(
-            keranjang.value.map((item) => ({
-              nama_ticket: item.ticket.nama_ticket,
-              harga_ticket: item.ticket.harga_ticket,
-              jumlah: item.jumlah,
-              total_harga: item.ticket.harga_ticket * item.jumlah,
-            }))
-          ),
-        },
-      });
+watch(() => props.selected, getData, { immediate: true });
+
+const onSubmit = async (values: typeof formValues) => {
+  try {
+    if (props.selected) {
+      await axios.post(`/transaksi/${props.selected}?_method=PUT`, values);
+      toast.success('Transaksi berhasil diperbarui');
     } else {
-      alert("Gagal menyimpan transaksi: " + response.data.message);
+      await axios.post('/transaksi', values);
+      toast.success('Transaksi berhasil ditambahkan');
     }
-  } catch (error: any) {
-    alert("Gagal menyimpan transaksi: " + error.message);
-    console.error(error);
+    emit('refresh');
+    emit('close');
+  } catch (err) {
+    toast.error('Gagal menyimpan transaksi');
   }
 };
 </script>
 
 <template>
-  <div class="card card-custom">
-    <div class="card-header">
-      <h3 class="card-title">Form Pemesanan Tiket</h3>
-    </div>
-
-    <div class="card-body">
-      <div v-if="selectedTicket">
-        <h5>{{ selectedTicket.nama_ticket }}</h5>
-        <p>Harga: Rp {{ selectedTicket.harga_ticket.toLocaleString() }}</p>
-
-        <div class="input-group my-2" style="max-width: 200px">
-          <span class="input-group-text">Jumlah</span>
-          <input type="number" v-model="jumlah" min="1" class="form-control" />
-        </div>
-
-        <button
-          class="btn btn-primary mt-2"
-          @click="tambahKeKeranjang"
-          :disabled="selectedTicket.stok_ticket === 0"
-        >
-          {{
-            selectedTicket.stok_ticket === 0
-              ? "Stok Habis"
-              : "Tambah ke Keranjang"
-          }}
-        </button>
+  <VForm v-slot="{ handleSubmit }">
+    <form @submit.prevent="handleSubmit(onSubmit)" class="form card">
+      <div class="card-header">
+        <h2>{{ props.selected ? 'Edit' : 'Tambah' }} Transaksi</h2>
       </div>
-
-      <div v-else class="alert alert-warning">
-        Silakan pilih tiket terlebih dahulu.
-      </div>
-
-      <div v-if="keranjang.length > 0" class="mt-4">
-        <h5>Keranjang</h5>
-        <ul class="list-group">
-          <li
-            v-for="item in keranjang"
-            :key="item.ticket.id"
-            class="d-flex justify-content-between align-items-center"
-          >
-            <div>
-              {{ item.ticket.nama_ticket }} x {{ item.jumlah }}
-              <button
-                class="btn btn-sm btn-danger ms-2"
-                @click="hapusItem(item.ticket.id)"
-              >
-                Hapus
-              </button>
-            </div>
-            <span>
-              Rp {{ (item.ticket.harga_ticket * item.jumlah).toLocaleString() }}
-            </span>
-          </li>
-        </ul>
-
-        <div class="mt-3 fw-bold">
-          Total: Rp {{ totalHarga.toLocaleString() }}
+      <div class="card-body row px-4 pt-4">
+        <div class="col-md-6 mb-4">
+          <label>User ID</label>
+          <Field name="user_id" v-model="formValues.user_id" type="number" class="form-control" />
+          <ErrorMessage name="user_id" class="text-danger" />
         </div>
-
-        <div class="d-flex mt-3">
-          <button class="btn btn-danger me-2" @click="batalTransaksi">
-            Batal
-          </button>
-          <button class="btn btn-success" @click="simpanSemuaTransaksi">
-            Bayar
-          </button>
+        <div class="col-md-6 mb-4">
+          <label>Kode Transaksi</label>
+          <Field name="kode_transaksi" v-model="formValues.kode_transaksi" type="text" class="form-control" />
+          <ErrorMessage name="kode_transaksi" class="text-danger" />
+        </div>
+        <div class="col-md-6 mb-4">
+          <label>Metode Pembayaran</label>
+          <Field name="metode_pembayaran" v-model="formValues.metode_pembayaran" type="text" class="form-control" />
+          <ErrorMessage name="metode_pembayaran" class="text-danger" />
+        </div>
+        <div class="col-md-6 mb-4">
+          <label>Total Harga</label>
+          <Field name="total_harga" v-model="formValues.total_harga" type="number" class="form-control" />
+          <ErrorMessage name="total_harga" class="text-danger" />
+        </div>
+        <div class="col-md-6 mb-4">
+          <label>Bayar</label>
+          <Field name="bayar" v-model="formValues.bayar" type="number" class="form-control" />
+          <ErrorMessage name="bayar" class="text-danger" />
+        </div>
+        <div class="col-md-6 mb-4">
+          <label>Status</label>
+          <Field name="status" as="select" v-model="formValues.status" class="form-control">
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+            <option value="cancelled">Cancelled</option>
+          </Field>
+          <ErrorMessage name="status" class="text-danger" />
         </div>
       </div>
-    </div>
-  </div>
+      <div class="card-footer d-flex">
+        <button type="submit" class="btn btn-primary ms-auto">Simpan</button>
+      </div>
+    </form>
+  </VForm>
 </template>
-
-<style scoped>
-.card-custom {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-</style>

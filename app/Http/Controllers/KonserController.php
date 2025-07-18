@@ -7,10 +7,19 @@ use Illuminate\Http\Request;
 class KonserController extends Controller
 {
     // 🔍 Get all konser
-    public function index()
+    public function index(Request $request)
 {
-    $data = Konser::orderBy('tanggal', 'desc')->paginate(10);
-    return response()->json($data); // ⬅️ Ini sudah sesuai struktur di atas
+    $query = Konser::query();
+
+    // Jika parameter "search" ada, filter berdasarkan nama_konser
+    if ($request->filled('search')) {
+        $search = $request->input('search');
+        $query->where('nama_konser', 'like', "%{$search}%");
+    }
+
+    $data = $query->orderBy('tanggal', 'desc')->paginate(10);
+
+    return response()->json($data);
 }
 
 
