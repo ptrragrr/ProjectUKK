@@ -15,7 +15,7 @@ return new class extends Migration
         $table->id();
         $table->foreignId('konser_id')->constrained('konser')->onDelete('cascade');
         $table->string('jenis_tiket'); // VIP, Reguler, dll
-        $table->decimal('harga_tiket', 10, 2);
+        $table->decimal('harga_tiket', 15, 3);
         $table->integer('stok_tiket');
         $table->timestamps();
     });

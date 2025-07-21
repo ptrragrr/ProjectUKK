@@ -8,17 +8,12 @@ import { Field, ErrorMessage, useForm, Form as VForm } from "vee-validate";
 
 // Props & Emits
 const props = defineProps({
-  selected: {
-    type: [String, Number],
-    default: null,
-  },
+  selected: [String, Number],
 });
 const emit = defineEmits(["close", "refresh"]);
 
-// Options
+// State
 const konserOptions = ref<{ id: number; nama_konser: string }[]>([]);
-
-// Display value
 const hargaTiketDisplay = ref("");
 
 // Yup Schema
@@ -33,14 +28,8 @@ const formSchema = Yup.object({
     .required("Stok tiket wajib diisi"),
 });
 
-// Form
-const {
-  values,
-  setValues,
-  setErrors,
-  handleSubmit,
-  resetForm,
-} = useForm({
+// VeeValidate Form
+const { values, setValues, setErrors, handleSubmit, resetForm } = useForm({
   validationSchema: formSchema,
   initialValues: {
     konser_id: "",
@@ -50,79 +39,71 @@ const {
   },
 });
 
-// Format ke Rupiah
-function formatRupiah(angka: string | number): string {
+// Format ke rupiah
+function formatRupiah(value: string | number): string {
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
     minimumFractionDigits: 0,
-  }).format(Number(angka || 0));
+  }).format(Number(value || 0));
 }
 
-// Handle tampilan harga saat berubah
+// Clean currency format
+function cleanCurrency(value: string | number): number {
+  return parseInt(value.toString().replace(/\D/g, ""), 10) || 0;
+}
+
+// Display harga otomatis
 watch(
   () => values.harga_tiket,
   (val) => {
-    if (val === null || val === "") {
-      hargaTiketDisplay.value = "";
-    } else {
-      hargaTiketDisplay.value = formatRupiah(val.toString());
-    }
+    hargaTiketDisplay.value = val ? formatRupiah(val) : "";
   },
   { immediate: true }
 );
 
-// Input harga format rupiah
-const onHargaInput = (e: Event) => {
+// Input manual dengan update ke VeeValidate field
+const onHargaInput = (e: Event, field: any) => {
   const target = e.target as HTMLInputElement;
   const raw = target.value.replace(/\D/g, "");
   hargaTiketDisplay.value = formatRupiah(raw);
-  values.harga_tiket = raw ? Number(raw) : 0;
+  field.onChange(raw ? Number(raw) : 0);
 };
 
-// Load konser untuk select
-async function loadKonserOptions() {
+// Load konser dari API
+const loadKonserOptions = async () => {
   try {
     const { data } = await axios.get("/konser");
     konserOptions.value = data.data || [];
   } catch {
     toast.error("Gagal memuat daftar konser");
   }
-}
+};
 
-// Clean string format
-function cleanCurrency(value: string | number): number {
-  if (!value) return 0;
-  return parseInt(value.toString().replace(/\D/g, ""), 10);
-}
-
-// Ambil data edit
+// Ambil data untuk edit
 const getEdit = async () => {
   if (!props.selected) return;
-  const formEl = document.getElementById("form-tiket");
-  if (formEl) block(formEl);
-
+  block(document.getElementById("form-tiket"));
   try {
     const { data } = await axios.get(`/tickets/${props.selected}`);
     const tiket = data.tiket;
-
     setValues({
       konser_id: tiket.konser_id?.toString() || "",
       jenis_tiket: tiket.jenis_tiket || "",
       harga_tiket: cleanCurrency(tiket.harga_tiket),
       stok_tiket: tiket.stok_tiket || "",
     });
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Gagal mengambil data tiket.");
+  } catch (err: any) {
+    toast.error(err.response?.data?.message || "Gagal mengambil data tiket");
   } finally {
-    if (formEl) unblock(formEl);
+    unblock(document.getElementById("form-tiket"));
   }
 };
 
 watch(() => props.selected, getEdit, { immediate: true });
 
 // Submit
-async function submit(values: any) {
+const submit = async (values: any) => {
   const formData = new FormData();
   formData.append("konser_id", values.konser_id);
   formData.append("jenis_tiket", values.jenis_tiket);
@@ -137,7 +118,6 @@ async function submit(values: any) {
         : "/tickets",
       formData
     );
-
     toast.success("Tiket berhasil disimpan");
     emit("refresh");
     emit("close");
@@ -148,27 +128,17 @@ async function submit(values: any) {
   } finally {
     unblock(document.getElementById("form-tiket"));
   }
-}
+};
 
-onMounted(() => {
-  loadKonserOptions();
-});
+onMounted(loadKonserOptions);
 </script>
 
 <template>
   <VForm :validation-schema="formSchema" v-slot="{ handleSubmit }">
-    <form
-      @submit.prevent="handleSubmit(submit)"
-      id="form-tiket"
-      class="form card mb-10"
-    >
+    <form @submit.prevent="handleSubmit(submit)" id="form-tiket" class="form card mb-10">
       <div class="card-header d-flex align-items-center">
         <h2 class="mb-0">{{ selected ? "Edit" : "Tambah" }} Tiket</h2>
-        <button
-          class="btn btn-sm btn-light-danger ms-auto"
-          type="button"
-          @click="emit('close')"
-        >
+        <button type="button" class="btn btn-sm btn-light-danger ms-auto" @click="emit('close')">
           Batal <i class="la la-times-circle p-0"></i>
         </button>
       </div>
@@ -184,11 +154,7 @@ onMounted(() => {
             class="form-select form-select-lg form-control-solid"
           >
             <option disabled value="">-- Pilih Konser --</option>
-            <option
-              v-for="konser in konserOptions"
-              :key="konser.id"
-              :value="konser.id.toString()"
-            >
+            <option v-for="konser in konserOptions" :key="konser.id" :value="konser.id.toString()">
               {{ konser.nama_konser }}
             </option>
           </Field>
@@ -212,14 +178,17 @@ onMounted(() => {
         <!-- Harga Tiket -->
         <div class="col-md-6 mb-7">
           <label class="form-label fw-bold fs-6 required ps-2">Harga Tiket</label>
-          <input
-            :value="hargaTiketDisplay"
-            @input="onHargaInput"
-            type="text"
-            class="form-control form-control-lg form-control-solid"
-            placeholder="Masukkan harga tiket"
-            autocomplete="off"
-          />
+          <Field name="harga_tiket" v-slot="{ field }">
+            <input
+              v-bind="field"
+              :value="hargaTiketDisplay"
+              @input="(e) => onHargaInput(e, field)"
+              type="text"
+              class="form-control form-control-lg form-control-solid"
+              placeholder="Masukkan harga tiket"
+              autocomplete="off"
+            />
+          </Field>
           <ErrorMessage name="harga_tiket" class="text-danger ps-2 text-sm" />
         </div>
 
@@ -239,9 +208,7 @@ onMounted(() => {
       </div>
 
       <div class="card-footer d-flex">
-        <button class="btn btn-sm btn-primary ms-auto" type="submit">
-          Simpan
-        </button>
+        <button type="submit" class="btn btn-sm btn-primary ms-auto">Simpan</button>
       </div>
     </form>
   </VForm>
