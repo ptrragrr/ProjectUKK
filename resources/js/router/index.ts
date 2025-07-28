@@ -112,6 +112,34 @@ const routes: Array<RouteRecordRaw> = [
             },
         ],
     },
+//     {
+//     path: "/",
+//     // component: () => import("@/layouts/default-layout/UserLayout.vue"),
+//     meta: {
+//         middleware: "auth",
+//     },
+//     children: [
+        
+//     ],
+// },
+{
+    path: "/contact",
+    name: "contact",
+    component: () => import("@/pages/dashboard/users/contact/index.vue"),
+    meta: {
+        pageTitle: "Kontak",
+        breadcrumbs: ["Contact"],
+    },
+},
+{
+        path: "/home",
+        name: "home",
+        component: () => import("@/pages/dashboard/users/home/index.vue"),
+        meta: {
+            pageTitle: "Beranda Pengguna",
+            breadcrumbs: ["Home"],
+        },
+    },
     {
         path: "/",
         component: () => import("@/layouts/AuthLayout.vue"),
@@ -178,50 +206,94 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-    if (to.name) {
-        // Start the route progress bar.
-        NProgress.start();
-    }
+  if (to.name) {
+    NProgress.start();
+  }
 
-    const authStore = useAuthStore();
-    const configStore = useConfigStore();
+  const authStore = useAuthStore();
+  const configStore = useConfigStore();
 
-    // current page view title
-    if (to.meta.pageTitle) {
-        document.title = `${to.meta.pageTitle} - ${import.meta.env.VITE_APP_NAME
-            }`;
+  if (to.meta.pageTitle) {
+    document.title = `${to.meta.pageTitle} - ${import.meta.env.VITE_APP_NAME}`;
+  } else {
+    document.title = import.meta.env.VITE_APP_NAME;
+  }
+
+  configStore.resetLayoutConfig();
+
+  if (!authStore.isAuthenticated) await authStore.verifyAuth();
+
+  if (to.meta.middleware === "auth") {
+    if (authStore.isAuthenticated) {
+      if (to.meta.permission && !authStore.user.permission.includes(to.meta.permission)) {
+        return next({ name: "404" });
+      } else if (to.name === "dashboard" && authStore.user.role?.name === "pengguna") {
+        return next({ name: "home" });
+      } else {
+        return next();
+      }
     } else {
-        document.title = import.meta.env.VITE_APP_NAME as string;
+      return next({ name: "sign-in" });
     }
+  }
 
-    // reset config to initial state
-    configStore.resetLayoutConfig();
+  if (to.meta.middleware === "guest" && authStore.isAuthenticated) {
+    return next({ name: "dashboard" });
+  }
 
-    // verify auth token before each page change
-    if (!authStore.isAuthenticated) await authStore.verifyAuth();
-
-    // before page access check if page requires authentication
-    if (to.meta.middleware == "auth") {
-        if (authStore.isAuthenticated) {
-            if (
-                to.meta.permission &&
-                !authStore.user.permission.includes(to.meta.permission)
-            ) {
-                next({ name: "404" });
-            } else if (to.meta.checkDetail == false) {
-                next();
-            }
-
-            next();
-        } else {
-            next({ name: "sign-in" });
-        }
-    } else if (to.meta.middleware == "guest" && authStore.isAuthenticated) {
-        next({ name: "dashboard" });
-    } else {
-        next();
-    }
+  // fallback, biar next() selalu terpanggil
+  return next();
 });
+
+// router.beforeEach(async (to, from, next) => {
+//     if (to.name) {
+//         // Start the route progress bar.
+//         NProgress.start();
+//     }
+
+//     const authStore = useAuthStore();
+//     const configStore = useConfigStore();
+
+//     // current page view title
+//     if (to.meta.pageTitle) {
+//         document.title = `${to.meta.pageTitle} - ${import.meta.env.VITE_APP_NAME
+//             }`;
+//     } else {
+//         document.title = import.meta.env.VITE_APP_NAME as string;
+//     }
+
+//     // reset config to initial state
+//     configStore.resetLayoutConfig();
+
+//     // verify auth token before each page change
+//     if (!authStore.isAuthenticated) await authStore.verifyAuth();
+
+//     // before page access check if page requires authentication
+    
+//         if (authStore.isAuthenticated) {
+//             if (to.meta.middleware == "auth") {
+//                 if (authStore.isAuthenticated) {
+//                     if (
+//                         to.meta.permission &&
+//                         !authStore.user.permission.includes(to.meta.permission)
+//                     ) {
+//                         next({ name: "404" });
+//                     } else if (to.name === "dashboard" && authStore.user.role?.name === "pengguna") {
+//                         next({ name: "home" });
+//                     } else {
+//                         next();
+//                     }
+//                 } else {
+//                     next({ name: "sign-in" });
+//                 }
+//             }
+//         } else if (to.meta.middleware == "guest" && authStore.isAuthenticated) {
+//             next({ name: "dashboard" });
+//         } else {
+//             next();
+//         }
+//     }
+// );
 
 router.afterEach(() => {
     // Complete the animation of the route progress bar.

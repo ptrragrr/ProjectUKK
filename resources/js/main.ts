@@ -3,6 +3,7 @@ import "./bootstrap";
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import { Tooltip } from "bootstrap";
+// import router from './router'
 import App from "./App.vue";
 
 /*

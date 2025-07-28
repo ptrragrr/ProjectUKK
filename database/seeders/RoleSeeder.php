@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
+use App\Models\User;
 
 class RoleSeeder extends Seeder
 {
@@ -13,15 +13,21 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
+        // Buat role jika belum ada
+        if (!Role::where('name', 'admin')->where('guard_name', 'web')->exists()) {
+            Role::create(['name' => 'admin', 'guard_name' => 'web']);
+        }
 
-        if (!Role::where('full_name','name', 'admin')->where('guard_name', 'api')->exists()) {
-    Role::create(['full_name' => 'adminnnnnn','name' => 'admin', 'guard_name' => 'api']);
-}
+        // Buat user admin
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin',
+                'password' => bcrypt('password'),
+            ]
+        );
 
-        // Role::create([
-        //     'name' => 'admin',
-        //     'guard_name' => 'api',
-        //     'full_name' => 'Administrator',
-        // ]);
+        // Assign role ke user
+        $admin->assignRole('admin');
     }
 }

@@ -100,22 +100,22 @@ const currentLangugeLocale = computed(() => {
                 <!--end::Avatar-->
 
                 <!--begin::Username-->
-                <div class="d-flex flex-column">
-                    <div class="fw-bold d-flex align-items-center fs-5">
-                        {{ store.user.name }}
-                        <span
-                            class="badge badge-light-success fw-bold fs-8 px-2 py-1 ms-2"
-                        >
-                            {{ store.user.role.name }}
-                        </span>
-                    </div>
-                    <a
-                        href="#"
-                        class="fw-semibold text-muted text-hover-primary fs-7"
-                    >
-                        {{ store.user.email }}
-                    </a>
-                </div>
+                <div class="fw-bold d-flex align-items-center fs-5" v-if="store.user">
+  {{ store.user.name }}
+  <span
+    v-if="store.user.role"
+    class="badge badge-light-success fw-bold fs-8 px-2 py-1 ms-2"
+  >
+    {{ store.user.role.name }}
+  </span>
+</div>
+<a
+  v-if="store.user"
+  href="#"
+  class="fw-semibold text-muted text-hover-primary fs-7"
+>
+  {{ store.user.email }}
+</a>
                 <!--end::Username-->
             </div>
         </div>
