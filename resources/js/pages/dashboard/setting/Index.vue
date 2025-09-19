@@ -166,25 +166,44 @@ export default defineComponent({
         }
     },
     methods: {
-        submit() {
-            const data = new FormData(this.$el)
+      submit() {
+  const data = new FormData();
 
-            data.append('logo', this.files.logo[0].file)
-            data.append('bg_auth', this.files.bgAuth[0].file)
+  // Kirim semua input text manual dari formData
+  data.append('app', this.formData.app);
+  data.append('description', this.formData.description);
+  data.append('pemerintah', this.formData.pemerintah);
+  data.append('alamat', this.formData.alamat);
+  data.append('telepon', this.formData.telepon);
+  data.append('email', this.formData.email);
 
-            block(this.$el)
-            axios.post("/setting", data)
-                .then((res) => {
-                    toast.success(res.data.message)
-                    this.setting.refetch()
-                })
-                .catch(err => {
-                    toast.error(err.response.data.message)
-                })
-                .finally(() => {
-                    unblock(this.$el)
-                })
-        }
+  // Cek dan kirim file logo jika valid (bukan string lama)
+  const logoFile = this.files.logo?.[0];
+  if (logoFile && typeof logoFile !== 'string' && logoFile.file) {
+    data.append('logo', logoFile.file);
+  }
+
+  // Cek dan kirim file background login jika valid
+  const bgAuthFile = this.files.bgAuth?.[0];
+  if (bgAuthFile && typeof bgAuthFile !== 'string' && bgAuthFile.file) {
+    data.append('bg_auth', bgAuthFile.file);
+  }
+
+  block(this.$el);
+  axios.post("/setting", data)
+    .then((res) => {
+      toast.success(res.data.message);
+      this.setting.refetch();
+    })
+    .catch(err => {
+      const msg = err.response?.data?.message || "Terjadi kesalahan validasi";
+      toast.error(msg);
+      console.error("Validation error:", err.response?.data?.errors);
+    })
+    .finally(() => {
+      unblock(this.$el);
+    });
+}
     },
     watch: {
         setting: {

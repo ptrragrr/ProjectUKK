@@ -7,10 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class TicketTransaksi extends Model
 {
-   use Illuminate\Database\Eloquent\Model;
-
-class TicketTransaksi extends Model
-{
     protected $table = 'ticket_transaksi';
 
     protected $fillable = [
@@ -28,6 +24,4 @@ class TicketTransaksi extends Model
     {
         return $this->belongsTo(Ticket::class);
     }
-}
-
 }

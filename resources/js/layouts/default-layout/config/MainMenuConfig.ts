@@ -79,16 +79,16 @@ const MainMenuConfig: Array<MenuItem> = [
             //     name: "pesanan",
             //     keenthemesIcon: "bi bi-list-ol",
             // },
+            // {
+            //     heading: "Transaksi",
+            //     route: "/dashboard/transaksi",
+            //     name: "transaksi",
+            //     keenthemesIcon: "bi bi-wallet2",
+            // },
             {
-                heading: "Transaksi",
-                route: "/dashboard/transaksi",
-                name: "transaksi",
-                keenthemesIcon: "bi bi-wallet2",
-            },
-            {
-                heading: "History",
-                route: "/dashboard/riwayat",
-                name: "riwayat",
+                heading: "Input kode tiket",
+                route: "/dashboard/input",
+                name: "input",
                 keenthemesIcon: "bi bi-clock-history",
             },
             {

@@ -8,6 +8,7 @@ use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\KonserController;
+use App\Http\Controllers\InputKodeController;
 // use App\Http\Controllers\TicketTransaksiController;
 use Illuminate\Support\Facades\Route;
 
@@ -82,6 +83,13 @@ Route::get('/transaksi/{id}', [TransaksiController::class, 'show']);      // �
 Route::put('/transaksi/{id}', [TransaksiController::class, 'update']);    // ✏️ Update konser
 Route::patch('/transaksi/{id}', [TransaksiController::class, 'update']);  // ✏️ Update parsial konser
 Route::delete('/transaksi/{id}', [TransaksiController::class, 'destroy']); // 🗑 Hapus konser
+// Route::post('/transaksi/{id}/kode-tiket', [TransaksiController::class, 'simpanKodeTiket']);
+// Route::get('/transaksi/{id}/cetak', [TransaksiController::class, 'cetakTiket']);
+
+// Route::post('/input-tiket', [InputTiketController::class, 'simpan']);
+Route::get('/cek-tiket/{kode}', [InputKodeController::class, 'cek']);
+// Route::get('/cetak-tiket/{kode}', [InputKodeController::class, 'cetak'])->name('cetak.tiket');
+
 
 // Route::get('/tickettransaksi', [TicketTransaksiController::class, 'index']);          // 🔍 List semua konser
 // Route::post('/tickettransaksi', [TicketTransaksiController::class, 'store']);         // ➕ Tambah konser baru

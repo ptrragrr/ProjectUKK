@@ -4,6 +4,7 @@ namespace App\Models;
 
 
 use App\Traits\Uuid;
+use Illuminate\Database\Eloquent\Model; // ✅ ini yang kurang
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;

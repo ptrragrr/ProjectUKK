@@ -1,18 +1,21 @@
 <?php
 
-use App\Http\Controllers\Controller;
-
+namespace App\Http\Controllers;
 
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
 
 class TransaksiController extends Controller
 {
-    // 🔍 Menampilkan semua transaksi dengan relasi
+    // 🔍 Menampilkan semua transaksi dengan relasi tiket + konser
     public function index()
     {
-        $transaksis = Transaksi::with(['user', 'details'])->get();
-        return response()->json(['success' => true, 'data' => $transaksis]);
+        $transaksis = Transaksi::with([
+            'details.ticket.konser', // ambil konser dari tiket
+            'user'
+        ])->orderBy('created_at', 'desc')->get();
+
+        return response()->json($transaksis);
     }
 
     // ➕ Menyimpan transaksi baru
@@ -20,7 +23,7 @@ class TransaksiController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'kode_transaksi' => 'required|string|unique:transaksi,kode_transaksi',
+            'kode_transaksi' => 'required|string|unique:transaksis,kode_transaksi', // ✅ fix table name
             'metode_pembayaran' => 'required|string',
             'total_harga' => 'required|numeric|min:0',
             'bayar' => 'required|numeric|min:0',
@@ -32,11 +35,15 @@ class TransaksiController extends Controller
         return response()->json(['success' => true, 'data' => $transaksi], 201);
     }
 
-    // 👁 Tampilkan 1 transaksi
+    // 👁 Tampilkan 1 transaksi lengkap dengan tiket & konser
     public function show($id)
     {
-        $transaksi = Transaksi::with(['user', 'details'])->findOrFail($id);
-        return response()->json(['success' => true, 'data' => $transaksi]);
+        $transaksi = Transaksi::with([
+            'details.ticket.konser', // ambil konser juga
+            'user'
+        ])->findOrFail($id);
+
+        return response()->json($transaksi);
     }
 
     // ✏️ Update transaksi
@@ -63,5 +70,29 @@ class TransaksiController extends Controller
         $transaksi->delete();
 
         return response()->json(['success' => true, 'message' => 'Transaksi berhasil dihapus.']);
+    }
+
+    // 💾 Simpan kode tiket
+    public function simpanKodeTiket(Request $request, $id)
+    {
+        $request->validate([
+            'kode_tiket' => 'required|string|max:50'
+        ]);
+
+        $transaksi = Transaksi::findOrFail($id);
+        $transaksi->kode_tiket = $request->kode_tiket; // pastikan ada di migration
+        $transaksi->save();
+
+        return response()->json(['message' => 'Kode tiket berhasil disimpan']);
+    }
+
+    // 🖨 Cetak tiket (PDF)
+    public function cetakTiket($id)
+    {
+        $transaksi = Transaksi::with('details.ticket.konser')->findOrFail($id);
+
+        // Generate PDF tiket
+        $pdf = \PDF::loadView('pdf.tiket', compact('transaksi'));
+        return $pdf->download('tiket-'.$transaksi->kode_tiket.'.pdf');
     }
 }

@@ -4,7 +4,8 @@ import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
 import { block, unblock } from "@/libs/utils";
 import { ref, onMounted, watch } from "vue";
-import { Field, ErrorMessage, useForm, Form as VForm } from "vee-validate";
+import { Field, ErrorMessage, useForm, Form as VForm, validate } from "vee-validate";
+import Select2 from "@/components/Select2.vue";
 
 // Props & Emits
 const props = defineProps<{ selected: number | string | null }>();
@@ -14,90 +15,108 @@ const emit = defineEmits(["close", "refresh"]);
 const konserOptions = ref([]);
 const hargaTiketDisplay = ref("");
 
-// Yup Schema
+// Yup Schema - DIPERBAIKI
 const formSchema = Yup.object({
-  konser_id: Yup.string().required("Konser wajib dipilih"),
+  konser_id: Yup.mixed().required("Konser wajib dipilih"),
   jenis_tiket: Yup.string().required("Jenis tiket wajib diisi"),
   harga_tiket: Yup.number()
-    .transform((value, originalValue) =>
-      Number(String(originalValue).replace(/\D/g, "")) || 0
-    )
+    .transform((value, originalValue) => {
+      console.log("Transform input:", { value, originalValue, type: typeof originalValue });
+      
+      // Jika sudah number dan valid, kembalikan langsung
+      if (typeof originalValue === "number" && !isNaN(originalValue)) {
+        return originalValue;
+      }
+      
+      // Jika string, bersihkan dan konversi
+      if (typeof originalValue === "string") {
+        const digits = originalValue.replace(/\D/g, "");
+        const result = digits === "" ? NaN : Number(digits);
+        console.log("String transform result:", result);
+        return result;
+      }
+      
+      // Default return NaN untuk trigger error
+      return NaN;
+    })
     .typeError("Harga harus berupa angka")
-    .required("Harga tiket wajib diisi"),
+    .required("Harga tiket wajib diisi")
+    .min(1, "Harga tiket harus lebih dari 0"),
   stok_tiket: Yup.number()
     .typeError("Stok harus berupa angka")
-    .required("Stok tiket wajib diisi"),
+    .required("Stok tiket wajib diisi")
+    .min(1, "Stok tiket harus lebih dari 0"),
 });
-// const formSchema = Yup.object({
-//   konser_id: Yup.string().required("Konser wajib dipilih"),
-//   jenis_tiket: Yup.string().required("Jenis tiket wajib diisi"),
-//   harga_tiket: Yup.number()
-//     .typeError("Harga harus berupa angka")
-//     .required("Harga tiket wajib diisi"),
-//   stok_tiket: Yup.number()
-//     .typeError("Stok harus berupa angka")
-//     .required("Stok tiket wajib diisi"),
-// });
 
-// VeeValidate
-const {
-  values,
-  setValues,
-  setErrors,
-  handleSubmit,
-  resetForm,
-} = useForm({
+// VeeValidate Form Setup - DIPERBAIKI
+const { values, setValues, setErrors, handleSubmit, resetForm, setFieldValue, validate } = useForm({
   validationSchema: formSchema,
   initialValues: {
     konser_id: "",
     jenis_tiket: "",
-    harga_tiket: "",
-    stok_tiket: "",
+    harga_tiket: 0, // PERBAIKAN: Gunakan 0 sebagai default, bukan string kosong
+    stok_tiket: 0,   // PERBAIKAN: Gunakan 0 sebagai default
   },
 });
 
-// Format Rupiah
+// Format & Clean Rupiah - DIPERBAIKI
 function formatRupiah(value: string | number): string {
+  const numValue = typeof value === 'string' ? parseFloat(value.replace(/\D/g, '')) || 0 : value || 0;
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
     minimumFractionDigits: 0,
-  }).format(Number(value || 0));
+  }).format(numValue);
 }
 
-// Clean rupiah format
 function cleanCurrency(value: string | number): number {
-  return parseInt(value.toString().replace(/\D/g, ""), 10) || 0;
+  if (typeof value === 'number') return value;
+  // PERBAIKAN: Gunakan parseFloat bukan parseInt untuk mendukung desimal
+  return parseFloat(value.toString().replace(/\D/g, "")) || 0;
 }
 
-// Watch harga_tiket → update tampilan
+// Harga input - DIPERBAIKI
+const onHargaInput = (e: Event, handleChange: any) => {
+  const target = e.target as HTMLInputElement;
+  const raw = target.value.replace(/\D/g, "");
+  
+  console.log("Input event:", { raw, isEmpty: raw === "" });
+  
+  // Update display
+  hargaTiketDisplay.value = raw ? formatRupiah(raw) : "Rp 0";
+  
+  // PERBAIKAN: Kirim number ke form, 0 jika kosong
+  const numValue = raw ? Number(raw) : 0;
+  console.log("Sending to form:", numValue);
+  handleChange(numValue);
+};
+
+// Watch harga_tiket → update display - DIPERBAIKI  
 watch(
   () => values.harga_tiket,
   (val) => {
-    hargaTiketDisplay.value = formatRupiah(val);
+    console.log("Watch harga_tiket:", val, typeof val);
+    if (val !== null && val !== undefined) {
+      hargaTiketDisplay.value = formatRupiah(val);
+    }
   },
   { immediate: true }
 );
 
-// Harga input
-const onHargaInput = (e: Event, handleChange: any) => {
-  const target = e.target as HTMLInputElement;
-  const raw = target.value.replace(/\D/g, "");
-  hargaTiketDisplay.value = formatRupiah(raw);
-  handleChange(raw ? Number(raw) : 0);
-};
-
-// Load konser
+// Load konser dropdown
 const loadKonserOptions = async () => {
   try {
     const { data } = await axios.get("/konser");
-    konserOptions.value = data.data || [];
+    konserOptions.value = (data.data || []).map((k: any) => ({
+      id: k.id,
+      text: k.nama_konser,
+    }));
   } catch {
     toast.error("Gagal memuat konser");
   }
 };
 
-// Ambil data edit
+// Load data untuk edit - DIPERBAIKI
 const getEdit = async () => {
   if (!props.selected) return;
   block(document.getElementById("form-tiket"));
@@ -105,19 +124,27 @@ const getEdit = async () => {
     const { data } = await axios.get(`/tickets/${props.selected}`);
     const tiket = data.tiket;
 
-    const harga =
-      typeof tiket.harga_tiket === "number"
-        ? tiket.harga_tiket
-        : parseInt(cleanCurrency(tiket.harga_tiket.toString()));
+    console.log("Data from API:", tiket);
+
+    const harga = typeof tiket.harga_tiket === "number"
+      ? tiket.harga_tiket
+      : cleanCurrency(tiket.harga_tiket.toString());
+
+    console.log("Processed harga:", harga);
 
     setValues({
       konser_id: tiket.konser_id?.toString() || "",
       jenis_tiket: tiket.jenis_tiket || "",
-      harga_tiket: harga,
-      stok_tiket: tiket.stok_tiket || "",
+      harga_tiket: harga, // Sudah berupa number
+      stok_tiket: Number(tiket.stok_tiket) || 0, // PERBAIKAN: Pastikan number
     });
 
     hargaTiketDisplay.value = formatRupiah(harga);
+
+    // PERBAIKAN: Tunggu sebentar sebelum validasi
+    setTimeout(async () => {
+      await validate();
+    }, 100);
   } catch (err: any) {
     toast.error(err.response?.data?.message || "Gagal mengambil data");
   } finally {
@@ -125,7 +152,7 @@ const getEdit = async () => {
   }
 };
 
-// Watch saat edit dibuka
+// Watch selected (edit / reset)
 watch(
   () => props.selected,
   async () => {
@@ -134,36 +161,76 @@ watch(
       await getEdit();
     } else {
       resetForm();
-      hargaTiketDisplay.value = "";
+      hargaTiketDisplay.value = "Rp 0";
     }
   },
   { immediate: true }
 );
 
-// Submit
+// Submit - DIPERBAIKI
+// Final submit function - Menggunakan JSON payload
 const submit = async (values: any) => {
-  const formData = new FormData();
-  formData.append("konser_id", values.konser_id);
-  formData.append("jenis_tiket", values.jenis_tiket);
-  formData.append("harga_tiket", values.harga_tiket.toString());
-  formData.append("stok_tiket", values.stok_tiket.toString());
+  console.log("Submit values:", values);
+
+  // Validasi manual sebelum submit
+  if (!values.konser_id) {
+    toast.error("Konser wajib dipilih");
+    return;
+  }
+  if (!values.jenis_tiket?.trim()) {
+    toast.error("Jenis tiket wajib diisi");
+    return;
+  }
+  if (!values.harga_tiket || values.harga_tiket <= 0) {
+    toast.error("Harga tiket wajib diisi dan harus lebih dari 0");
+    return;
+  }
+  if (!values.stok_tiket || values.stok_tiket <= 0) {
+    toast.error("Stok tiket wajib diisi dan harus lebih dari 0");
+    return;
+  }
+
+  // Payload JSON (lebih reliable daripada FormData)
+  const payload = {
+    konser_id: parseInt(values.konser_id),
+    jenis_tiket: values.jenis_tiket.trim(),
+    harga_tiket: Number(values.harga_tiket),
+    stok_tiket: Number(values.stok_tiket),
+  };
+
+  console.log("Payload yang akan dikirim:", payload);
 
   block(document.getElementById("form-tiket"));
   try {
-    const url = props.selected
-      ? `/tickets/${props.selected}?_method=PUT`
-      : "/tickets";
+    let response;
+    
+    if (props.selected) {
+      // UPDATE - gunakan PUT method langsung
+      response = await axios.put(`/tickets/${props.selected}`, payload);
+    } else {
+      // CREATE - gunakan POST method
+      response = await axios.post("/tickets", payload);
+    }
 
-    await axios.post(url, formData);
-
+    console.log("Response sukses:", response);
     toast.success("Tiket berhasil disimpan");
     emit("refresh");
     emit("close");
     resetForm();
-    hargaTiketDisplay.value = "";
+    hargaTiketDisplay.value = "Rp 0";
   } catch (err: any) {
-    setErrors(err.response?.data?.errors || {});
-    toast.error(err.response?.data?.message || "Gagal menyimpan tiket");
+    console.error("Submit error:", err.response?.data);
+    
+    if (err.response?.data?.errors) {
+      setErrors(err.response.data.errors);
+      // Show first validation error
+      const firstError = Object.values(err.response.data.errors)[0];
+      if (Array.isArray(firstError) && firstError.length > 0) {
+        toast.error(firstError[0]);
+      }
+    } else {
+      toast.error(err.response?.data?.message || "Gagal menyimpan tiket");
+    }
   } finally {
     unblock(document.getElementById("form-tiket"));
   }
@@ -174,18 +241,10 @@ onMounted(loadKonserOptions);
 
 <template>
   <VForm :validation-schema="formSchema" v-slot="{ handleSubmit }">
-    <form
-      @submit.prevent="handleSubmit(submit)"
-      id="form-tiket"
-      class="form card mb-10"
-    >
+    <form @submit.prevent="handleSubmit(submit)" id="form-tiket" class="form card mb-10">
       <div class="card-header d-flex align-items-center">
         <h2 class="mb-0">{{ selected ? "Edit" : "Tambah" }} Tiket</h2>
-        <button
-          type="button"
-          class="btn btn-sm btn-light-danger ms-auto"
-          @click="emit('close')"
-        >
+        <button type="button" class="btn btn-sm btn-light-danger ms-auto" @click="emit('close')">
           Batal <i class="la la-times-circle p-0"></i>
         </button>
       </div>
@@ -194,14 +253,10 @@ onMounted(loadKonserOptions);
         <!-- Konser -->
         <div class="col-md-6 mb-7">
           <label class="form-label fw-bold fs-6 required ps-2">Konser</label>
-          <Field name="konser_id" v-model="values.konser_id" as="select" class="form-select">
+          <Field as="select" name="konser_id" v-model="values.konser_id" class="form-control form-control-lg form-control-solid">
             <option value="">-- Pilih Konser --</option>
-            <option
-              v-for="konser in konserOptions"
-              :key="konser.id"
-              :value="konser.id.toString()"
-            >
-              {{ konser.nama_konser }}
+            <option v-for="konser in konserOptions" :key="konser.id" :value="konser.id">
+              {{ konser.text }}
             </option>
           </Field>
           <ErrorMessage name="konser_id" class="text-danger ps-2 text-sm" />
@@ -224,9 +279,10 @@ onMounted(loadKonserOptions);
         <!-- Harga Tiket -->
         <div class="col-md-6 mb-7">
           <label class="form-label fw-bold fs-6 required ps-2">Harga Tiket</label>
-          <Field name="harga_tiket" v-slot="{ handleChange }">
+          <Field name="harga_tiket" v-slot="{ handleChange, field }">
             <input
               :value="hargaTiketDisplay"
+              name="harga_tiket"
               @input="(e) => onHargaInput(e, handleChange)"
               type="text"
               class="form-control form-control-lg form-control-solid"
@@ -235,6 +291,8 @@ onMounted(loadKonserOptions);
             />
           </Field>
           <ErrorMessage name="harga_tiket" class="text-danger ps-2 text-sm" />
+          <!-- Debug info (hapus setelah selesai debugging) -->
+          <small class="text-muted">Debug: {{ values.harga_tiket }} ({{ typeof values.harga_tiket }})</small>
         </div>
 
         <!-- Stok Tiket -->
@@ -247,15 +305,14 @@ onMounted(loadKonserOptions);
             type="number"
             class="form-control form-control-lg form-control-solid"
             placeholder="Masukkan stok tiket"
+            min="1"
           />
           <ErrorMessage name="stok_tiket" class="text-danger ps-2 text-sm" />
         </div>
       </div>
 
       <div class="card-footer d-flex">
-        <button type="submit" class="btn btn-sm btn-primary ms-auto">
-          Simpan
-        </button>
+        <button type="submit" class="btn btn-sm btn-primary ms-auto">Simpan</button>
       </div>
     </form>
   </VForm>

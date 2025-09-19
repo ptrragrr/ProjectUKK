@@ -51,6 +51,15 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Website", "Setting"],
                 },
             },
+            {
+                path: "/dashboard/input",
+                name: "dashboard.input",
+                component: () => import("@/pages/dashboard/input/index.vue"),
+                // meta: {
+                //     pageTitle: "Website Setting",
+                //     breadcrumbs: ["Website", "Setting"],
+                // },
+            },
 
             // MASTER
             {
@@ -63,16 +72,16 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Master", "Users", "Roles"],
                 },
             },
-            {
-                path: "/dashboard/transaksi",
-                name: "dashboard.transaksi",
-                component: () =>
-                    import("@/pages/dashboard/transaksi/Index.vue"),
-                meta: {
-                    // pageTitle: "Transaksi",
-                    // breadcrumbs: ["Transaksi", "Transaksi"],
-                },
-            },
+            // {
+            //     path: "/dashboard/transaksi",
+            //     name: "dashboard.transaksi",
+            //     component: () =>
+            //         import("@/pages/dashboard/transaksi/index.vue"),
+            //     meta: {
+            //         // pageTitle: "Transaksi",
+            //         // breadcrumbs: ["Transaksi", "Transaksi"],
+            //     },
+            // },
             {
                 path: "/dashboard/tambah/management/tiket",
                 name: "dashboard.tambah.management.tiket",
@@ -110,6 +119,14 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Master", "Users"],
                 },
             },
+            {
+                path: '/dashboard/transaksi/detail/:id',
+                name: 'dashboard.transaksi.detail',
+                component: () => import('@/pages/dashboard/transaksi/detail.vue'),
+                meta: {
+                    pageTitle: "Detail Transaksi",
+                },
+            }
         ],
     },
 //     {

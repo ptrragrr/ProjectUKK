@@ -206,11 +206,7 @@ const onSubmit = async (values: typeof formValues) => {
                         class="text-danger ps-2 text-sm"
                     />
                 </div>
-
-                <!-- <div class="col-md-6 mb-3" v-if="props.selected && bannerPath">
-          <label class="form-label fw-bold fs-6 ps-2">Banner Saat Ini</label>
-          <img :src="bannerPath" alt="Preview Banner" style="max-height: 100px; border-radius: 4px;" />
-        </div> -->
+                
                 <div
                     class="col-md-12 mb-3 text-center"
                     v-if="props.selected && bannerPath"

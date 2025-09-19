@@ -1,30 +1,25 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Transaksi extends Model
 {
-    protected $table = 'transaksi';
+    protected $table = 'transaksis';
+
     protected $fillable = [
-        'user_id', 'kode_transaksi', 'metode_pembayaran', 'total_harga', 'bayar', 'status',
+        'nama_pembeli', 'email', 'nomer_telpon',
+        'kode_transaksi', 'status_payment', 'total_harga'
     ];
 
     public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
 
     public function details()
     {
-        return $this->hasMany(TransaksiDetail::class);
-    }
-
-    public function tickets()
-    {
-        return $this->belongsToMany(Ticket::class, 'ticket_transaksi')
-            ->withPivot('jumlah')
-            ->withTimestamps();
+        return $this->hasMany(TransaksiDetail::class, 'transaksi_id', 'id');
     }
 }
+

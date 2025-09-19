@@ -2,6 +2,7 @@
 
 use AmrShawky\LaravelCurrency\Facade\Currency;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\InputKodeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,10 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', function () {
 //     return view('app');
 // });
+
+// Route::get('/cek-tiket/{kode}', [InputKodeController::class, 'cek']);
+Route::get('/cetak-tiket/{kode}', [InputKodeController::class, 'cetak'])->name('cetak.tiket');
+Route::post('/selesai/{kode}', [InputKodeController::class, 'selesai']);
 
 Route::get('/{any}', function () {
     return view('app');

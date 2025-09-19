@@ -19,7 +19,7 @@ class PermissionSeeder extends Seeder
         $menuMaster = ['master', 'master-user', 'master-role'];
         $menuTambah = ['tambah', 'tambah-konser', 'tambah-tiket'];
         $menuWebsite = ['website', 'setting'];
-        $custom = ['transaksi'];
+        $custom = ['transaksi', 'input'];
 
         $permissionsByRole = [
             'admin' => ['dashboard', ...$menuMaster, ...$menuWebsite, ...$menuTambah, ...$custom],
