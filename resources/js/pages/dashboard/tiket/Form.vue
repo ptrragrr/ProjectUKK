@@ -251,16 +251,19 @@ onMounted(loadKonserOptions);
 
       <div class="row px-4 pt-4">
         <!-- Konser -->
-        <div class="col-md-6 mb-7">
-          <label class="form-label fw-bold fs-6 required ps-2">Konser</label>
-          <Field as="select" name="konser_id" v-model="values.konser_id" class="form-control form-control-lg form-control-solid">
-            <option value="">-- Pilih Konser --</option>
-            <option v-for="konser in konserOptions" :key="konser.id" :value="konser.id">
-              {{ konser.text }}
-            </option>
-          </Field>
-          <ErrorMessage name="konser_id" class="text-danger ps-2 text-sm" />
-        </div>
+        <!-- Konser -->
+<div class="col-md-6 mb-7">
+  <label class="form-label fw-bold fs-6 required ps-2">Konser</label>
+  <Field name="konser_id" v-slot="{ field, meta }">
+    <Select2
+      v-model="values.konser_id"   
+      :options="konserOptions"
+      placeholder="-- Pilih Konser --"
+      :settings="{ width: '100%' }"
+    />
+  </Field>
+  <ErrorMessage name="konser_id" class="text-danger ps-2 text-sm" />
+</div>
 
         <!-- Jenis Tiket -->
         <div class="col-md-6 mb-7">
