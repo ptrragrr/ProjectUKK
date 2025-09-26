@@ -8,21 +8,36 @@ use Illuminate\Http\Request;
 class KonserController extends Controller
 {
     // 🔍 Get all konser
-    public function index(Request $request)
+//     public function index(Request $request)
+// {
+//     $query = Konser::query();
+
+//     // Jika parameter "search" ada, filter berdasarkan nama_konser
+//     if ($request->filled('search')) {
+//         $search = $request->input('search');
+//         $query->where('nama_konser', 'like', "%{$search}%");
+//     }
+
+//     // $data = $query->orderBy('tanggal', 'desc')->paginate(10);
+//     $data = $query->orderBy('id', 'desc')->paginate(10);
+
+//     return response()->json($data);
+// }
+
+public function index(Request $request)
 {
     $query = Konser::query();
 
-    // Jika parameter "search" ada, filter berdasarkan nama_konser
     if ($request->filled('search')) {
         $search = $request->input('search');
         $query->where('nama_konser', 'like', "%{$search}%");
     }
 
-    $data = $query->orderBy('tanggal', 'desc')->paginate(10);
+    $perPage = $request->input('per_page', 10); // default 10
+    $data = $query->orderBy('id', 'desc')->paginate($perPage);
 
     return response()->json($data);
 }
-
 
     // ➕ Tambah konser
     public function store(Request $request)

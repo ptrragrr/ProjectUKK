@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { h, ref, watch } from "vue";
+import { h, ref, watch, computed } from "vue";
 import { useDelete } from "@/libs/hooks";
 import Form from "./Form.vue";
 import { createColumnHelper } from "@tanstack/vue-table";
@@ -9,6 +9,8 @@ const column = createColumnHelper<Konser>();
 const paginateRef = ref<any>(null);
 const selected = ref<string>("");
 const openForm = ref<boolean>(false);
+const searchQuery = ref<string>("");
+const selectedPerPage = ref<number>(10);
 
 const { delete: deleteKonser } = useDelete({
   onSuccess: () => paginateRef.value.refetch(),
@@ -28,7 +30,19 @@ const columns = [
   column.display({
     id: "no",
     header: "No",
-    cell: (info) => info.row.index + 1,
+    cell: (info) => {
+      // Coba ambil dari paginateRef dulu
+      const currentPage = paginateRef.value?.currentPage || paginateRef.value?.data?.current_page || 1;
+      const perPage = paginateRef.value?.perPage || paginateRef.value?.data?.per_page || 10;
+      
+      // Atau gunakan 'from' jika tersedia di response
+      const from = paginateRef.value?.data?.from;
+      if (from) {
+        return from + info.row.index;
+      }
+      
+      return (currentPage - 1) * perPage + info.row.index + 1;
+    },
   }),
   column.accessor("nama_konser", {
     header: "Nama Konser",
@@ -45,7 +59,7 @@ const columns = [
         day: "numeric",
       }),
   }),
-   column.accessor("deskripsi", {
+  column.accessor("deskripsi", {
     header: "Deskripsi",
   }),
   column.accessor("banner", {
@@ -58,7 +72,7 @@ const columns = [
             style: "width: 60px; height: 60px; object-fit: cover; border-radius: 4px;",
         });
     },
-}),
+  }),
   column.accessor("id", {
     header: "Aksi",
     cell: (cell) =>
@@ -86,7 +100,31 @@ const columns = [
   }),
 ];
 
+// Search parameters untuk paginate component
+const searchParams = computed(() => {
+  const params: any = {};
+  if (searchQuery.value) {
+    params.search = searchQuery.value;
+  }
+  if (selectedPerPage.value) {
+    params.per_page = selectedPerPage.value;
+  }
+  return params;
+});
+
+// Debounced search
+let searchTimeout: NodeJS.Timeout;
+const debounceSearch = () => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    paginateRef.value?.refetch();
+  }, 500);
+};
+
 const refresh = () => paginateRef.value.refetch();
+
+watch(searchQuery, debounceSearch);
+watch(selectedPerPage, () => paginateRef.value?.refetch());
 
 watch(openForm, (val) => {
   if (!val) {
@@ -117,12 +155,32 @@ watch(openForm, (val) => {
         <i class="la la-plus"></i>
       </button>
     </div>
+    
     <div class="card-body">
+      <!-- Search Box -->
+      <!-- <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="la la-search"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Cari nama konser, lokasi, atau deskripsi..."
+              v-model="searchQuery"
+            />
+          </div>
+        </div>
+      </div> -->
+
+      <!-- Table -->
       <paginate
         ref="paginateRef"
         id="table-konser"
         url="/konser"
         :columns="columns"
+        :search-params="searchParams"
       ></paginate>
     </div>
   </div>

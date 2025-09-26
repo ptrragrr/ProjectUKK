@@ -36,6 +36,11 @@ Route::prefix('setting')->group(function () {
     Route::get('', [SettingController::class, 'index']);
 });
 
+Route::middleware('auth')->group(function () {
+    Route::get('/me', [UserController::class, 'me']);         // ambil profile user login
+    Route::put('/me', [UserController::class, 'updateMe']);   // update profile user login
+});
+
 Route::middleware(['auth', 'verified', 'json'])->group(function () {
     Route::prefix('setting')->middleware('can:setting')->group(function () {
         Route::post('', [SettingController::class, 'update']);
@@ -43,11 +48,21 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
 
     Route::prefix('master')->group(function () {
         Route::middleware('can:master-user')->group(function () {
-            Route::get('users', [UserController::class, 'get']);
-            Route::post('users', [UserController::class, 'index']);
-            Route::post('users/store', [UserController::class, 'store']);
-            Route::apiResource('users', UserController::class)
-                ->except(['index', 'store'])->scoped(['user' => 'uuid']);
+            // Route::get('users', [UserController::class, 'get']);
+            // Route::post('users', [UserController::class, 'index']);
+            // Route::post('users/store', [UserController::class, 'store']);
+            // Route::apiResource('users', UserController::class)
+            //     ->except(['index', 'store'])->scoped(['user' => 'uuid']);
+            // Route::get('/profile', [UserController::class, 'show']);
+            // Route::put('/profile', [UserController::class, 'update']);
+            Route::get('/users', [UserController::class, 'index']);       // list user (paginate)
+            Route::get('/users/all', [UserController::class, 'get']);     // ambil semua user
+            Route::post('/users', [UserController::class, 'store']);      // tambah user
+            Route::put('/users/{user}', [UserController::class, 'update']);   // update user by admin
+            Route::delete('/users/{user}', [UserController::class, 'destroy']); // hapus user
+            Route::get('/roles', [UserController::class, 'getRoles']);
+            Route::put('/profile', [UserController::class, 'updateMe']);
+
         });
 
         Route::middleware('can:master-role')->group(function () {
@@ -58,9 +73,9 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
                 ->except(['index', 'store']);
         });
     });
+});
 
 Route::get('/tickets-transaksi', [TransaksiController::class, 'index']);
-});
 
 Route::get('/tickets', [TicketController::class, 'index']);
 Route::post('/tickets', [TicketController::class, 'store']);
@@ -89,12 +104,3 @@ Route::delete('/transaksi/{id}', [TransaksiController::class, 'destroy']); // �
 // Route::post('/input-tiket', [InputTiketController::class, 'simpan']);
 Route::get('/cek-tiket/{kode}', [InputKodeController::class, 'cek']);
 // Route::get('/cetak-tiket/{kode}', [InputKodeController::class, 'cetak'])->name('cetak.tiket');
-
-
-// Route::get('/tickettransaksi', [TicketTransaksiController::class, 'index']);          // 🔍 List semua konser
-// Route::post('/tickettransaksi', [TicketTransaksiController::class, 'store']);         // ➕ Tambah konser baru
-// Route::get('/tickettransaksi/{id}', [TicketTransaksiController::class, 'show']);      // 👁 Detail konser
-// Route::put('/tickettransaksi/{id}', [TicketTransaksiController::class, 'update']);    // ✏️ Update konser
-// Route::patch('/tickettransaksi/{id}', [TicketTransaksiController::class, 'update']);  // ✏️ Update parsial konser
-// Route::delete('/tickettransaksi/{id}', [TicketTransaksiController::class, 'destroy']); // 🗑 Hapus konser
-

@@ -24,14 +24,14 @@ const formSchema = Yup.object({
       console.log("Transform input:", { value, originalValue, type: typeof originalValue });
       
       // Jika sudah number dan valid, kembalikan langsung
-      if (typeof originalValue === "number" && !isNaN(originalValue)) {
+      if (typeof originalValue == "number" && !isNaN(originalValue)) {
         return originalValue;
       }
       
       // Jika string, bersihkan dan konversi
-      if (typeof originalValue === "string") {
+      if (typeof originalValue == "string") {
         const digits = originalValue.replace(/\D/g, "");
-        const result = digits === "" ? NaN : Number(digits);
+        const result = digits == "" ? NaN : Number(digits);
         console.log("String transform result:", result);
         return result;
       }

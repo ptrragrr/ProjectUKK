@@ -13,8 +13,7 @@ class TicketController extends Controller
     public function index(Request $request)
     {
         $tickets = Ticket::with('konser')
-         ->orderBy('id', 'desc') 
-         ->paginate(10);
+         ->orderBy('id', 'desc') ->paginate(10);
 
         return response()->json([
             'data' => $tickets->items(),
