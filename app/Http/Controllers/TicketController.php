@@ -12,9 +12,7 @@ class TicketController extends Controller
     // 🔍 Get all tickets
     public function index(Request $request)
     {
-        $tickets = Ticket::with('konser')
-            ->orderBy('id', 'desc')
-            ->paginate(10);
+        $tickets = Ticket::orderBy('id', 'desc')->paginate(10);
 
         return response()->json([
             'data' => $tickets->items(),
@@ -26,117 +24,62 @@ class TicketController extends Controller
         ]);
     }
 
+    // ➕ Store ticket
     public function store(Request $request)
     {
-        // ✅ DIPERBAIKI: Log dengan format yang benar
-        Log::info('Store Request Data', $request->all());
-        Log::info('Store Request Method', ['method' => $request->method()]);
-
-        // PERBAIKAN: Handle both konser_id and konser field
         $validated = $request->validate([
-            'konser_id' => 'nullable|exists:konser,id',
-            'konser' => 'nullable|exists:konser,id', // Alternative field name
-            'jenis_tiket' => 'required|string|max:255',
-            'harga_tiket' => 'required|numeric|min:1',
-            'stok_tiket' => 'required|integer|min:1',
+            'nama_event'   => 'required|string|max:255',
+            'tanggal'      => 'required|date',
+            'jenis_tiket'  => 'required|string|max:255',
+            'harga_tiket'  => 'required|numeric',
+            'stok_tiket'   => 'required|integer|min:1',
+            'deskripsi'    => 'nullable|string',
         ]);
 
-        // PERBAIKAN: Use konser_id or konser field
-        $konser_id = $validated['konser_id'] ?? $validated['konser'] ?? null;
-        
-        if (!$konser_id) {
-            return response()->json([
-                'message' => 'Konser harus dipilih',
-                'errors' => ['konser' => ['Field konser wajib diisi']]
-            ], 422);
-        }
+        Ticket::create($validated);
 
-        Log::info('Store Validated Data', $validated);
-
-        $ticket = new Ticket();
-        $ticket->konser_id = $konser_id;
-        $ticket->jenis_tiket = $validated['jenis_tiket'];
-        $ticket->harga_tiket = $validated['harga_tiket'];
-        $ticket->stok_tiket = $validated['stok_tiket'];
-        $ticket->save();
-
-        return response()->json([
-            'message' => 'Tiket berhasil disimpan',
-            'ticket' => $ticket
-        ]);
+        return response()->json(['message' => 'Tiket berhasil ditambahkan']);
     }
 
     // 👁 Show single ticket
     public function show($id)
     {
-        $ticket = Ticket::with('konser')->find($id);
+        $ticket = Ticket::find($id);
 
         if (!$ticket) {
             return response()->json(['message' => 'Tiket tidak ditemukan'], 404);
         }
 
         return response()->json([
-            'tiket' => [
-                'id' => $ticket->id,
-                'konser_id' => $ticket->konser_id,
-                'konser' => $ticket->konser->nama_konser ?? '',
-                'jenis_tiket' => $ticket->jenis_tiket,
-                'harga_tiket' => $ticket->harga_tiket,
-                'stok_tiket' => $ticket->stok_tiket,
-            ]
+            'tiket' => $ticket
         ]);
     }
 
     // ✏️ Update ticket
     public function update(Request $request, $id)
     {
-        // ✅ DIPERBAIKI: Log dengan format yang benar
         Log::info('=== UPDATE DEBUG START ===');
-        Log::info('Request All', $request->all());
-        Log::info('Request Input', $request->input());
-        Log::info('Request Method', ['method' => $request->method()]);
-        Log::info('Ticket ID', ['id' => $id]);
-        
-        // Validasi
+        Log::info('Request Data', $request->all());
+
         $validated = $request->validate([
-            'konser_id' => 'sometimes|exists:konser,id',
-            'jenis_tiket' => 'required|string|max:255',
-            'harga_tiket' => 'required|numeric|min:1',
-            'stok_tiket' => 'required|integer|min:1',
+            'nama_event'   => 'required|string|max:255',
+            'tanggal'      => 'required|date',
+            'jenis_tiket'  => 'required|string|max:255',
+            'harga_tiket'  => 'required|numeric|min:1',
+            'stok_tiket'   => 'required|integer|min:1',
+            'deskripsi'    => 'nullable|string',
         ]);
-        
+
         $ticket = Ticket::findOrFail($id);
-        
-        // Update hanya field yang ada di validated data
-        $ticket->fill($validated);
-        $ticket->save();
-        
+        $ticket->update($validated);
+
         Log::info('Updated Ticket Data', $ticket->toArray());
         Log::info('=== UPDATE DEBUG END ===');
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Tiket berhasil diupdate',
-            'ticket' => $ticket
-        ]);
-    }
-
-    public function updateMe(Request $request)
-    {
-        Log::info('UpdateMe request data', $request->all());
-        
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'nullable|string|max:20',
-            'role_id' => 'nullable|exists:roles,id',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
-        ]);
-
-        // Add your update logic here
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Profile updated successfully'
+            'ticket'  => $ticket
         ]);
     }
 
@@ -155,18 +98,11 @@ class TicketController extends Controller
     // 📝 Edit ticket
     public function edit($id)
     {
-        $ticket = Ticket::with('konser')->findOrFail($id);
+        $ticket = Ticket::findOrFail($id);
 
         return response()->json([
             'success' => true,
-            'data' => [
-                'id' => $ticket->id,
-                'konser_id' => $ticket->konser_id,
-                'konser_nama' => $ticket->konser->nama_konser ?? '',
-                'jenis_tiket' => $ticket->jenis_tiket,
-                'harga_tiket' => $ticket->harga_tiket,
-                'stok_tiket' => $ticket->stok_tiket,
-            ]
+            'data' => $ticket
         ]);
     }
 }

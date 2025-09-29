@@ -6,17 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 class Ticket extends Model
 {
     protected $fillable = [
-        'konser_id',
+        'nama_event',
+        'tanggal',
         'jenis_tiket',
         'harga_tiket',
         'stok_tiket',
+        'deskripsi',
     ];
 
     // Relasi ke konser
-    public function konser()
-    {
-        return $this->belongsTo(Konser::class);
-    }
+    // public function konser()
+    // {
+    //     return $this->belongsTo(Konser::class);
+    // }
 
     // Relasi ke transaksi detail
     public function transaksiDetails()

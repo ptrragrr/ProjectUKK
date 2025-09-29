@@ -42,31 +42,31 @@ const MainMenuConfig: Array<MenuItem> = [
                     },
                 ],
             },
-             {
-                sectionTitle: "Tambah",
-                route: "/tambah",
-                keenthemesIcon: "bi bi-exclamation-octagon-fill",
-                name: "tambah",
-                sub: [
-                    {
-                        sectionTitle: " Management ",
-                        route: "/management",
-                        name: "tambah-management",
-                        sub: [
-                            {
-                                heading: "Konser",
-                                name: "tambah-konser",
-                                route: "/dashboard/tambah/management/konser",
-                            },
-                            {
-                                heading: "Tiket",
-                                name: "tambah-tiket",
-                                route: "/dashboard/tambah/management/tiket",
-                            },
-                        ],
-                    },
-                ],
-            },
+            //  {
+            //     sectionTitle: "Tambah",
+            //     route: "/tambah",
+            //     keenthemesIcon: "bi bi-exclamation-octagon-fill",
+            //     name: "tambah",
+            //     sub: [
+            //         {
+            //             sectionTitle: " Management ",
+            //             route: "/management",
+            //             name: "tambah-management",
+            //             sub: [
+            //                 {
+            //                     heading: "Konser",
+            //                     name: "tambah-konser",
+            //                     route: "/dashboard/tambah/management/konser",
+            //                 },
+            //                 {
+            //                     heading: "Tiket",
+            //                     name: "tambah-tiket",
+            //                     route: "/dashboard/tambah/management/tiket",
+            //                 },
+            //             ],
+            //         },
+            //     ],
+            // },
             // {
             //     heading: "Management",
             //     route: "/dashboard/management",
@@ -85,6 +85,12 @@ const MainMenuConfig: Array<MenuItem> = [
             //     name: "transaksi",
             //     keenthemesIcon: "bi bi-wallet2",
             // },
+            {
+                heading: "Tambah tiket",
+                route: "/dashboard/tiket",
+                name: "tiket",
+                keenthemesIcon: "bi bi-plus-circle",
+            },
             {
                 heading: "Input kode tiket",
                 route: "/dashboard/input",

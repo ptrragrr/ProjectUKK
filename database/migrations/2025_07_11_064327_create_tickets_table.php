@@ -9,17 +9,26 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
-{
-    Schema::create('tickets', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('konser_id')->constrained('konser')->onDelete('cascade');
-        $table->string('jenis_tiket'); // VIP, Reguler, dll
-        $table->decimal('harga_tiket', 15, 3);
-        $table->integer('stok_tiket');
-        $table->timestamps();
-    });
-}
+    public function up(): void
+    {
+        Schema::create('tickets', function (Blueprint $table) {
+            $table->id();
+
+            // Informasi event langsung disimpan di tabel tickets
+            $table->string('nama_event');
+            $table->date('tanggal');
+
+            // Detail tiket
+            $table->string('jenis_tiket'); // VIP, Reguler, dll
+            $table->decimal('harga_tiket', 15, 2);
+            $table->unsignedInteger('stok_tiket');
+
+            // Tambahan deskripsi atau line-up event
+            $table->text('deskripsi')->nullable();
+
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.
@@ -29,4 +38,3 @@ return new class extends Migration
         Schema::dropIfExists('tickets');
     }
 };
-
