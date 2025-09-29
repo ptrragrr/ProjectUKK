@@ -27,7 +27,7 @@ const searchQuery = ref("");
 const years = computed(() => {
     const currentYear = new Date().getFullYear();
     const yearsList = [];
-    for (let year = 2021; year <= currentYear; year++) {
+    for (let year = 2023; year <= currentYear; year++) {
         yearsList.push(year);
     }
     return yearsList.reverse();
@@ -192,13 +192,13 @@ const getStatusClass = (status: string) => {
                                 </select>
 
                                 <!-- Clear Filters -->
-                                <button
+                                <!-- <button
                                     v-if="selectedYear || selectedMonth || searchQuery"
                                     @click="clearFilters"
                                     class="px-4 py-2 text-black-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                                 >
                                     Reset
-                                </button>
+                                </button> -->
                             </div>
                         </div>
 

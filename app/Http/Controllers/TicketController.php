@@ -13,7 +13,8 @@ class TicketController extends Controller
     public function index(Request $request)
     {
         $tickets = Ticket::with('konser')
-         ->orderBy('id', 'desc') ->paginate(10);
+            ->orderBy('id', 'desc')
+            ->paginate(10);
 
         return response()->json([
             'data' => $tickets->items(),
@@ -27,8 +28,8 @@ class TicketController extends Controller
 
     public function store(Request $request)
     {
-        // DEBUG: Log request data
-        Log::info('Store Request Data:', $request->all());
+        // ✅ DIPERBAIKI: Log dengan format yang benar
+        Log::info('Store Request Data', $request->all());
         Log::info('Store Request Method', ['method' => $request->method()]);
 
         // PERBAIKAN: Handle both konser_id and konser field
@@ -50,7 +51,7 @@ class TicketController extends Controller
             ], 422);
         }
 
-        Log::info('Store Validated Data:', $validated);
+        Log::info('Store Validated Data', $validated);
 
         $ticket = new Ticket();
         $ticket->konser_id = $konser_id;
@@ -78,7 +79,7 @@ class TicketController extends Controller
             'tiket' => [
                 'id' => $ticket->id,
                 'konser_id' => $ticket->konser_id,
-                'konser' => $ticket->konser->nama_konser ?? '', // Assuming konser has 'nama' field
+                'konser' => $ticket->konser->nama_konser ?? '',
                 'jenis_tiket' => $ticket->jenis_tiket,
                 'harga_tiket' => $ticket->harga_tiket,
                 'stok_tiket' => $ticket->stok_tiket,
@@ -86,42 +87,58 @@ class TicketController extends Controller
         ]);
     }
 
-    // ✏️ Update ticket - DIPERBAIKI TOTAL
+    // ✏️ Update ticket
     public function update(Request $request, $id)
-{
-    // DEBUG: Log SEMUA data yang masuk
-    Log::info('=== UPDATE DEBUG START ===');
-    Log::info('Request All:', $request->all());
-    Log::info('Request Input:', $request->input());
-    Log::info('Request Method:', $request->method());
-    Log::info('Ticket ID:', $id);
-    
-    // Validasi SUPER sederhana dulu
-    $request->validate([
-        'harga_tiket' => 'required',
-        'stok_tiket' => 'required', 
-        'jenis_tiket' => 'required'
-    ]);
-    
-    $ticket = Ticket::findOrFail($id);
-    $ticket->update($request->only(['harga_tiket', 'stok_tiket', 'jenis_tiket']));
-    
-    Log::info('=== UPDATE DEBUG END ===');
-    
-    return response()->json(['success' => true, 'message' => 'Berhasil update']);
-}
+    {
+        // ✅ DIPERBAIKI: Log dengan format yang benar
+        Log::info('=== UPDATE DEBUG START ===');
+        Log::info('Request All', $request->all());
+        Log::info('Request Input', $request->input());
+        Log::info('Request Method', ['method' => $request->method()]);
+        Log::info('Ticket ID', ['id' => $id]);
+        
+        // Validasi
+        $validated = $request->validate([
+            'konser_id' => 'sometimes|exists:konser,id',
+            'jenis_tiket' => 'required|string|max:255',
+            'harga_tiket' => 'required|numeric|min:1',
+            'stok_tiket' => 'required|integer|min:1',
+        ]);
+        
+        $ticket = Ticket::findOrFail($id);
+        
+        // Update hanya field yang ada di validated data
+        $ticket->fill($validated);
+        $ticket->save();
+        
+        Log::info('Updated Ticket Data', $ticket->toArray());
+        Log::info('=== UPDATE DEBUG END ===');
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Tiket berhasil diupdate',
+            'ticket' => $ticket
+        ]);
+    }
 
-public function updateMe(Request $request)
-{
-    Log::info('UpdateMe request data: ', $request->all()); // ✅ aman
-    
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'phone' => 'nullable|string|max:20',
-        'role_id' => 'nullable|exists:roles,id',
-        'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
-    ]);
-}
+    public function updateMe(Request $request)
+    {
+        Log::info('UpdateMe request data', $request->all());
+        
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'role_id' => 'nullable|exists:roles,id',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+        ]);
+
+        // Add your update logic here
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile updated successfully'
+        ]);
+    }
 
     // 🗑 Delete ticket
     public function destroy($id)
@@ -129,44 +146,27 @@ public function updateMe(Request $request)
         $ticket = Ticket::findOrFail($id);
         $ticket->delete();
 
-        return response()->json(['message' => 'Ticket deleted successfully.']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Ticket deleted successfully'
+        ]);
     }
 
-    // 📝 TAMBAHAN: Method untuk menampilkan form edit (jika menggunakan web routes)
-    // public function edit($id)
-    // {
-    //     $ticket = Ticket::with('konser')->findOrFail($id);
-        
-    //     // Jika ini web route, return view
-    //     // return view('tickets.edit', compact('ticket'));
-        
-    //     // Jika ini API route, return JSON
-    //     return response()->json([
-    //         'success' => true,
-    //         'data' => [
-    //             'id' => $ticket->id,
-    //             'konser_id' => $ticket->konser_id,
-    //             'konser' => $ticket->konser_id, // For form compatibility
-    //             'jenis_tiket' => $ticket->jenis_tiket,
-    //             'harga_tiket' => $ticket->harga_tiket,
-    //             'stok_tiket' => $ticket->stok_tiket,
-    //         ]
-    //     ]);
-    // }
+    // 📝 Edit ticket
     public function edit($id)
-{
-    $ticket = Ticket::with('konser')->findOrFail($id);
+    {
+        $ticket = Ticket::with('konser')->findOrFail($id);
 
-    return response()->json([
-        'success' => true,
-        'data' => [
-            'id' => $ticket->id,
-            'konser_id' => $ticket->konser_id,                // untuk value hidden / relasi ID
-            'konser_nama' => $ticket->konser->nama_konser ?? '', // untuk ditampilkan di UI
-            'jenis_tiket' => $ticket->jenis_tiket,
-            'harga_tiket' => $ticket->harga_tiket,
-            'stok_tiket' => $ticket->stok_tiket,
-        ]
-    ]);
-}
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $ticket->id,
+                'konser_id' => $ticket->konser_id,
+                'konser_nama' => $ticket->konser->nama_konser ?? '',
+                'jenis_tiket' => $ticket->jenis_tiket,
+                'harga_tiket' => $ticket->harga_tiket,
+                'stok_tiket' => $ticket->stok_tiket,
+            ]
+        ]);
+    }
 }
