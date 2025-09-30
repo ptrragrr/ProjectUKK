@@ -47,7 +47,7 @@ const columns = [
       h("span", { class: "badge badge-light-primary fw-bold" }, getValue()),
   }),
   column.accessor("deskripsi", {
-    header: () => h("div", { class: "fw-bold" }, "Deskripsi / Line-up"),
+    header: () => h("div", { class: "fw-bold" }, "Line up Artis"),
     cell: ({ getValue }) =>
       h("div", { class: "text-muted fs-7" }, getValue() || "-"),
   }),

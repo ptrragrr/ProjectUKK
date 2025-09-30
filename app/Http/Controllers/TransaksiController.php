@@ -7,11 +7,11 @@ use Illuminate\Http\Request;
 
 class TransaksiController extends Controller
 {
-    // 🔍 Menampilkan semua transaksi dengan relasi tiket + konser
+    // 🔍 Menampilkan semua transaksi dengan relasi tiket + user
     public function index()
     {
         $transaksis = Transaksi::with([
-            'details.ticket.konser', // ambil konser dari tiket
+            'details.ticket', // cukup ambil tiket saja
             'user'
         ])->orderBy('created_at', 'desc')->get();
 
@@ -23,7 +23,7 @@ class TransaksiController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'kode_transaksi' => 'required|string|unique:transaksis,kode_transaksi', // ✅ fix table name
+            'kode_transaksi' => 'required|string|unique:transaksis,kode_transaksi',
             'metode_pembayaran' => 'required|string',
             'total_harga' => 'required|numeric|min:0',
             'bayar' => 'required|numeric|min:0',
@@ -35,11 +35,11 @@ class TransaksiController extends Controller
         return response()->json(['success' => true, 'data' => $transaksi], 201);
     }
 
-    // 👁 Tampilkan 1 transaksi lengkap dengan tiket & konser
+    // 👁 Tampilkan 1 transaksi lengkap dengan tiket
     public function show($id)
     {
         $transaksi = Transaksi::with([
-            'details.ticket.konser', // ambil konser juga
+            'details.ticket',
             'user'
         ])->findOrFail($id);
 
@@ -80,7 +80,7 @@ class TransaksiController extends Controller
         ]);
 
         $transaksi = Transaksi::findOrFail($id);
-        $transaksi->kode_tiket = $request->kode_tiket; // pastikan ada di migration
+        $transaksi->kode_tiket = $request->kode_tiket; // pastikan ada kolom kode_tiket di transaksis
         $transaksi->save();
 
         return response()->json(['message' => 'Kode tiket berhasil disimpan']);
@@ -89,7 +89,7 @@ class TransaksiController extends Controller
     // 🖨 Cetak tiket (PDF)
     public function cetakTiket($id)
     {
-        $transaksi = Transaksi::with('details.ticket.konser')->findOrFail($id);
+        $transaksi = Transaksi::with('details.ticket')->findOrFail($id);
 
         // Generate PDF tiket
         $pdf = \PDF::loadView('pdf.tiket', compact('transaksi'));

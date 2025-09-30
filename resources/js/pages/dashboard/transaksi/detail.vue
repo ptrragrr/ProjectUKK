@@ -138,7 +138,7 @@ const formatRupiah = (value: number) => {
   <table class="table table-row-bordered align-middle">
     <thead>
       <tr class="fw-bold text-gray-600">
-        <th>Nama Konser</th>
+        <th>Nama Event</th>
         <!-- <th>Nama Tiket</th> -->
         <th>Jumlah</th>
         <th>Harga</th>
@@ -147,7 +147,7 @@ const formatRupiah = (value: number) => {
     </thead>
     <tbody>
       <tr v-for="detail in transaksi?.details || []" :key="detail.id">
-        <td>{{ detail.ticket.konser?.nama_konser }}</td>
+        <td>{{ detail.ticket.nama_event }}</td>
         <!-- <td>{{ detail.ticket.nama }}</td> -->
         <td>{{ detail.jumlah }}</td>
         <!-- <td>Rp {{ detail.harga_satuan.toLocaleString("id-ID") }}</td>

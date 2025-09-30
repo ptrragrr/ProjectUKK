@@ -249,7 +249,7 @@ const submit = handleSubmit(
 
       <!-- Deskripsi -->
       <div class="col-12 mb-7">
-        <label class="form-label fw-bold fs-6 required ps-2">Deskripsi / Lineup</label>
+        <label class="form-label fw-bold fs-6 required ps-2">Lineup Artis</label>
         <Field
           name="deskripsi"
           v-model="values.deskripsi"
