@@ -20,7 +20,7 @@ const MainMenuConfig: Array<MenuItem> = [
             {
                 sectionTitle: "Master",
                 route: "/master",
-                keenthemesIcon: "bi bi-exclamation-octagon-fill",
+                keenthemesIcon: "bi bi-people",
                 name: "master",
                 sub: [
                     {
@@ -95,7 +95,7 @@ const MainMenuConfig: Array<MenuItem> = [
                 heading: "Input kode tiket",
                 route: "/dashboard/input",
                 name: "input",
-                keenthemesIcon: "bi bi-clock-history",
+                keenthemesIcon: "bi bi-ticket",
             },
             {
                 heading: "Settings",

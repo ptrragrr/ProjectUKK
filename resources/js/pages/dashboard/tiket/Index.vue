@@ -106,7 +106,7 @@ watch(openForm, (val) => {
 
   <!-- Main Card dengan Design Modern -->
   <div class="card shadow-sm border-0 overflow-hidden">
-    <!-- Header dengan Gradient dan Stats -->
+    <!-- Header dengan Gradient -->
     <div class="card-header bg-gradient-primary border-0 py-6 px-6">
       <div class="d-flex align-items-center justify-content-between w-100 gap-4">
         <!-- Title Section -->
@@ -122,7 +122,7 @@ watch(openForm, (val) => {
           </div>
         </div>
 
-        <!-- Action Button - Positioned at the right -->
+        <!-- Action Button -->
         <button
           type="button"
           class="btn btn-light btn-lg shadow-sm"
@@ -133,55 +133,6 @@ watch(openForm, (val) => {
           Tambah Tiket Baru
         </button>
       </div>
-
-      <!-- Stats Cards -->
-      <!-- <div class="row g-4 mt-2">
-        <div class="col-md-4">
-          <div class="card bg-white bg-opacity-10 border-0 shadow-sm">
-            <div class="card-body p-4">
-              <div class="d-flex align-items-center gap-3">
-                <div class="symbol symbol-45px bg-white bg-opacity-20 rounded">
-                  <i class="la la-tags fs-2x text-white"></i>
-                </div>
-                <div class="flex-grow-1">
-                  <span class="text-white text-opacity-75 fs-7 d-block">Total Tiket</span>
-                  <span class="text-white fw-bold fs-3">-</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card bg-white bg-opacity-10 border-0 shadow-sm">
-            <div class="card-body p-4">
-              <div class="d-flex align-items-center gap-3">
-                <div class="symbol symbol-45px bg-white bg-opacity-20 rounded">
-                  <i class="la la-cubes fs-2x text-white"></i>
-                </div>
-                <div class="flex-grow-1">
-                  <span class="text-white text-opacity-75 fs-7 d-block">Stok Tersedia</span>
-                  <span class="text-white fw-bold fs-3">-</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card bg-white bg-opacity-10 border-0 shadow-sm">
-            <div class="card-body p-4">
-              <div class="d-flex align-items-center gap-3">
-                <div class="symbol symbol-45px bg-white bg-opacity-20 rounded">
-                  <i class="la la-music fs-2x text-white"></i>
-                </div>
-                <div class="flex-grow-1">
-                  <span class="text-white text-opacity-75 fs-7 d-block">Konser Aktif</span>
-                  <span class="text-white fw-bold fs-3">-</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
     </div>
 
     <!-- Table Body dengan Styling Modern -->
@@ -192,6 +143,52 @@ watch(openForm, (val) => {
         <div class="text-primary">
           <div class="fw-bold mb-1">Informasi</div>
           <div class="fs-7">Klik tombol "Tambah Tiket Baru" untuk menambahkan tiket konser. Gunakan tombol aksi untuk mengedit atau menghapus tiket.</div>
+        </div>
+      </div>
+
+      <!-- Search Bar and Filters -->
+      <div class="card border mb-6" style="border-radius: 8px;">
+        <div class="card-body p-4">
+          <div class="row align-items-center g-3">
+            <!-- Search Input -->
+            <div class="col-md-6">
+              <div class="position-relative">
+                <i class="la la-search position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: #a1a5b7; font-size: 1.25rem;"></i>
+                <input
+                  type="text"
+                  class="form-control ps-10"
+                  placeholder="Cari nama event, jenis tiket, atau line up artis..."
+                  style="border-radius: 8px; padding-left: 2.5rem;"
+                />
+              </div>
+            </div>
+
+            <!-- Entries per page -->
+            <!-- <div class="col-md-3">
+              <div class="d-flex align-items-center gap-2">
+                <label class="text-muted fs-7 text-nowrap mb-0">Tampilkan:</label>
+                <select class="form-select form-select-sm" style="border-radius: 8px; min-width: 80px;">
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                </select>
+              </div>
+            </div> -->
+
+            <!-- Filter Button -->
+            <div class="col-md-3">
+              <!-- <div class="d-flex gap-2 justify-content-end">
+                <button class="btn btn-light-primary btn-sm" style="border-radius: 8px;">
+                  <i class="la la-filter fs-4 me-1"></i>
+                  Filter
+                </button>
+                <button class="btn btn-light-secondary btn-sm" style="border-radius: 8px;" @click="refresh" title="Refresh Data">
+                  <i class="la la-sync fs-4"></i>
+                </button>
+              </div> -->
+            </div>
+          </div>
         </div>
       </div>
 
@@ -212,15 +209,6 @@ watch(openForm, (val) => {
         <div class="text-muted fs-7">
           <i class="la la-info-circle me-1"></i>
           Data diperbarui secara real-time
-        </div>
-        <div class="d-flex gap-2">
-          <button 
-            class="btn btn-sm btn-light-primary"
-            @click="refresh"
-            title="Refresh Data"
-          >
-            <i class="la la-sync"></i>
-          </button>
         </div>
       </div>
     </div>
@@ -286,10 +274,6 @@ watch(openForm, (val) => {
     flex-shrink: 0;
 }
 
-.symbol-circle {
-    border-radius: 50%;
-}
-
 /* Badge Enhancements */
 .badge {
     border-radius: 6px;
@@ -343,19 +327,38 @@ watch(openForm, (val) => {
     border-left-color: #667eea;
 }
 
-/* Stats Cards in Header */
-.card-header .card {
-    transition: all 0.3s ease;
+/* Form Control Enhancement */
+.form-control:focus,
+.form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
 }
 
-.card-header .card:hover {
-    transform: translateY(-2px);
-    background-color: rgba(255, 255, 255, 0.15) !important;
+.ps-10 {
+    padding-left: 2.5rem !important;
 }
 
-/* Smooth Scrolling */
-html {
-    scroll-behavior: smooth;
+/* Button Color Variants */
+.btn-light-primary {
+    background-color: #e1e8ff;
+    color: #667eea;
+    border: none;
+}
+
+.btn-light-primary:hover {
+    background-color: #667eea;
+    color: white;
+}
+
+.btn-light-secondary {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    border: none;
+}
+
+.btn-light-secondary:hover {
+    background-color: #e5e7eb;
+    color: #374151;
 }
 
 /* Responsive Adjustments */
@@ -372,23 +375,5 @@ html {
         padding: 0.75rem 1.5rem;
         font-size: 0.95rem;
     }
-}
-
-/* Loading State Enhancement */
-:deep(.loading-overlay) {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(4px);
-}
-
-/* Empty State */
-:deep(.empty-state) {
-    padding: 3rem;
-    text-align: center;
-}
-
-:deep(.empty-state i) {
-    font-size: 4rem;
-    color: #cbd5e0;
-    margin-bottom: 1rem;
 }
 </style>

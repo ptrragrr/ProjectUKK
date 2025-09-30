@@ -48,13 +48,6 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
 
     Route::prefix('master')->group(function () {
         Route::middleware('can:master-user')->group(function () {
-            // Route::get('users', [UserController::class, 'get']);
-            // Route::post('users', [UserController::class, 'index']);
-            // Route::post('users/store', [UserController::class, 'store']);
-            // Route::apiResource('users', UserController::class)
-            //     ->except(['index', 'store'])->scoped(['user' => 'uuid']);
-            // Route::get('/profile', [UserController::class, 'show']);
-            // Route::put('/profile', [UserController::class, 'update']);
             Route::get('/users', [UserController::class, 'index']);       // list user (paginate)
             Route::get('/users/all', [UserController::class, 'get']);     // ambil semua user
             Route::post('/users', [UserController::class, 'store']);      // tambah user

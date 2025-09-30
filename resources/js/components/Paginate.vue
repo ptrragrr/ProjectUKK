@@ -1,6 +1,6 @@
 <template>
     <div :id="id">
-        <div class="d-flex justify-content-between gap-2 flex-wrap mb-4">
+        <!-- <div class="d-flex justify-content-between gap-2 flex-wrap mb-4">
             <div class="d-flex gap-4 align-items-center">
                 <label htmlFor="limit" class="form-label"> Tampilkan </label>
                 <select2
@@ -20,7 +20,7 @@
                     v-debounce="onSearch"
                 />
             </form>
-        </div>
+        </div> -->
         <div class="table-responsive" style="margin-top: -8rem">
             <table
                 class="table table-rounded table-hover table-striped border gy-7 gs-7"
