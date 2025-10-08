@@ -9,6 +9,9 @@ const column = createColumnHelper<User>();
 const paginateRef = ref<any>(null);
 const selected = ref<string>("");
 const openForm = ref<boolean>(false);
+const searchQuery = ref("");
+const perPage = ref(10);
+const currentPage = ref(1);
 
 const { delete: deleteUser } = useDelete({
     onSuccess: () => paginateRef.value.refetch(),
@@ -17,8 +20,10 @@ const { delete: deleteUser } = useDelete({
 const columns = [
     column.accessor("no", {
         header: () => h("div", { class: "text-center fw-bold" }, "NO"),
-        cell: (info) =>
-            h("div", { class: "text-center fw-bold text-primary" }, info.row.index + 1),
+        cell: (info) => {
+            const offset = (currentPage.value - 1) * perPage.value;
+            return h("div", { class: "text-center fw-bold text-primary" }, offset + info.row.index + 1);
+        },
     }),
     column.accessor("name", {
         header: () => h("div", { class: "fw-bold" }, "Nama"),
@@ -65,7 +70,47 @@ const columns = [
     }),
 ];
 
-const refresh = () => paginateRef.value.refetch();
+// const refresh = () => {
+//    if (paginateRef.value) {
+//     paginateRef.value.fetchData({
+//       page: currentPage.value,
+//       per: perPage.value,
+//       search: searchQuery.value,
+//     })
+//   }; 
+// };
+
+const refresh = () => {
+    if (paginateRef.value) {
+    paginateRef.value.fetchData({
+      page: currentPage.value,
+      per: perPage.value,
+      search: searchQuery.value,
+    })
+  }; // Force reload dengan mengubah key
+};
+
+// Watch search query dengan debounce
+let searchTimeout: any = null;
+watch(searchQuery, () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        currentPage.value = 1; // Reset ke halaman pertama saat search
+        refresh();
+    }, 500);
+});
+
+// Watch perPage changes
+watch(perPage, (val) => {
+    currentPage.value = 1;
+    if (paginateRef.value) {
+        paginateRef.value.fetchData({
+            page: 1,
+            per: val,
+            search: searchQuery.value,
+        });
+    }
+});
 
 watch(openForm, (val) => {
     if (!val) {
@@ -73,6 +118,11 @@ watch(openForm, (val) => {
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
 });
+
+// Clear search
+const clearSearch = () => {
+    searchQuery.value = "";
+};
 </script>
 
 <template>
@@ -91,7 +141,7 @@ watch(openForm, (val) => {
     <div class="card shadow-sm border-0 overflow-hidden">
         <!-- Header dengan Gradient -->
         <div class="card-header bg-gradient-primary border-0 py-6 px-6">
-            <div class="d-flex align-items-center justify-content-between w-100 gap-4">
+            <div class="d-flex align-items-center justify-content-between w-100 gap-4 flex-wrap">
                 <!-- Title Section -->
                 <div class="d-flex align-items-center gap-3">
                     <div class="symbol symbol-50px bg-white bg-opacity-20 rounded">
@@ -136,38 +186,50 @@ watch(openForm, (val) => {
                         <!-- Search Input -->
                         <div class="col-md-6">
                             <div class="position-relative">
-                                <i class="la la-search position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: #a1a5b7; font-size: 1.25rem;"></i>
+                                <i class="la la-search position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: #a1a5b7; font-size: 1.25rem; z-index: 1;"></i>
                                 <input
+                                    v-model="searchQuery"
                                     type="text"
                                     class="form-control ps-10"
                                     placeholder="Cari nama, email, atau nomor telepon..."
                                     style="border-radius: 8px; padding-left: 2.5rem;"
                                 />
+                                <button
+                                    v-if="searchQuery"
+                                    @click="clearSearch"
+                                    class="btn btn-sm btn-icon position-absolute"
+                                    style="right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none;"
+                                    title="Clear search"
+                                >
+                                    <i class="la la-times text-muted"></i>
+                                </button>
                             </div>
                         </div>
 
                         <!-- Entries per page -->
-                        <!-- <div class="col-md-3">
+                        <div class="col-md-3">
                             <div class="d-flex align-items-center gap-2">
                                 <label class="text-muted fs-7 text-nowrap mb-0">Tampilkan:</label>
-                                <select class="form-select form-select-sm" style="border-radius: 8px; min-width: 80px;">
-                                    <option value="5">5</option>
-                                    <option value="10">10</option>
-                                    <option value="25">5250</option>
-                                    <option value="50">50</option>
+                                <select v-model="perPage" class="form-select form-select-sm" style="border-radius: 8px; min-width: 80px;">
+                                    <option :value="5">5</option>
+                                    <option :value="10">10</option>
+                                    <option :value="25">25</option>
+                                    <option :value="50">50</option>
                                 </select>
                             </div>
-                        </div> -->
+                        </div>
 
                         <!-- Filter Button -->
                         <!-- <div class="col-md-3">
                             <div class="d-flex gap-2 justify-content-end">
-                                <button class="btn btn-light-primary btn-sm" style="border-radius: 8px;">
-                                    <i class="la la-filter fs-4 me-1"></i>
-                                    Filter
-                                </button>
-                                <button class="btn btn-light-secondary btn-sm" style="border-radius: 8px;" @click="refresh" title="Refresh Data">
-                                    <i class="la la-sync fs-4"></i>
+                                <button 
+                                    class="btn btn-light-secondary btn-sm" 
+                                    style="border-radius: 8px;"
+                                    @click="refresh"
+                                    title="Refresh Data"
+                                >
+                                    <i class="la la-sync fs-4 me-1"></i>
+                                    Refresh
                                 </button>
                             </div>
                         </div> -->
@@ -180,8 +242,11 @@ watch(openForm, (val) => {
                 <paginate
                     ref="paginateRef"
                     id="table-users"
-                    url="/master/users"
+                    :url="`/master/users?search=${searchQuery}`"
                     :columns="columns"
+                    :per="perPage"
+                    :page="currentPage"
+                    @update:page="currentPage = $event"
                 />
             </div>
         </div>
@@ -192,6 +257,10 @@ watch(openForm, (val) => {
                 <div class="text-muted fs-7">
                     <i class="la la-info-circle me-1"></i>
                     Data diperbarui secara real-time
+                </div>
+                <div class="text-muted fs-7" v-if="searchQuery">
+                    <i class="la la-filter me-1"></i>
+                    Filter aktif: "{{ searchQuery }}"
                 </div>
             </div>
         </div>

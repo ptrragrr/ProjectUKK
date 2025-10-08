@@ -23,19 +23,36 @@ class RoleController extends Controller
     /**
      * Display a paginated list of the resource.
      */
+    // public function index(Request $request)
+    // {
+    //     $per = $request->per ?? 10;
+    //     $page = $request->page ? $request->page - 1 : 0;
+
+    //     DB::statement('set @no=0+' . $page * $per);
+    //     $data = Role::when($request->search, function (Builder $query, string $search) {
+    //         $query->where('name', 'like', "%$search%")
+    //             ->orWhere('full_name', 'like', "%$search%");
+    //     })->latest()->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
+
+    //     return response()->json($data);
+    // }
     public function index(Request $request)
-    {
-        $per = $request->per ?? 10;
-        $page = $request->page ? $request->page - 1 : 0;
+{
+    $search = $request->search;
+    $perPage = $request->per ?? 10;
 
-        DB::statement('set @no=0+' . $page * $per);
-        $data = Role::when($request->search, function (Builder $query, string $search) {
-            $query->where('name', 'like', "%$search%")
-                ->orWhere('full_name', 'like', "%$search%");
-        })->latest()->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
+    $query = Role::query();
 
-        return response()->json($data);
+    if ($search) {
+        $query->where('name', 'like', "%{$search}%")
+              ->orWhere('full_name', 'like', "%{$search}%");
     }
+
+    // Gunakan paginate, bukan get()
+    $roles = $query->orderBy('id', 'asc')->paginate($perPage);
+
+    return response()->json($roles);
+}
 
     /**
      * Store a newly created resource in storage.

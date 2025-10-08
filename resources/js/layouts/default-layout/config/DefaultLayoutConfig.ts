@@ -5,7 +5,7 @@ const config: LayoutConfigTypes = {
         mode: "system",
         primaryColor: "#50CD89",
         pageWidth: "default",
-        layout: "dark-sidebar",
+        layout: "light-sidebar",
         iconsType: "duotone",
     },
     header: {

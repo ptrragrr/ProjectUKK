@@ -9,6 +9,9 @@ const column = createColumnHelper<Ticket>();
 const paginateRef = ref<any>(null);
 const selected = ref<string>("");
 const openForm = ref<boolean>(false);
+const perPage = ref<number>(10);
+const currentPage = ref<number>(1);
+const searchQuery = ref<string>(""); // State untuk search
 
 const { delete: deleteTicket } = useDelete({
   onSuccess: () => paginateRef.value.refetch(),
@@ -18,8 +21,10 @@ const columns = [
   column.display({
     id: "no",
     header: () => h("div", { class: "text-center fw-bold" }, "No"),
-    cell: (info) =>
-      h("div", { class: "text-center fw-bold text-primary" }, info.row.index + 1),
+    cell: (info) => {
+      const offset = (currentPage.value - 1) * perPage.value;
+      return h("div", { class: "text-center fw-bold text-primary" }, offset + info.row.index + 1);
+    },
   }),
   column.accessor("nama_event", {
     header: () => h("div", { class: "fw-bold" }, "Nama Event"),
@@ -81,8 +86,36 @@ const columns = [
   }),
 ];
 
+const refresh = () => {
+  console.log('Refreshing data with:', {
+    page: currentPage.value,
+    per: perPage.value,
+    search: searchQuery.value,
+  });
+  if (paginateRef.value) {
+    paginateRef.value.fetchData({
+      page: currentPage.value,
+      per: perPage.value,
+      search: searchQuery.value,
+    })
+  }
+};
 
-const refresh = () => paginateRef.value.refetch();
+// Debug: Watch pagination data
+watch(() => paginateRef.value?.pagination, (val) => {
+  console.log('Pagination data:', val);
+  console.log('PaginateRef:', paginateRef.value);
+}, { deep: true, immediate: true });
+
+// Watch untuk search dengan debounce
+let searchTimeout: any = null;
+watch(searchQuery, () => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    currentPage.value = 1; // Reset ke halaman pertama saat search
+    refresh();
+  }, 500); // Delay 500ms untuk mengurangi request
+});
 
 watch(openForm, (val) => {
   if (!val) {
@@ -90,6 +123,44 @@ watch(openForm, (val) => {
   }
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
+
+watch(perPage, (val) => {
+  currentPage.value = 1
+  if (paginateRef.value) {
+    paginateRef.value.fetchData({
+      page: 1,
+      per: val,
+      search: searchQuery.value,
+    })
+  }
+});
+
+// Function untuk mendapatkan visible page numbers
+const getVisiblePages = () => {
+  if (!paginateRef.value?.pagination) return [];
+  
+  const current = currentPage.value;
+  const last = paginateRef.value.pagination.last_page;
+  const pages = [];
+  
+  // Tampilkan maksimal 5 nomor halaman
+  let start = Math.max(1, current - 2);
+  let end = Math.min(last, current + 2);
+  
+  // Adjust jika di awal atau akhir
+  if (current <= 3) {
+    end = Math.min(5, last);
+  }
+  if (current >= last - 2) {
+    start = Math.max(1, last - 4);
+  }
+  
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+  
+  return pages;
+};
 </script>
 
 <template>
@@ -155,6 +226,7 @@ watch(openForm, (val) => {
               <div class="position-relative">
                 <i class="la la-search position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: #a1a5b7; font-size: 1.25rem;"></i>
                 <input
+                  v-model="searchQuery"
                   type="text"
                   class="form-control ps-10"
                   placeholder="Cari nama event, jenis tiket, atau line up artis..."
@@ -164,30 +236,27 @@ watch(openForm, (val) => {
             </div>
 
             <!-- Entries per page -->
-            <!-- <div class="col-md-3">
+            <div class="col-md-3">
               <div class="d-flex align-items-center gap-2">
                 <label class="text-muted fs-7 text-nowrap mb-0">Tampilkan:</label>
-                <select class="form-select form-select-sm" style="border-radius: 8px; min-width: 80px;">
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                  <option value="25">25</option>
-                  <option value="50">50</option>
+                <select v-model="perPage" class="form-select form-select-sm" style="border-radius: 8px; min-width: 80px;">
+                  <option :value="5">5</option>
+                  <option :value="10">10</option>
+                  <option :value="25">25</option>
+                  <option :value="50">50</option>
                 </select>
               </div>
-            </div> -->
+            </div>
 
             <!-- Filter Button -->
-            <div class="col-md-3">
-              <!-- <div class="d-flex gap-2 justify-content-end">
-                <button class="btn btn-light-primary btn-sm" style="border-radius: 8px;">
-                  <i class="la la-filter fs-4 me-1"></i>
-                  Filter
-                </button>
+            <!-- <div class="col-md-3">
+              <div class="d-flex gap-2 justify-content-end">
                 <button class="btn btn-light-secondary btn-sm" style="border-radius: 8px;" @click="refresh" title="Refresh Data">
-                  <i class="la la-sync fs-4"></i>
+                  <i class="la la-sync fs-4 me-1"></i>
+                  Refresh
                 </button>
-              </div> -->
-            </div>
+              </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -197,10 +266,49 @@ watch(openForm, (val) => {
         <paginate
           ref="paginateRef"
           id="table-tickets"
-          url="/tickets"
+          :url="`/tickets?search=${searchQuery}`"
           :columns="columns"
+          :per="perPage"
+          :page="currentPage"
+          @update:page="currentPage = $event"
         />
       </div>
+
+      <!-- Pagination Controls -->
+      <div
+        class="d-flex justify-content-center align-items-center gap-2 mt-4"
+        v-if="paginateRef?.pagination"
+      >
+        <!-- Tombol Prev -->
+        <button
+          class="pagination-btn"
+          :disabled="currentPage === 1"
+          @click="currentPage--; refresh()"
+        >
+          ‹
+        </button>
+
+        <!-- Nomor Halaman -->
+        <button
+          v-for="page in getVisiblePages()"
+          :key="page"
+          class="pagination-btn"
+          :class="{ active: currentPage === page }"
+          @click="currentPage = page; refresh()"
+        >
+          {{ page }}
+        </button>
+
+        <!-- Tombol Next -->
+        <button
+          class="pagination-btn"
+          :disabled="!paginateRef?.pagination || currentPage === paginateRef.pagination.last_page"
+          @click="currentPage++; refresh()"
+        >
+          ›
+        </button>
+      </div>
+
     </div>
 
     <!-- Footer dengan Info -->
@@ -252,7 +360,7 @@ watch(openForm, (val) => {
     border-radius: 8px;
 }
 
-.btn:hover {
+.btn:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -339,6 +447,18 @@ watch(openForm, (val) => {
 }
 
 /* Button Color Variants */
+.btn-light {
+    background: white;
+    color: #667eea;
+    font-weight: 600;
+    border: none;
+}
+
+.btn-light:hover {
+    background: #f8f9fa;
+    color: #667eea;
+}
+
 .btn-light-primary {
     background-color: #e1e8ff;
     color: #667eea;
@@ -350,15 +470,76 @@ watch(openForm, (val) => {
     color: white;
 }
 
+.btn-light-danger {
+    background-color: #ffe1e1;
+    color: #dc3545;
+    border: none;
+}
+
+.btn-light-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-primary {
+    background-color: #667eea;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #5568d3;
+}
+
 .btn-light-secondary {
     background-color: #f3f4f6;
     color: #6b7280;
     border: none;
 }
 
-.btn-light-secondary:hover {
+.btn-light-secondary:hover:not(:disabled) {
     background-color: #e5e7eb;
     color: #374151;
+}
+
+.btn-light-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.badge-light-success {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+/* Pagination Styling */
+.pagination-btn {
+    border: none;
+    background: transparent;
+    color: #4b5563;
+    font-weight: 600;
+    font-size: 0.95rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    transition: all 0.25s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background-color: #e5e7eb;
+    color: #111827;
+}
+
+.pagination-btn.active {
+    background-color: #667eea;
+    color: white;
+    box-shadow: 0 0 6px rgba(102, 126, 234, 0.3);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 /* Responsive Adjustments */

@@ -1,262 +1,159 @@
-<template>
-    <div :id="id">
-        <!-- <div class="d-flex justify-content-between gap-2 flex-wrap mb-4">
-            <div class="d-flex gap-4 align-items-center">
-                <label htmlFor="limit" class="form-label"> Tampilkan </label>
-                <select2
-                    class="w-75px form-select-solid"
-                    v-model="per"
-                    placeholder="Per"
-                    :options="[5, 10, 25, 50, 100]"
-                >
-                </select2>
-            </div>
-            <form @submit.prevent="refetch" class="w-100 w-sm-auto">
-                <input
-                    type="search"
-                    class="form-control form-control-solid"
-                    placeholder="Cari ..."
-                    v-model="search"
-                    v-debounce="onSearch"
-                />
-            </form>
-        </div> -->
-        <div class="table-responsive" style="margin-top: -8rem">
-            <table
-                class="table table-rounded table-hover table-striped border gy-7 gs-7"
-                style="margin: 8rem 0"
-            >
-                <thead class="bg-gray-200">
-                    <tr
-                        class="fw-bolder fs-6 text-gray-800 border-bottom border-gray-200"
-                        v-for="headerGroup in table.getHeaderGroups()"
-                        :key="headerGroup.id"
-                    >
-                        <th
-                            v-for="header in headerGroup.headers"
-                            :key="header.id"
-                            class="py-4"
-                        >
-                            <FlexRender
-                                :render="
-                                    header.isPlaceholder
-                                        ? null
-                                        : header.column.columnDef.header
-                                "
-                                :props="header.getContext()"
-                            />
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <template v-if="!!data?.data?.length">
-                        <tr
-                            v-for="row in table.getRowModel().rows"
-                            :key="`row.${row.original.uuid}`"
-                        >
-                            <td
-                                v-for="cell in row.getVisibleCells()"
-                                :key="`cell.${cell.id}.${cell.row.original.uuid}`"
-                                class="py-4"
-                            >
-                                <FlexRender
-                                    :render="cell.column.columnDef.cell"
-                                    :props="cell.getContext()"
-                                />
-                            </td>
-                        </tr>
-                    </template>
-                    <tr v-else>
-                        <td :colspan="columns.length" class="text-center py-4">
-                            Data tidak ditemukan
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="d-flex justify-content-between mt-n20 flex-wrap gap-2">
-            <div class="text-gray-700 fs-7">
-                Menampilkan {{ data?.from }} sampai {{ data?.to }} dari
-                {{ data?.total }} hasil
-            </div>
-            <ul class="pagination">
-                <li
-                    class="page-item previous"
-                    :class="{ disabled: data?.current_page == 1 || !data }"
-                >
-                    <span
-                        @click="page = data?.current_page - 1"
-                        class="page-link"
-                    >
-                        <i class="previous"></i>
-                    </span>
-                </li>
-                <li
-                    v-for="item in pagination"
-                    :key="item"
-                    @click="page = item"
-                    class="page-item"
-                    :class="{ active: item === page }"
-                >
-                    <span class="page-link cursor-pointer">{{ item }}</span>
-                </li>
-                <li
-                    class="page-item next"
-                    :class="{
-                        disabled:
-                            data?.current_page == data?.last_page || !data,
-                    }"
-                >
-                    <span
-                        @click="page = data?.current_page + 1"
-                        class="page-link cursor-pointer"
-                    >
-                        <i class="next"></i>
-                    </span>
-                </li>
-            </ul>
-        </div>
-    </div>
-</template>
-
-<script>
-import { useQuery } from "@tanstack/vue-query";
-import { ref, defineComponent } from "vue";
-import { useVueTable, FlexRender, getCoreRowModel } from "@tanstack/vue-table";
+<script setup lang="ts">
+import { ref, watch, onMounted, computed } from "vue";
 import axios from "@/libs/axios";
-import { block, unblock } from "@/libs/utils";
-import { toast } from "vue3-toastify";
+import {
+  useVueTable,
+  getCoreRowModel,
+  FlexRender,
+} from "@tanstack/vue-table";
 
-export default defineComponent({
-    props: {
-        id: {
-            type: String,
-            required: true,
-        },
-        columns: {
-            type: Object,
-            required: true,
-        },
-        url: {
-            type: String,
-            required: true,
-        },
-        payload: {
-            type: Object,
-            default: {},
-        },
-        queryKey: {
-            type: String,
-            default: null,
-        },
-        enabled: {
-            type: Boolean,
-            default: true,
-        },
-    },
-    components: {
-        FlexRender,
-    },
-    setup(props) {
-        const search = ref("");
-        const debouncedSearch = ref("");
-
-        const per = ref(10);
-        const page = ref(1);
-
-        const {
-            data = {},
-            isFetching,
-            refetch,
-        } = useQuery({
-            queryKey: [props.queryKey || props.url],
-            queryFn: () =>
-                axios
-                    .get(props.url, {
-                        params: {
-                            search: search.value,
-                            page: page.value,
-                            per: parseInt(per.value),
-                            ...props.payload,
-                        },
-                    })
-                    .then((res) => res.data),
-            placeholderData: { data: [] },
-            cacheTime: 0,
-            enabled: props.enabled,
-            onSuccess: (data) => {
-                if (page.value > data.last_page) page.value = data.last_page;
-            },
-            onError: (err) => {
-                toast.error(err.response.data.message);
-            },
-        });
-
-        const table = useVueTable({
-            get data() {
-                return data.value.data;
-            },
-            columns: props.columns,
-            getCoreRowModel: getCoreRowModel(),
-        });
-
-        return {
-            search,
-            debouncedSearch,
-            table,
-            per,
-            page,
-            data,
-            isFetching,
-            refetch,
-        };
-    },
-    methods: {
-        onSearch() {
-            this.debouncedSearch = this.search;
-        },
-    },
-    watch: {
-        page() {
-            this.refetch();
-        },
-        per() {
-            this.refetch();
-        },
-        debouncedSearch() {
-            this.refetch();
-        },
-        isFetching(val) {
-            if (
-                val &&
-                !document
-                    .querySelector(`#${this.id} table`)
-                    .querySelector(".blockui-overlay")
-            )
-                block(`#${this.id} table`);
-            else unblock(`#${this.id} table`);
-        },
-        payload(val, oldVal) {
-            if (JSON.stringify(val) !== JSON.stringify(oldVal)) this.refetch();
-        },
-    },
-    computed: {
-        pagination() {
-            let limit = this.data?.last_page <= this.page + 1 ? 5 : 2;
-            return Array.from(
-                { length: this.data?.last_page },
-                (_, i) => i + 1
-            ).filter(
-                (i) =>
-                    i >= (this.page < 3 ? 3 : this.page) - limit &&
-                    i <= (this.page < 3 ? 3 : this.page) + limit
-            );
-        },
-    },
-    mounted() {
-        block(`#${this.id} table`);
-    },
+const props = defineProps({
+  url: { type: String, required: true },
+  columns: { type: Array, required: true },
+  per: { type: Number, default: 10 },
+  page: { type: Number, default: 1 },
 });
+
+const emit = defineEmits(["update:page"]);
+
+const data = ref<any[]>([]);
+const pagination = ref({
+  total: 0,
+  current_page: 1,
+  per_page: props.per,
+});
+
+const loading = ref(false);
+
+const fetchData = async (params?: { page?: number; per?: number }) => {
+  loading.value = true;
+  try {
+    const res = await axios.get(props.url, {
+      params: {
+        page: params?.page ?? props.page,
+        per: params?.per ?? props.per,
+      },
+    });
+
+    data.value = res.data.data || res.data;
+    pagination.value = {
+      total: res.data.total,
+      current_page: res.data.current_page,
+      per_page: res.data.per_page,
+      last_page: res.data.last_page, // ✅ tambahkan ini
+    };
+
+    emit("update:page", pagination.value.current_page); // ✅ sinkronkan ke parent
+  } catch (err) {
+    console.error("Fetch error:", err);
+  } finally {
+    loading.value = false;
+  }
+};
+
+// buat reactive table
+const table = useVueTable({
+  get data() {
+    return data.value;
+  },
+  get columns() {
+    return props.columns;
+  },
+  getCoreRowModel: getCoreRowModel(),
+});
+
+onMounted(() => fetchData());
+
+watch(
+  () => props.per,
+  (val) => {
+    fetchData({ page: 1, per: val });
+  }
+);
+
+watch(
+  () => props.page,
+  (val) => {
+    fetchData({ page: val, per: props.per });
+  }
+);
+
+defineExpose({ fetchData });
 </script>
 
-<style></style>
+<template>
+  <div class="p-3">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr>
+          <th
+            v-for="header in table.getHeaderGroups()[0].headers"
+            :key="header.id"
+            class="text-center fw-bold text-uppercase"
+          >
+            <FlexRender
+              :render="header.column.columnDef.header"
+              :props="header.getContext()"
+            />
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr v-if="loading">
+          <td colspan="100%" class="text-center py-5 text-muted">Memuat data...</td>
+        </tr>
+
+        <tr v-else-if="data.length === 0">
+          <td colspan="100%" class="text-center py-5 text-muted">Tidak ada data</td>
+        </tr>
+
+        <tr
+          v-else
+          v-for="row in table.getRowModel().rows"
+          :key="row.id"
+        >
+          <td
+            v-for="cell in row.getVisibleCells()"
+            :key="cell.id"
+            class="align-middle"
+          >
+            <FlexRender
+              :render="cell.column.columnDef.cell"
+              :props="cell.getContext()"
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <div class="text-muted fs-7">
+        Menampilkan {{ data.length }} dari {{ pagination.total }} data
+      </div>
+
+      <div class="btn-group">
+        <button
+          class="btn btn-light btn-sm"
+          :disabled="pagination.current_page <= 1"
+          @click="emit('update:page', pagination.current_page - 1)"
+        >
+          <i class="la la-angle-left"></i>
+        </button>
+
+        <span class="btn btn-outline-secondary btn-sm disabled">
+          Hal. {{ pagination.current_page }}
+        </span>
+
+        <button
+          class="btn btn-light btn-sm"
+          :disabled="pagination.current_page >= Math.ceil(pagination.total / pagination.per_page)"
+          @click="emit('update:page', pagination.current_page + 1)"
+        >
+          <i class="la la-angle-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</template>

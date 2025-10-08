@@ -21,6 +21,8 @@ const loading = ref(true);
 const selectedYear = ref<number | null>(null);
 const selectedMonth = ref<number | null>(null);
 const searchQuery = ref("");
+const perPage = ref(10);
+const currentPage = ref(1);
 
 // Generate years array (2023 - current year)
 const years = computed(() => {
@@ -82,6 +84,26 @@ const filteredTransaksis = computed(() => {
     return filtered;
 });
 
+// Paginated data
+const paginatedTransaksis = computed(() => {
+    const start = (currentPage.value - 1) * perPage.value;
+    const end = start + perPage.value;
+    return filteredTransaksis.value.slice(start, end);
+});
+
+// Total pages
+const totalPages = computed(() => {
+    return Math.ceil(filteredTransaksis.value.length / perPage.value);
+});
+
+// Pagination info
+const paginationInfo = computed(() => {
+    const start = (currentPage.value - 1) * perPage.value + 1;
+    const end = Math.min(currentPage.value * perPage.value, filteredTransaksis.value.length);
+    const total = filteredTransaksis.value.length;
+    return { start, end, total };
+});
+
 // Statistics
 const stats = computed(() => {
     const filtered = filteredTransaksis.value;
@@ -126,6 +148,24 @@ const clearFilters = () => {
     selectedYear.value = null;
     selectedMonth.value = null;
     searchQuery.value = "";
+    currentPage.value = 1;
+};
+
+const changePage = (page: number) => {
+    if (page >= 1 && page <= totalPages.value) {
+        currentPage.value = page;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+};
+
+const clearSearch = () => {
+    searchQuery.value = "";
+    currentPage.value = 1;
+};
+
+// Watch for filter changes to reset page
+const resetPage = () => {
+    currentPage.value = 1;
 };
 
 onMounted(fetchTransaksis);
@@ -241,25 +281,45 @@ const getStatusClass = (status: string) => {
                             <h5 class="mb-0 fw-semibold">Filter Data</h5>
                         </div>
                         <div class="col-md-auto">
-                            <select v-model="selectedYear" class="form-select" style="min-width: 150px; border-radius: 8px;">
+                            <select v-model="selectedYear" @change="resetPage" class="form-select" style="min-width: 150px; border-radius: 8px;">
                                 <option :value="null">Semua Tahun</option>
                                 <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
                             </select>
                         </div>
                         <div class="col-md-auto">
-                            <select v-model="selectedMonth" class="form-select" style="min-width: 150px; border-radius: 8px;">
+                            <select v-model="selectedMonth" @change="resetPage" class="form-select" style="min-width: 150px; border-radius: 8px;">
                                 <option :value="null">Semua Bulan</option>
                                 <option v-for="month in months" :key="month.value" :value="month.value">{{ month.label }}</option>
                             </select>
                         </div>
+                        <div class="col-md-auto">
+                            <select v-model="perPage" @change="resetPage" class="form-select" style="min-width: 120px; border-radius: 8px;">
+                                <option :value="5">5 per halaman</option>
+                                <option :value="10">10 per halaman</option>
+                                <option :value="25">25 per halaman</option>
+                                <option :value="50">50 per halaman</option>
+                            </select>
+                        </div>
                         <div class="col-md ms-auto">
-                            <input
-                                v-model="searchQuery"
-                                type="text"
-                                placeholder="Cari transaksi..."
-                                class="form-control"
-                                style="border-radius: 8px;"
-                            />
+                            <div class="position-relative">
+                                <input
+                                    v-model="searchQuery"
+                                    @input="resetPage"
+                                    type="text"
+                                    placeholder="Cari nama, email, atau kode transaksi..."
+                                    class="form-control"
+                                    style="border-radius: 8px; padding-right: 2.5rem;"
+                                />
+                                <button
+                                    v-if="searchQuery"
+                                    @click="clearSearch"
+                                    class="btn btn-sm btn-icon position-absolute"
+                                    style="right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none;"
+                                    title="Clear search"
+                                >
+                                    <i class="la la-times text-muted"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -307,18 +367,15 @@ const getStatusClass = (status: string) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(trx, index) in filteredTransaksis" :key="trx.id" class="hover-bg-light">
+                                <tr v-for="(trx, index) in paginatedTransaksis" :key="trx.id" class="hover-bg-light">
                                     <td class="ps-6">
-                                        <span class="text-muted">{{ index + 1 }}</span>
+                                        <span class="text-muted">{{ (currentPage - 1) * perPage + index + 1 }}</span>
                                     </td>
                                     <td>
                                         <span class="fw-bold text-gray-800">#{{ trx.id }}</span>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <!-- <div class="symbol symbol-40px me-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                                <span class="text-white fw-bold">{{ trx.nama_pembeli.charAt(0).toUpperCase() }}</span>
-                                            </div> -->
                                             <div>
                                                 <div class="fw-semibold text-gray-800">{{ trx.nama_pembeli }}</div>
                                             </div>
@@ -364,6 +421,45 @@ const getStatusClass = (status: string) => {
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Pagination -->
+                    <div class="card-footer border-0 bg-light py-4 px-6">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                            <div class="text-muted fs-7">
+                                Menampilkan {{ paginationInfo.start }} - {{ paginationInfo.end }} dari {{ paginationInfo.total }} data
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button
+                                    @click="changePage(currentPage - 1)"
+                                    :disabled="currentPage === 1"
+                                    class="btn btn-sm btn-light"
+                                    style="border-radius: 6px;"
+                                >
+                                    <i class="la la-angle-left"></i>
+                                </button>
+                                
+                                <button
+                                    v-for="page in totalPages"
+                                    :key="page"
+                                    v-show="Math.abs(page - currentPage) < 3 || page === 1 || page === totalPages"
+                                    @click="changePage(page)"
+                                    :class="['btn btn-sm', page === currentPage ? 'btn-primary' : 'btn-light']"
+                                    style="border-radius: 6px; min-width: 40px;"
+                                >
+                                    {{ page }}
+                                </button>
+                                
+                                <button
+                                    @click="changePage(currentPage + 1)"
+                                    :disabled="currentPage === totalPages"
+                                    class="btn btn-sm btn-light"
+                                    style="border-radius: 6px;"
+                                >
+                                    <i class="la la-angle-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -401,5 +497,20 @@ const getStatusClass = (status: string) => {
 .form-control:focus {
     border-color: #667eea;
     box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.btn-primary {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.btn-primary:hover {
+    background-color: #5568d3;
+    border-color: #5568d3;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 </style>

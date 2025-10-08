@@ -50,7 +50,7 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
         Route::middleware('can:master-user')->group(function () {
             Route::get('/users', [UserController::class, 'index']);       // list user (paginate)
             Route::get('/users/all', [UserController::class, 'get']);     // ambil semua user
-            Route::post('/users', [UserController::class, 'store']);      // tambah user
+            Route::post('/users/store', [UserController::class, 'store']);      // tambah user
             Route::put('/users/{user}', [UserController::class, 'update']);   // update user by admin
             Route::delete('/users/{user}', [UserController::class, 'destroy']); // hapus user
             Route::get('/roles', [UserController::class, 'getRoles']);
@@ -58,13 +58,24 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
 
         });
 
+        // Route::middleware('can:master-role')->group(function () {
+        //     Route::get('roles', [RoleController::class, 'get'])->withoutMiddleware('can:master-role');
+        //     Route::post('roles', [RoleController::class, 'index']);
+        //     Route::post('roles/store', [RoleController::class, 'store']);
+        //     Route::apiResource('roles', RoleController::class)
+        //         ->except(['index', 'store']);
+        // });
         Route::middleware('can:master-role')->group(function () {
-            Route::get('roles', [RoleController::class, 'get'])->withoutMiddleware('can:master-role');
-            Route::post('roles', [RoleController::class, 'index']);
-            Route::post('roles/store', [RoleController::class, 'store']);
-            Route::apiResource('roles', RoleController::class)
-                ->except(['index', 'store']);
-        });
+    // ✅ Untuk pagination dan search
+    Route::get('roles', [RoleController::class, 'index']);
+
+    // ✅ Untuk tambah role baru
+    Route::post('roles/store', [RoleController::class, 'store']);
+
+    // ✅ CRUD lainnya
+    Route::apiResource('roles', RoleController::class)
+        ->except(['index', 'store']);
+});
     });
 });
 
@@ -78,12 +89,12 @@ Route::put('/tickets/{id}', [TicketController::class, 'update']);
 Route::patch('/tickets/{id}', [TicketController::class, 'update']);
 Route::delete('/tickets/{id}', [TicketController::class, 'destroy']);
 
-Route::get('/konser', [KonserController::class, 'index']);          // 🔍 List semua konser
-Route::post('/konser', [KonserController::class, 'store']);         // ➕ Tambah konser baru
-Route::get('/konser/{id}', [KonserController::class, 'show']);      // 👁 Detail konser
-Route::put('/konser/{id}', [KonserController::class, 'update']);    // ✏️ Update konser
-// Route::patch('/konser/{id}', [KonserController::class, 'update']);  // ✏️ Update parsial konser
-Route::delete('/konser/{id}', [KonserController::class, 'destroy']); // 🗑 Hapus konser
+// Route::get('/konser', [KonserController::class, 'index']);          // 🔍 List semua konser
+// Route::post('/konser', [KonserController::class, 'store']);         // ➕ Tambah konser baru
+// Route::get('/konser/{id}', [KonserController::class, 'show']);      // 👁 Detail konser
+// Route::put('/konser/{id}', [KonserController::class, 'update']);    // ✏️ Update konser
+// // Route::patch('/konser/{id}', [KonserController::class, 'update']);  // ✏️ Update parsial konser
+// Route::delete('/konser/{id}', [KonserController::class, 'destroy']); // 🗑 Hapus konser
 
 Route::get('/transaksi', [TransaksiController::class, 'index']);          // 🔍 List semua konser
 Route::post('/transaksi/store', [TransaksiController::class, 'store']);         // ➕ Tambah konser baru

@@ -71,21 +71,48 @@ const onHargaInput = (e: Event) => {
 };
 
 // Load edit data
+// const getEdit = async () => {
+//   if (!props.selected) return;
+//   block(document.getElementById("form-tiket"));
+//   try {
+//     const { data } = await axios.get(`/tickets/${props.selected}`);
+//     const t = data.tiket;
+//     const harga = Number(t.harga_tiket) || 0;
+
+//     setValues({
+//       nama_event: t.nama_event || "",
+//       tanggal: t.tanggal || "",
+//       harga_tiket: harga,
+//       jenis_tiket: t.jenis_tiket || "",
+//       deskripsi: t.deskripsi || "",
+//       stok_tiket: t.stok_tiket || 1,
+//     });
+
+//     hargaDisplay.value = formatRupiah(harga);
+//   } catch (err: any) {
+//     toast.error(err.response?.data?.message || "Gagal mengambil data");
+//   } finally {
+//     unblock(document.getElementById("form-tiket"));
+//   }
+// };
+
 const getEdit = async () => {
   if (!props.selected) return;
   block(document.getElementById("form-tiket"));
   try {
     const { data } = await axios.get(`/tickets/${props.selected}`);
-    const t = data.tiket;
+
+    // Data langsung dari backend, bukan data.tiket
+    const t = data; 
     const harga = Number(t.harga_tiket) || 0;
 
     setValues({
       nama_event: t.nama_event || "",
       tanggal: t.tanggal || "",
-      harga_tiket: harga,
+      harga_tiket: t.harga_tiket,
       jenis_tiket: t.jenis_tiket || "",
       deskripsi: t.deskripsi || "",
-      stok_tiket: t.stok_tiket || 1,
+      stok_tiket: t.stok_tiket,
     });
 
     hargaDisplay.value = formatRupiah(harga);
