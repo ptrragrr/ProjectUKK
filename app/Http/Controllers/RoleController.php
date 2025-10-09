@@ -115,8 +115,8 @@ class RoleController extends Controller
         $role->revokePermissionTo($role->permissions);
         $role->delete();
 
-        return response()->json([
-            'success' => true
+       return response()->json([
+            'message' => 'Role berhasil dihapus'
         ]);
     }
 }

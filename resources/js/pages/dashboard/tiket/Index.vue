@@ -14,7 +14,7 @@ const currentPage = ref<number>(1);
 const searchQuery = ref<string>(""); // State untuk search
 
 const { delete: deleteTicket } = useDelete({
-  onSuccess: () => paginateRef.value.refetch(),
+  onSuccess: () => refresh(),
 });
 
 const columns = [
@@ -29,12 +29,12 @@ const columns = [
   column.accessor("nama_event", {
     header: () => h("div", { class: "fw-bold" }, "Nama Event"),
     cell: ({ getValue }) =>
-      h("div", { class: "fw-bold text-gray-800" }, getValue()),
+      h("div", { class: "fw-bold text-gray-900 dark:text-gray-100" }, getValue()),
   }),
   column.accessor("tanggal", {
     header: () => h("div", { class: "fw-bold" }, "Tanggal"),
     cell: ({ getValue }) =>
-      h("div", { class: "text-muted" }, new Date(getValue()).toLocaleDateString("id-ID")),
+      h("div", { class: "text-gray-900 dark:text-gray-100" }, new Date(getValue()).toLocaleDateString("id-ID")),
   }),
   column.accessor("harga_tiket", {
     header: () => h("div", { class: "fw-bold" }, "Harga"),
@@ -46,6 +46,15 @@ const columns = [
       return h("span", { class: "badge badge-light-success fw-bold" }, formatted);
     },
   }),
+   column.accessor("stok_tiket", {
+  header: () => h("div", { class: "fw-bold text-center" }, "Stok"),
+  cell: ({ getValue }) =>
+    h(
+      "div",
+      { class: "text-center fw-bold text-gray-900 dark:text-gray-100" },
+      getValue() ?? 0
+    ),
+}),
   column.accessor("jenis_tiket", {
     header: () => h("div", { class: "fw-bold" }, "Jenis Tiket"),
     cell: ({ getValue }) =>
@@ -54,7 +63,7 @@ const columns = [
   column.accessor("deskripsi", {
     header: () => h("div", { class: "fw-bold" }, "Line up Artis"),
     cell: ({ getValue }) =>
-      h("div", { class: "text-muted fs-7" }, getValue() || "-"),
+      h("div", { class: "text-gray-900 dark:text-gray-100 fs-7" }, getValue() || "-"),
   }),
   column.accessor("id", {
     header: () => h("div", { class: "text-center fw-bold" }, "Aksi"),
@@ -247,16 +256,6 @@ const getVisiblePages = () => {
                 </select>
               </div>
             </div>
-
-            <!-- Filter Button -->
-            <!-- <div class="col-md-3">
-              <div class="d-flex gap-2 justify-content-end">
-                <button class="btn btn-light-secondary btn-sm" style="border-radius: 8px;" @click="refresh" title="Refresh Data">
-                  <i class="la la-sync fs-4 me-1"></i>
-                  Refresh
-                </button>
-              </div>
-            </div> -->
           </div>
         </div>
       </div>
@@ -275,40 +274,6 @@ const getVisiblePages = () => {
       </div>
 
       <!-- Pagination Controls -->
-      <div
-        class="d-flex justify-content-center align-items-center gap-2 mt-4"
-        v-if="paginateRef?.pagination"
-      >
-        <!-- Tombol Prev -->
-        <button
-          class="pagination-btn"
-          :disabled="currentPage === 1"
-          @click="currentPage--; refresh()"
-        >
-          ‹
-        </button>
-
-        <!-- Nomor Halaman -->
-        <button
-          v-for="page in getVisiblePages()"
-          :key="page"
-          class="pagination-btn"
-          :class="{ active: currentPage === page }"
-          @click="currentPage = page; refresh()"
-        >
-          {{ page }}
-        </button>
-
-        <!-- Tombol Next -->
-        <button
-          class="pagination-btn"
-          :disabled="!paginateRef?.pagination || currentPage === paginateRef.pagination.last_page"
-          @click="currentPage++; refresh()"
-        >
-          ›
-        </button>
-      </div>
-
     </div>
 
     <!-- Footer dengan Info -->
@@ -407,13 +372,38 @@ const getVisiblePages = () => {
     text-transform: uppercase;
     font-size: 0.85rem;
     letter-spacing: 0.5px;
-    color: #3f4254;
+    color: #1f2937 !important;
 }
 
 :deep(.table tbody td) {
     padding: 1.25rem 1rem;
     vertical-align: middle;
     border-bottom: 1px solid #f3f4f6;
+}
+
+/* Dark mode text color fix */
+:deep(.dark .table tbody td) {
+    color: #e5e7eb !important;
+    border-bottom-color: #374151 !important;
+    background-color: transparent !important;
+}
+
+:deep(.dark .table tbody tr) {
+    background-color: #1f2937 !important;
+}
+
+:deep(.dark .table thead th) {
+    background-color: #1f2937 !important;
+    color: #e5e7eb !important;
+    border-bottom-color: #374151 !important;
+}
+
+:deep(.dark .table) {
+    background-color: #1f2937 !important;
+}
+
+:deep(.dark .table-responsive) {
+    background-color: #1f2937 !important;
 }
 
 :deep(.table tbody tr) {
@@ -423,6 +413,11 @@ const getVisiblePages = () => {
 :deep(.table tbody tr:hover) {
     background-color: #f8f9fb;
     transform: scale(1.001);
+}
+
+/* Dark mode hover effect */
+:deep(.dark .table tbody tr:hover) {
+    background-color: #374151 !important;
 }
 
 /* Alert Styling */
@@ -511,35 +506,6 @@ const getVisiblePages = () => {
 .badge-light-success {
     background-color: #d1fae5;
     color: #065f46;
-}
-
-/* Pagination Styling */
-.pagination-btn {
-    border: none;
-    background: transparent;
-    color: #4b5563;
-    font-weight: 600;
-    font-size: 0.95rem;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    transition: all 0.25s ease;
-}
-
-.pagination-btn:hover:not(:disabled) {
-    background-color: #e5e7eb;
-    color: #111827;
-}
-
-.pagination-btn.active {
-    background-color: #667eea;
-    color: white;
-    box-shadow: 0 0 6px rgba(102, 126, 234, 0.3);
-}
-
-.pagination-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
 }
 
 /* Responsive Adjustments */

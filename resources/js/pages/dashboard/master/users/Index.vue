@@ -14,7 +14,7 @@ const perPage = ref(10);
 const currentPage = ref(1);
 
 const { delete: deleteUser } = useDelete({
-    onSuccess: () => paginateRef.value.refetch(),
+    onSuccess: () => refresh(),
 });
 
 const columns = [
@@ -33,29 +33,29 @@ const columns = [
     column.accessor("email", {
         header: () => h("div", { class: "fw-bold" }, "Email"),
         cell: ({ getValue }) =>
-            h("div", { class: "text-muted" }, getValue()),
+            h("div", { class: "text-dark" }, getValue()),
     }),
     column.accessor("phone", {
         header: () => h("div", { class: "fw-bold" }, "No. Telp"),
         cell: ({ getValue }) =>
-            h("div", { class: "text-muted" }, getValue() || "-"),
+            h("div", { class: "text-dark" }, getValue() || "-"),
     }),
     column.accessor("uuid", {
         header: () => h("div", { class: "text-center fw-bold" }, "Aksi"),
         cell: (cell) =>
             h("div", { class: "d-flex gap-2 justify-content-center" }, [
-                h(
-                    "button",
-                    {
-                        class: "btn btn-sm btn-icon btn-light-primary",
-                        onClick: () => {
-                            selected.value = cell.getValue();
-                            openForm.value = true;
-                        },
-                        title: "Edit User",
-                    },
-                    h("i", { class: "la la-pencil fs-3" })
-                ),
+                // h(
+                //     "button",
+                //     {
+                //         class: "btn btn-sm btn-icon btn-light-primary",
+                //         onClick: () => {
+                //             selected.value = cell.getValue();
+                //             openForm.value = true;
+                //         },
+                //         title: "Edit User",
+                //     },
+                //     h("i", { class: "la la-pencil fs-3" })
+                // ),
                 h(
                     "button",
                     {
@@ -69,16 +69,6 @@ const columns = [
             ]),
     }),
 ];
-
-// const refresh = () => {
-//    if (paginateRef.value) {
-//     paginateRef.value.fetchData({
-//       page: currentPage.value,
-//       per: perPage.value,
-//       search: searchQuery.value,
-//     })
-//   }; 
-// };
 
 const refresh = () => {
     if (paginateRef.value) {
@@ -218,21 +208,6 @@ const clearSearch = () => {
                                 </select>
                             </div>
                         </div>
-
-                        <!-- Filter Button -->
-                        <!-- <div class="col-md-3">
-                            <div class="d-flex gap-2 justify-content-end">
-                                <button 
-                                    class="btn btn-light-secondary btn-sm" 
-                                    style="border-radius: 8px;"
-                                    @click="refresh"
-                                    title="Refresh Data"
-                                >
-                                    <i class="la la-sync fs-4 me-1"></i>
-                                    Refresh
-                                </button>
-                            </div>
-                        </div> -->
                     </div>
                 </div>
             </div>

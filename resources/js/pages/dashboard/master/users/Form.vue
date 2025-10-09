@@ -35,22 +35,22 @@ const formSchema = Yup.object().shape({
     role_id: Yup.string().required("Pilih role"),
 });
 
-function getEdit() {
-    block(document.getElementById("form-user"));
-    ApiService.get("master/users", props.selected)
-        .then(({ data }) => {
-            user.value = data.user;
-            photo.value = data.user.photo
-                ? ["/storage/" + data.user.photo]
-                : [];
-        })
-        .catch((err: any) => {
-            toast.error(err.response.data.message);
-        })
-        .finally(() => {
-            unblock(document.getElementById("form-user"));
-        });
-}
+// function getEdit() {
+//     block(document.getElementById("form-user"));
+//     ApiService.get("master/users", props.selected)
+//         .then(({ data }) => {
+//             user.value = data.user;
+//             photo.value = data.user.photo
+//                 ? ["/storage/" + data.user.photo]
+//                 : [];
+//         })
+//         .catch((err: any) => {
+//             toast.error(err.response.data.message);
+//         })
+//         .finally(() => {
+//             unblock(document.getElementById("form-user"));
+//         });
+// }
 
 function submit() {
     const formData = new FormData();
@@ -107,20 +107,20 @@ const roles = computed(() =>
     }))
 );
 
-onMounted(async () => {
-    if (props.selected) {
-        getEdit();
-    }
-});
+// onMounted(async () => {
+//     if (props.selected) {
+//         getEdit();
+//     }
+// });
 
-watch(
-    () => props.selected,
-    () => {
-        if (props.selected) {
-            getEdit();
-        }
-    }
-);
+// watch(
+//     () => props.selected,
+//     () => {
+//         if (props.selected) {
+//             getEdit();
+//         }
+//     }
+// );
 </script>
 
 <template>

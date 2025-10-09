@@ -7,7 +7,7 @@ import KTSidebarMenu from "@/layouts/default-layout/components/sidebar/SidebarMe
 const sidebarRef = ref<HTMLFormElement | null>(null);
 </script>
 
-<!-- <template>
+<template>
     <div
         v-if="displaySidebar"
         ref="sidebarRef"
@@ -24,10 +24,9 @@ const sidebarRef = ref<HTMLFormElement | null>(null);
         <KTSidebarLogo :sidebar-ref="sidebarRef"></KTSidebarLogo>
         <KTSidebarMenu></KTSidebarMenu>
     </div>
-</template> -->
+</template>
 
-<template>
-    <!--begin::sidebar-->
+<!-- <template>
     <div
         v-if="displaySidebar"
         ref="sidebarRef"
@@ -44,15 +43,11 @@ const sidebarRef = ref<HTMLFormElement | null>(null);
         <KTSidebarLogo :sidebar-ref="sidebarRef"></KTSidebarLogo>
         <KTSidebarMenu></KTSidebarMenu>
     </div>
-    <!--end::sidebar-->
 </template>
 
 <style scoped>
-/* === Layout fix agar sidebar nempel di kiri dan full height === */
-
-/* === Semua teks & icon hitam === */
 .app-sidebar,
 .app-sidebar * {
   color: #afaaaa !important;
 }
-</style>
+</style> -->

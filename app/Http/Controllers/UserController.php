@@ -70,6 +70,12 @@ class UserController extends Controller
         ]);
     }
 
+//     public function show($id)
+// {
+//     $user = User::findOrFail($id);
+//     return response()->json(['user' => $user]);
+// }
+
     /**
      * Show profile of currently authenticated user.
      */
@@ -238,45 +244,44 @@ public function updateMe(Request $request)
     /**
      * Update a user by admin.
      */
-    public function update(UpdateUserRequest $request, User $user)
-    {
-        $validatedData = $request->validated();
+    // public function update(UpdateUserRequest $request, User $user)
+    // {
+    //     $validatedData = $request->validated();
 
-        if ($request->hasFile('photo')) {
-            if ($user->photo) {
-                Storage::disk('public')->delete($user->photo);
-            }
-            $validatedData['photo'] = $request->file('photo')->store('photo', 'public');
-        } else {
-            if (isset($validatedData['photo']) && $validatedData['photo'] === null && $user->photo) {
-                Storage::disk('public')->delete($user->photo);
-            }
-        }
+    //     if ($request->hasFile('photo')) {
+    //         if ($user->photo) {
+    //             Storage::disk('public')->delete($user->photo);
+    //         }
+    //         $validatedData['photo'] = $request->file('photo')->store('photo', 'public');
+    //     } else {
+    //         if (isset($validatedData['photo']) && $validatedData['photo'] === null && $user->photo) {
+    //             Storage::disk('public')->delete($user->photo);
+    //         }
+    //     }
 
-        $user->update($validatedData);
+    //     $user->update($validatedData);
 
-        $role = Role::findById($validatedData['role_id']);
-        $user->syncRoles($role);
+    //     $role = Role::findById($validatedData['role_id']);
+    //     $user->syncRoles($role);
 
-        return response()->json([
-            'success' => true,
-            'user' => $user
-        ]);
-    }
+    //     return response()->json([
+    //         'success' => true,
+    //         'user' => $user
+    //     ]);
+    // }
 
     /**
      * Remove a user.
      */
-    public function destroy(User $user)
-    {
-        if ($user->photo) {
-            Storage::disk('public')->delete($user->photo);
-        }
+public function destroy($uuid)
+{
+    $user = User::where('uuid', $uuid)->first();
 
-        $user->delete();
-
-        return response()->json([
-            'success' => true
-        ]);
+    if (!$user) {
+        return response()->json(['message' => 'Resource Not Found'], 404);
     }
+
+    $user->delete();
+    return response()->json(['message' => 'User berhasil dihapus']);
+}
 }

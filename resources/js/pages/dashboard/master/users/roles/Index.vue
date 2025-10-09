@@ -16,7 +16,7 @@ const allData = ref<User[]>([]); // Store all data
 const filteredData = ref<User[]>([]); // Store filtered data
 
 const { delete: deleteUser } = useDelete({
-    onSuccess: () => paginateRef.value?.refetch(),
+    onSuccess: () => refresh(), 
 });
 
 const columns = [
@@ -35,7 +35,7 @@ const columns = [
     column.accessor("full_name", {
         header: () => h("div", { class: "fw-bold" }, "Full Name"),
         cell: ({ getValue }) =>
-            h("div", { class: "text-muted" }, getValue() || "-"),
+            h("div", { class: "text-dark" }, getValue() || "-"),
     }),
     column.accessor("id", {
         header: () => h("div", { class: "text-center fw-bold" }, "Aksi"),
@@ -204,21 +204,6 @@ watch(() => paginateRef.value?.pagination, (val) => {
                                 </select>
                             </div>
                         </div>
-
-                        <!-- Filter Button -->
-                        <!-- <div class="col-md-3">
-                            <div class="d-flex gap-2 justify-content-end">
-                                <button 
-                                    class="btn btn-light-secondary btn-sm" 
-                                    style="border-radius: 8px;"
-                                    @click="refresh"
-                                    title="Refresh Data"
-                                >
-                                    <i class="la la-sync fs-4 me-1"></i>
-                                    Refresh
-                                </button>
-                            </div>
-                        </div> -->
                     </div>
                 </div>
             </div>

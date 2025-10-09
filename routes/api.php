@@ -51,7 +51,8 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
             Route::get('/users', [UserController::class, 'index']);       // list user (paginate)
             Route::get('/users/all', [UserController::class, 'get']);     // ambil semua user
             Route::post('/users/store', [UserController::class, 'store']);      // tambah user
-            Route::put('/users/{user}', [UserController::class, 'update']);   // update user by admin
+            Route::put('/users/{user}', [UserController::class, 'update']); 
+            Route::get('/master/users/{uuid}', [UserController::class, 'show']);  // update user by admin
             Route::delete('/users/{user}', [UserController::class, 'destroy']); // hapus user
             Route::get('/roles', [UserController::class, 'getRoles']);
             Route::put('/profile', [UserController::class, 'updateMe']);
