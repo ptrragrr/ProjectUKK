@@ -30,7 +30,8 @@ const formSchema = Yup.object({
     })
     .required("Harga tiket wajib diisi")
     .min(1, "Harga tiket harus lebih dari 0"),
-  jenis_tiket: Yup.string().required("Jenis tiket wajib diisi"),
+  jenis_tiket: Yup.string().required("Jenis tiket wajib diisi").matches(/^[A-Za-zÀ-ÿ\s]+$/, "Hanya boleh huruf dan spasi"),
+  harga_tiket: Yup.number().required("Harga wajib diisi"),
   deskripsi: Yup.string().required("Deskripsi wajib diisi"),
   stok_tiket: Yup.number()
     .typeError("Stok tiket harus berupa angka")
@@ -60,15 +61,52 @@ function formatRupiah(value: number): string {
   }).format(value || 0);
 }
 
-// Handle input harga
+// Cegah penghapusan "Rp "
+const preventRpDeletion = (e: KeyboardEvent) => {
+  const target = e.target as HTMLInputElement;
+  const cursorPos = target.selectionStart || 0;
+
+  // Cegah penghapusan huruf "Rp "
+  if (cursorPos <= 3 && (e.key === "Backspace" || e.key === "Delete")) {
+    e.preventDefault();
+  }
+
+  // Hanya izinkan angka, navigasi, dan beberapa tombol khusus
+  const allowedKeys = [
+    "Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End",
+  ];
+  if (!allowedKeys.includes(e.key) && !/^\d$/.test(e.key)) {
+    e.preventDefault(); // cegah input huruf atau simbol
+  }
+};
+
+// Handle input harga (otomatis format Rp)
 const onHargaInput = (e: Event) => {
   const target = e.target as HTMLInputElement;
+
+  // Ambil angka saja dari input
   const raw = target.value.replace(/\D/g, "");
   const numValue = raw ? Number(raw) : 0;
 
+  // Update tampilan dan form field
   hargaDisplay.value = formatRupiah(numValue);
   setFieldValue("harga_tiket", numValue);
+
+  // Pastikan kursor tetap di akhir input
+  nextTick(() => {
+    target.selectionStart = target.selectionEnd = target.value.length;
+  });
 };
+
+// Handle input harga
+// const onHargaInput = (e: Event) => {
+//   const target = e.target as HTMLInputElement;
+//   const raw = target.value.replace(/\D/g, "");
+//   const numValue = raw ? Number(raw) : 0;
+
+//   hargaDisplay.value = formatRupiah(numValue);
+//   setFieldValue("harga_tiket", numValue);
+// };
 
 // Load edit data
 // const getEdit = async () => {
@@ -95,6 +133,13 @@ const onHargaInput = (e: Event) => {
 //     unblock(document.getElementById("form-tiket"));
 //   }
 // };
+
+// Batasi input Jenis Tiket agar hanya huruf dan spasi
+const onJenisTiketInput = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  target.value = target.value.replace(/[^A-Za-zÀ-ÿ\s]/g, ""); // hapus selain huruf & spasi
+  setFieldValue("jenis_tiket", target.value); // update ke form VeeValidate
+};
 
 const getEdit = async () => {
   if (!props.selected) return;
@@ -230,14 +275,24 @@ const submit = handleSubmit(
       <!-- Harga -->
       <div class="col-md-6 mb-7">
         <label class="form-label fw-bold fs-6 required ps-2">Harga Tiket</label>
-        <input
+        <!-- <input
           :value="hargaDisplay"
           @input="onHargaInput"
           type="text"
           class="form-control form-control-lg form-control-solid"
           placeholder="Masukkan harga"
           autocomplete="off"
-        />
+        /> -->
+        <!-- Input Harga -->
+<input
+  :value="hargaDisplay"
+  @input="onHargaInput"
+  @keydown="preventRpDeletion"
+  type="text"
+  class="form-control form-control-lg form-control-solid"
+  placeholder="Masukkan harga"
+  autocomplete="off"
+/>
         <span v-if="showErrors && errors.harga_tiket" class="text-danger ps-2 text-sm">
           {{ errors.harga_tiket }}
         </span>
@@ -246,13 +301,14 @@ const submit = handleSubmit(
       <!-- Jenis Tiket -->
       <div class="col-md-6 mb-7">
         <label class="form-label fw-bold fs-6 required ps-2">Jenis Tiket</label>
-        <Field
-          name="jenis_tiket"
-          v-model="values.jenis_tiket"
-          type="text"
-          class="form-control form-control-lg form-control-solid"
-          placeholder="Masukkan jenis tiket"
-        />
+       <input
+  v-model="values.jenis_tiket"
+  @input="onJenisTiketInput"
+  type="text"
+  class="form-control form-control-lg form-control-solid"
+  placeholder="Masukkan jenis tiket"
+  autocomplete="off"
+/>
         <span v-if="showErrors && errors.jenis_tiket" class="text-danger ps-2 text-sm">
           {{ errors.jenis_tiket }}
         </span>

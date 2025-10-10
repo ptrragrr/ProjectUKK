@@ -170,18 +170,43 @@ const getVisiblePages = () => {
   
   return pages;
 };
+
+const handleRefresh = (newTicket?: Ticket) => {
+  if (newTicket) {
+    const currentData = paginateRef.value?.data || [];
+
+    // Tambahkan tiket baru di bawah (bukan di atas)
+    const updatedData = [...currentData, newTicket];
+
+    if (paginateRef.value) {
+      paginateRef.value.setData(updatedData);
+    }
+
+    return;
+  }
+
+  refresh();
+};
+
 </script>
 
 <template>
   <!-- Form Section dengan Animasi -->
   <transition name="slide-fade">
-    <Form
+    <!-- <Form
       :selected="selected"
       @close="openForm = false"
       v-if="openForm"
       @refresh="refresh"
       class="mb-6"
-    />
+    /> -->
+    <Form
+  :selected="selected"
+  @close="openForm = false"
+  v-if="openForm"
+  @refresh="handleRefresh"
+  class="mb-6"
+/>
   </transition>
 
   <!-- Main Card dengan Design Modern -->

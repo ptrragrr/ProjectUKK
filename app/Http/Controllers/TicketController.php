@@ -24,7 +24,7 @@ class TicketController extends Controller
         }
 
         // Sorting (opsional)
-        $query->orderBy('tanggal', 'desc');
+        $query->orderBy('created_at', 'asc');
 
         // Pagination
         $perPage = $request->per ?? 10;

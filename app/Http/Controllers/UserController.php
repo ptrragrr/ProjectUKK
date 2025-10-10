@@ -42,7 +42,7 @@ class UserController extends Controller
                 ->orWhere('email', 'like', "%$search%")
                 ->orWhere('phone', 'like', "%$search%");
         })
-            ->latest()
+            ->oldest()
             ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
 
         return response()->json($data);
