@@ -92,9 +92,14 @@ onMounted(async () => {
     }
 });
 
+// const profileDetailsValidator = Yup.object().shape({
+//     name: Yup.string().required().label("Nama"),
+//     role: Yup.string().required().label("Role"),
+//     phone: Yup.string().required().label("Nomor Telepon"),
+// });
+
 const profileDetailsValidator = Yup.object().shape({
     name: Yup.string().required().label("Nama"),
-    role: Yup.string().required().label("Role"),
     phone: Yup.string().required().label("Nomor Telepon"),
 });
 
@@ -154,18 +159,20 @@ const saveChanges = async (values: any) => {
             console.log("Profile details:", profileDetails.value);
 
             const formData = new FormData();
-            
+
             // Pastikan name ada dan tidak kosong
             if (!values.name || values.name.trim() === "") {
                 throw new Error("Nama tidak boleh kosong");
             }
-            
+
             formData.append("name", values.name.trim());
             formData.append("phone", values.phone || "");
-            
+
             // Kirim role_id berdasarkan role yang dipilih
             if (values.role && values.role !== "") {
-                const selectedRole = roles.value.find(r => r.name === values.role);
+                const selectedRole = roles.value.find(
+                    (r) => r.name === values.role
+                );
                 if (selectedRole) {
                     formData.append("role_id", selectedRole.id.toString());
                     console.log("Sending role_id:", selectedRole.id);
@@ -188,11 +195,11 @@ const saveChanges = async (values: any) => {
 
             // Gunakan POST dengan _method untuk FormData
             formData.append("_method", "PUT");
-            
+
             const response = await axios.post("/me", formData, {
-                headers: { 
+                headers: {
                     "Content-Type": "multipart/form-data",
-                    "Accept": "application/json"
+                    Accept: "application/json",
                 },
             });
 
@@ -208,11 +215,10 @@ const saveChanges = async (values: any) => {
             });
 
             await loadProfile();
-
         } catch (error) {
             console.error("Save error:", error);
             console.error("Error response:", error.response);
-            
+
             let errorMessage = "Terjadi kesalahan saat menyimpan";
 
             if (error.message) {
@@ -273,16 +279,7 @@ const handleImageUpload = (event: Event) => {
     }
 };
 
-// Handle role selection change
-const onRoleChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement;
-    const selectedRole = roles.value.find((role) => role.name === target.value);
-
-    if (selectedRole) {
-        profileDetails.value.role = selectedRole.name;
-        profileDetails.value.role_id = selectedRole.id;
-    }
-};
+// Handle role selection chang
 </script>
 
 <template>
@@ -401,7 +398,7 @@ const onRoleChange = (event: Event) => {
                             Role
                         </label>
                         <div class="col-lg-8 fv-row">
-                            <Field
+                            <!-- <Field
                                 as="select"
                                 name="role"
                                 class="form-select form-select-solid form-select-lg"
@@ -416,7 +413,15 @@ const onRoleChange = (event: Event) => {
                                 >
                                     {{ role.name }}
                                 </option>
-                            </Field>
+                            </Field> -->
+                            <Field
+                                type="text"
+                                name="role"
+                                class="form-control form-control-lg form-control-solid"
+                                placeholder="Role"
+                                v-model="profileDetails.role"
+                                disabled
+                            />
                             <div class="fv-plugins-message-container">
                                 <div class="fv-help-block">
                                     <ErrorMessage name="role" />

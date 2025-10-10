@@ -17,84 +17,100 @@ const showErrors = ref(false);
 
 // Yup Schema
 const formSchema = Yup.object({
-  nama_event: Yup.string().required("Nama event wajib diisi"),
-  tanggal: Yup.date().required("Tanggal wajib diisi"),
-  harga_tiket: Yup.number()
-    .transform((value, originalValue) => {
-      if (typeof originalValue === "number") return value;
-      if (typeof originalValue === "string") {
-        const digits = originalValue.replace(/\D/g, "");
-        return digits ? Number(digits) : undefined;
-      }
-      return undefined;
-    })
-    .required("Harga tiket wajib diisi")
-    .min(1, "Harga tiket harus lebih dari 0"),
-  jenis_tiket: Yup.string().required("Jenis tiket wajib diisi").matches(/^[A-Za-zÀ-ÿ\s]+$/, "Hanya boleh huruf dan spasi"),
-  harga_tiket: Yup.number().required("Harga wajib diisi"),
-  deskripsi: Yup.string().required("Deskripsi wajib diisi"),
-  stok_tiket: Yup.number()
-    .typeError("Stok tiket harus berupa angka")
-    .required("Stok tiket wajib diisi")
+    nama_event: Yup.string().required("Nama event wajib diisi"),
+    tanggal: Yup.date().required("Tanggal wajib diisi"),
+    harga_tiket: Yup.number()
+        .transform((value, originalValue) => {
+            if (typeof originalValue === "number") return value;
+            if (typeof originalValue === "string") {
+                const digits = originalValue.replace(/\D/g, "");
+                return digits ? Number(digits) : undefined;
+            }
+            return undefined;
+        })
+        .required("Harga tiket wajib diisi")
+        .min(1, "Harga tiket harus lebih dari 0"),
+    jenis_tiket: Yup.string()
+        .required("Jenis tiket wajib diisi")
+        .matches(/^[A-Za-zÀ-ÿ\s]+$/, "Hanya boleh huruf dan spasi"),
+    harga_tiket: Yup.number().required("Harga wajib diisi"),
+    deskripsi: Yup.string().required("Deskripsi wajib diisi"),
+    stok_tiket: Yup.number()
+        .typeError("Stok tiket harus berupa angka")
+        .required("Stok tiket wajib diisi"),
 });
 
 // VeeValidate
-const { values, setValues, setErrors, handleSubmit, resetForm, setFieldValue, errors } = useForm({
-  validationSchema: formSchema,
-  initialValues: {
-    nama_event: "",
-    tanggal: "",
-    harga_tiket: undefined,
-    jenis_tiket: "",
-    deskripsi: "",
-    stok_tiket: undefined,
-  },
+const {
+    values,
+    setValues,
+    setErrors,
+    handleSubmit,
+    resetForm,
+    setFieldValue,
+    errors,
+} = useForm({
+    validationSchema: formSchema,
+    initialValues: {
+        nama_event: "",
+        tanggal: "",
+        harga_tiket: undefined,
+        jenis_tiket: "",
+        deskripsi: "",
+        stok_tiket: undefined,
+    },
 });
 
 // Format Rupiah
 function formatRupiah(value: number): string {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    minimumFractionDigits: 0,
-  }).format(value || 0);
+    return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0,
+    }).format(value || 0);
 }
 
 // Cegah penghapusan "Rp "
 const preventRpDeletion = (e: KeyboardEvent) => {
-  const target = e.target as HTMLInputElement;
-  const cursorPos = target.selectionStart || 0;
+    const target = e.target as HTMLInputElement;
+    const cursorPos = target.selectionStart || 0;
 
-  // Cegah penghapusan huruf "Rp "
-  if (cursorPos <= 3 && (e.key === "Backspace" || e.key === "Delete")) {
-    e.preventDefault();
-  }
+    // Cegah penghapusan huruf "Rp "
+    if (cursorPos <= 3 && (e.key === "Backspace" || e.key === "Delete")) {
+        e.preventDefault();
+    }
 
-  // Hanya izinkan angka, navigasi, dan beberapa tombol khusus
-  const allowedKeys = [
-    "Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End",
-  ];
-  if (!allowedKeys.includes(e.key) && !/^\d$/.test(e.key)) {
-    e.preventDefault(); // cegah input huruf atau simbol
-  }
+    // Hanya izinkan angka, navigasi, dan beberapa tombol khusus
+    const allowedKeys = [
+        "Backspace",
+        "Delete",
+        "ArrowLeft",
+        "ArrowRight",
+        "Tab",
+        "Home",
+        "End",
+    ];
+    if (!allowedKeys.includes(e.key) && !/^\d$/.test(e.key)) {
+        e.preventDefault(); // cegah input huruf atau simbol
+    }
 };
 
 // Handle input harga (otomatis format Rp)
 const onHargaInput = (e: Event) => {
-  const target = e.target as HTMLInputElement;
+    const target = e.target as HTMLInputElement;
 
-  // Ambil angka saja dari input
-  const raw = target.value.replace(/\D/g, "");
-  const numValue = raw ? Number(raw) : 0;
+    // Ambil angka saja dari input
+    const raw = target.value.replace(/\D/g, "");
+    const numValue = raw ? Number(raw) : 0;
 
-  // Update tampilan dan form field
-  hargaDisplay.value = formatRupiah(numValue);
-  setFieldValue("harga_tiket", numValue);
+    // Update tampilan dan form field
+    hargaDisplay.value = formatRupiah(numValue);
+    setFieldValue("harga_tiket", numValue);
 
-  // Pastikan kursor tetap di akhir input
-  nextTick(() => {
-    target.selectionStart = target.selectionEnd = target.value.length;
-  });
+    // Pastikan kursor tetap di akhir input
+    nextTick(() => {
+        target.selectionStart = target.selectionEnd = target.value.length;
+    });
 };
 
 // Handle input harga
@@ -135,146 +151,160 @@ const onHargaInput = (e: Event) => {
 
 // Batasi input Jenis Tiket agar hanya huruf dan spasi
 const onJenisTiketInput = (e: Event) => {
-  const target = e.target as HTMLInputElement;
-  target.value = target.value.replace(/[^A-Za-zÀ-ÿ\s]/g, ""); // hapus selain huruf & spasi
-  setFieldValue("jenis_tiket", target.value); // update ke form VeeValidate
+    const target = e.target as HTMLInputElement;
+    target.value = target.value.replace(/[^A-Za-zÀ-ÿ\s]/g, ""); // hapus selain huruf & spasi
+    setFieldValue("jenis_tiket", target.value); // update ke form VeeValidate
 };
 
 const getEdit = async () => {
-  if (!props.selected) return;
-  block(document.getElementById("form-tiket"));
-  try {
-    const { data } = await axios.get(`/tickets/${props.selected}`);
+    if (!props.selected) return;
+    block(document.getElementById("form-tiket"));
+    try {
+        const { data } = await axios.get(`/tickets/${props.selected}`);
 
-    // Data langsung dari backend, bukan data.tiket
-    const t = data; 
-    const harga = Number(t.harga_tiket) || 0;
+        // Data langsung dari backend, bukan data.tiket
+        const t = data;
+        const harga = Number(t.harga_tiket) || 0;
 
-    setValues({
-      nama_event: t.nama_event || "",
-      tanggal: t.tanggal || "",
-      harga_tiket: t.harga_tiket,
-      jenis_tiket: t.jenis_tiket || "",
-      deskripsi: t.deskripsi || "",
-      stok_tiket: t.stok_tiket,
-    });
+        setValues({
+            nama_event: t.nama_event || "",
+            tanggal: t.tanggal || "",
+            harga_tiket: t.harga_tiket,
+            jenis_tiket: t.jenis_tiket || "",
+            deskripsi: t.deskripsi || "",
+            stok_tiket: t.stok_tiket,
+        });
 
-    hargaDisplay.value = formatRupiah(harga);
-  } catch (err: any) {
-    toast.error(err.response?.data?.message || "Gagal mengambil data");
-  } finally {
-    unblock(document.getElementById("form-tiket"));
-  }
+        hargaDisplay.value = formatRupiah(harga);
+    } catch (err: any) {
+        toast.error(err.response?.data?.message || "Gagal mengambil data");
+    } finally {
+        unblock(document.getElementById("form-tiket"));
+    }
 };
 
 // Watch selected
 watch(
-  () => props.selected,
-  async (newVal) => {
-    showErrors.value = false;
-    if (newVal) {
-      await getEdit();
-    } else {
-      resetForm();
-      hargaDisplay.value = "Rp 0";
-    }
-  },
-  { immediate: true }
+    () => props.selected,
+    async (newVal) => {
+        showErrors.value = false;
+        if (newVal) {
+            await getEdit();
+        } else {
+            resetForm();
+            hargaDisplay.value = "Rp 0";
+        }
+    },
+    { immediate: true }
 );
 
 // Submit
 const submit = handleSubmit(
-  async (values) => {
-    const payload = {
-      nama_event: values.nama_event.trim(),
-      tanggal: values.tanggal,
-      harga_tiket: Number(values.harga_tiket),
-      jenis_tiket: values.jenis_tiket.trim(),
-      deskripsi: values.deskripsi.trim(),
-      stok_tiket: Number(values.stok_tiket),
-    };
+    async (values) => {
+        const payload = {
+            nama_event: values.nama_event.trim(),
+            tanggal: values.tanggal,
+            harga_tiket: Number(values.harga_tiket),
+            jenis_tiket: values.jenis_tiket.trim(),
+            deskripsi: values.deskripsi.trim(),
+            stok_tiket: Number(values.stok_tiket),
+        };
 
-    block(document.getElementById("form-tiket"));
-    try {
-      if (props.selected) {
-        await axios.put(`/tickets/${props.selected}`, payload);
-      } else {
-        await axios.post("/tickets", payload);
-      }
+        block(document.getElementById("form-tiket"));
+        try {
+            if (props.selected) {
+                await axios.put(`/tickets/${props.selected}`, payload);
+            } else {
+                await axios.post("/tickets", payload);
+            }
 
-      toast.success("Tiket berhasil disimpan");
-      emit("refresh");
-      emit("close");
-      resetForm();
-      hargaDisplay.value = "Rp 0";
-      showErrors.value = false;
-    } catch (err: any) {
-      if (err.response?.data?.errors) {
-        setErrors(err.response.data.errors);
-        const firstError = Object.values(err.response.data.errors)[0];
-        if (Array.isArray(firstError) && firstError.length > 0) {
-          toast.error(firstError[0]);
+            toast.success("Tiket berhasil disimpan");
+            emit("refresh");
+            emit("close");
+            resetForm();
+            hargaDisplay.value = "Rp 0";
+            showErrors.value = false;
+        } catch (err: any) {
+            if (err.response?.data?.errors) {
+                setErrors(err.response.data.errors);
+                const firstError = Object.values(err.response.data.errors)[0];
+                if (Array.isArray(firstError) && firstError.length > 0) {
+                    toast.error(firstError[0]);
+                }
+            } else {
+                toast.error(
+                    err.response?.data?.message || "Gagal menyimpan tiket"
+                );
+            }
+        } finally {
+            unblock(document.getElementById("form-tiket"));
         }
-      } else {
-        toast.error(err.response?.data?.message || "Gagal menyimpan tiket");
-      }
-    } finally {
-      unblock(document.getElementById("form-tiket"));
+    },
+    () => {
+        showErrors.value = true;
     }
-  },
-  () => {
-    showErrors.value = true;
-  }
 );
 </script>
 
 <template>
-  <form @submit.prevent="submit" id="form-tiket" class="form card mb-10">
-    <div class="card-header d-flex align-items-center">
-      <h2 class="mb-0">{{ selected ? "Edit" : "Tambah" }} Tiket</h2>
-      <button 
-        type="button" 
-        class="btn btn-sm btn-light-danger ms-auto" 
-        @click="emit('close')"
-      >
-        Batal <i class="la la-times-circle p-0"></i>
-      </button>
-    </div>
+    <form @submit.prevent="submit" id="form-tiket" class="form card mb-10">
+        <div class="card-header d-flex align-items-center">
+            <h2 class="mb-0">{{ selected ? "Edit" : "Tambah" }} Tiket</h2>
+            <button
+                type="button"
+                class="btn btn-sm btn-light-danger ms-auto"
+                @click="emit('close')"
+            >
+                Batal <i class="la la-times-circle p-0"></i>
+            </button>
+        </div>
 
-    <div class="row px-4 pt-4">
-      <!-- Nama Event -->
-      <div class="col-md-6 mb-7">
-        <label class="form-label fw-bold fs-6 required ps-2">Nama Event</label>
-        <Field
-          name="nama_event"
-          v-model="values.nama_event"
-          type="text"
-          class="form-control form-control-lg form-control-solid"
-          placeholder="Masukkan nama event"
-        />
-        <span v-if="showErrors && errors.nama_event" class="text-danger ps-2 text-sm">
-          {{ errors.nama_event }}
-        </span>
-      </div>
+        <div class="row px-4 pt-4">
+            <!-- Nama Event -->
+            <div class="col-md-6 mb-7">
+                <label class="form-label fw-bold fs-6 required ps-2"
+                    >Nama Event</label
+                >
+                <Field
+                    name="nama_event"
+                    v-model="values.nama_event"
+                    type="text"
+                    class="form-control form-control-lg form-control-solid"
+                    placeholder="Masukkan nama event"
+                />
+                <span
+                    v-if="showErrors && errors.nama_event"
+                    class="text-danger ps-2 text-sm"
+                >
+                    {{ errors.nama_event }}
+                </span>
+            </div>
 
-      <!-- Tanggal -->
-      <div class="col-md-6 mb-7">
-        <label class="form-label fw-bold fs-6 required ps-2">Tanggal</label>
-        <Field
-          name="tanggal"
-          v-model="values.tanggal"
-          type="date"
-          class="form-control form-control-lg form-control-solid"
-        />
-        <span v-if="showErrors && errors.tanggal" class="text-danger ps-2 text-sm">
-          {{ errors.tanggal }}
-        </span>
-      </div>
+            <!-- Tanggal -->
+            <div class="col-md-6 mb-7">
+                <label class="form-label fw-bold fs-6 required ps-2"
+                    >Tanggal</label
+                >
+                <Field
+                    name="tanggal"
+                    v-model="values.tanggal"
+                    type="date"
+                    class="form-control form-control-lg form-control-solid"
+                />
+                <span
+                    v-if="showErrors && errors.tanggal"
+                    class="text-danger ps-2 text-sm"
+                >
+                    {{ errors.tanggal }}
+                </span>
+            </div>
 
-      <!-- Harga -->
-      <div class="col-md-6 mb-7">
-        <label class="form-label fw-bold fs-6 required ps-2">Harga Tiket</label>
-        <!-- <input
+            <!-- Harga -->
+            <div class="col-md-6 mb-7">
+                <label class="form-label fw-bold fs-6 required ps-2"
+                    >Harga Tiket</label
+                >
+                <!-- <input
           :value="hargaDisplay"
           @input="onHargaInput"
           type="text"
@@ -282,74 +312,92 @@ const submit = handleSubmit(
           placeholder="Masukkan harga"
           autocomplete="off"
         /> -->
-        <!-- Input Harga -->
-<input
-  :value="hargaDisplay"
-  @input="onHargaInput"
-  @keydown="preventRpDeletion"
-  type="text"
-  class="form-control form-control-lg form-control-solid"
-  placeholder="Masukkan harga"
-  autocomplete="off"
-/>
-        <span v-if="showErrors && errors.harga_tiket" class="text-danger ps-2 text-sm">
-          {{ errors.harga_tiket }}
-        </span>
-      </div>
+                <!-- Input Harga -->
+                <input
+                    :value="hargaDisplay"
+                    @input="onHargaInput"
+                    @keydown="preventRpDeletion"
+                    type="text"
+                    class="form-control form-control-lg form-control-solid"
+                    placeholder="Masukkan harga"
+                    autocomplete="off"
+                />
+                <span
+                    v-if="showErrors && errors.harga_tiket"
+                    class="text-danger ps-2 text-sm"
+                >
+                    {{ errors.harga_tiket }}
+                </span>
+            </div>
 
-      <!-- Jenis Tiket -->
-      <div class="col-md-6 mb-7">
-        <label class="form-label fw-bold fs-6 required ps-2">Jenis Tiket</label>
-       <input
-  v-model="values.jenis_tiket"
-  @input="onJenisTiketInput"
-  type="text"
-  class="form-control form-control-lg form-control-solid"
-  placeholder="Masukkan jenis tiket"
-  autocomplete="off"
-/>
-        <span v-if="showErrors && errors.jenis_tiket" class="text-danger ps-2 text-sm">
-          {{ errors.jenis_tiket }}
-        </span>
-      </div>
+            <!-- Jenis Tiket -->
+            <div class="col-md-6 mb-7">
+                <label class="form-label fw-bold fs-6 required ps-2"
+                    >Jenis Tiket</label
+                >
+                <input
+                    v-model="values.jenis_tiket"
+                    @input="onJenisTiketInput"
+                    type="text"
+                    class="form-control form-control-lg form-control-solid"
+                    placeholder="Masukkan jenis tiket"
+                    autocomplete="off"
+                />
+                <span
+                    v-if="showErrors && errors.jenis_tiket"
+                    class="text-danger ps-2 text-sm"
+                >
+                    {{ errors.jenis_tiket }}
+                </span>
+            </div>
 
-      <!-- Stok Tiket -->
-      <div class="col-md-6 mb-7">
-        <label class="form-label fw-bold fs-6 required ps-2">Stok Tiket</label>
-        <Field
-          name="stok_tiket"
-          v-model="values.stok_tiket"
-          type="number"
-          class="form-control form-control-lg form-control-solid"
-          placeholder="Masukkan jumlah stok tiket"
-        />
-        <span v-if="showErrors && errors.stok_tiket" class="text-danger ps-2 text-sm">
-          {{ errors.stok_tiket }}
-        </span>
-      </div>
+            <!-- Stok Tiket -->
+            <div class="col-md-6 mb-7">
+                <label class="form-label fw-bold fs-6 required ps-2"
+                    >Stok Tiket</label
+                >
+                <Field
+                    name="stok_tiket"
+                    v-model="values.stok_tiket"
+                    type="number"
+                    class="form-control form-control-lg form-control-solid"
+                    placeholder="Masukkan jumlah stok tiket"
+                />
+                <span
+                    v-if="showErrors && errors.stok_tiket"
+                    class="text-danger ps-2 text-sm"
+                >
+                    {{ errors.stok_tiket }}
+                </span>
+            </div>
 
-      <!-- Deskripsi -->
-      <div class="col-12 mb-7">
-        <label class="form-label fw-bold fs-6 required ps-2">Lineup Artis</label>
-        <Field
-          name="deskripsi"
-          v-model="values.deskripsi"
-          as="textarea"
-          rows="3"
-          class="form-control form-control-lg form-control-solid"
-          placeholder="Masukkan deskripsi atau lineup artis"
-        />
-        <span v-if="showErrors && errors.deskripsi" class="text-danger ps-2 text-sm">
-          {{ errors.deskripsi }}
-        </span>
-      </div>
-    </div>
+            <!-- Deskripsi -->
+            <div class="col-12 mb-7">
+                <label class="form-label fw-bold fs-6 required ps-2"
+                    >Lineup Artis</label
+                >
+                <Field
+                    name="deskripsi"
+                    v-model="values.deskripsi"
+                    as="textarea"
+                    rows="3"
+                    class="form-control form-control-lg form-control-solid"
+                    placeholder="Masukkan deskripsi atau lineup artis"
+                />
+                <span
+                    v-if="showErrors && errors.deskripsi"
+                    class="text-danger ps-2 text-sm"
+                >
+                    {{ errors.deskripsi }}
+                </span>
+            </div>
+        </div>
 
-    <div class="card-footer d-flex">
-      <button type="submit" class="btn btn-sm btn-primary ms-auto">
-        Simpan
-      </button>
-    </div>
-  </form>
+        <div class="card-footer d-flex">
+            <button type="submit" class="btn btn-sm btn-primary ms-auto">
+                Simpan
+            </button>
+        </div>
+    </form>
 </template>
 ```
