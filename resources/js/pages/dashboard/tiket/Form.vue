@@ -36,7 +36,6 @@ const formSchema = Yup.object({
   stok_tiket: Yup.number()
     .typeError("Stok tiket harus berupa angka")
     .required("Stok tiket wajib diisi")
-    .min(1, "Stok tiket minimal 1"),
 });
 
 // VeeValidate
@@ -321,7 +320,6 @@ const submit = handleSubmit(
           name="stok_tiket"
           v-model="values.stok_tiket"
           type="number"
-          min="1"
           class="form-control form-control-lg form-control-solid"
           placeholder="Masukkan jumlah stok tiket"
         />
