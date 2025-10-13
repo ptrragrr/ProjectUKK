@@ -98,10 +98,10 @@ onMounted(async () => {
 //     phone: Yup.string().required().label("Nomor Telepon"),
 // });
 
-const profileDetailsValidator = Yup.object().shape({
-    name: Yup.string().required().label("Nama"),
-    phone: Yup.string().required().label("Nomor Telepon"),
-});
+// const profileDetailsValidator = Yup.object().shape({
+//     name: Yup.string().required().label("Nama"),
+//     phone: Yup.string().required().label("Nomor Telepon"),
+// });
 
 // const saveChanges = async (values: any) => {
 //     if (submitButton.value) {
@@ -309,86 +309,49 @@ const handleImageUpload = (event: Event) => {
             >
                 <form @submit.prevent="handleSubmit(saveChanges)">
                     <!-- semua input -->
-                    <!-- Photo Upload Section -->
-                    <div class="row mb-8">
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">
-                            Foto Profile
-                        </label>
-                        <div class="col-lg-8">
-                            <!-- Image Input -->
-                            <div
-                                class="image-input image-input-outline"
-                                data-kt-image-input="true"
-                                :style="{
-                                    backgroundImage: `url(${getAssetPath(
-                                        '/media/avatars/blank.png'
-                                    )})`,
-                                }"
-                            >
-                                <!-- Image Preview -->
-                                <div
-                                    class="image-input-wrapper w-125px h-125px"
-                                    :style="`background-image: url(${profileDetails.photo})`"
-                                ></div>
+                  <!-- Foto Profile (read-only) -->
+<div class="row mb-8">
+  <label class="col-lg-4 col-form-label fw-semibold fs-6">
+    Foto Profile
+  </label>
+  <div class="col-lg-8">
+    <div
+      class="image-input image-input-outline"
+      data-kt-image-input="true"
+      :style="{
+        backgroundImage: `url(${getAssetPath('/media/avatars/blank.png')})`,
+      }"
+    >
+      <!-- Image Preview -->
+      <div
+        class="image-input-wrapper w-125px h-125px"
+        :style="`background-image: url(${profileDetails.photo})`"
+      ></div>
+    </div>
 
-                                <!-- Change Photo Button -->
-                                <label
-                                    class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                    data-kt-image-input-action="change"
-                                    data-bs-toggle="tooltip"
-                                    title="Ganti Foto"
-                                >
-                                    <i class="bi bi-pencil-fill fs-7"></i>
-                                    <input
-                                        type="file"
-                                        name="avatar"
-                                        accept=".png, .jpg, .jpeg"
-                                        @change="handleImageUpload"
-                                    />
-                                    <input type="hidden" name="avatar_remove" />
-                                </label>
+    <div class="form-text">
+      (Foto profil tidak dapat diubah)
+    </div>
+  </div>
+</div>
 
-                                <!-- Remove Photo Button -->
-                                <span
-                                    class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                    data-kt-image-input-action="remove"
-                                    data-bs-toggle="tooltip"
-                                    @click="removeImage()"
-                                    title="Hapus Foto"
-                                >
-                                    <i class="bi bi-x fs-2"></i>
-                                </span>
-                            </div>
-
-                            <!-- File Type Hint -->
-                            <div class="form-text">
-                                Tipe file yang diizinkan: png, jpg, jpeg.
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- Name Input -->
-                    <div class="row mb-6">
-                        <label
-                            class="col-lg-4 col-form-label required fw-semibold fs-6"
-                        >
-                            Nama Lengkap
-                        </label>
-                        <div class="col-lg-8 fv-row">
-                            <Field
-                                type="text"
-                                name="name"
-                                class="form-control form-control-lg form-control-solid"
-                                placeholder="Masukkan nama lengkap"
-                                v-model="profileDetails.name"
-                            />
-                            <div class="fv-plugins-message-container">
-                                <div class="fv-help-block">
-                                    <ErrorMessage name="name" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<div class="row mb-6">
+  <label class="col-lg-4 col-form-label fw-semibold fs-6">
+    Nama Lengkap
+  </label>
+  <div class="col-lg-8 fv-row">
+    <Field
+      type="text"
+      name="name"
+      class="form-control form-control-lg form-control-solid"
+      v-model="profileDetails.name"
+      disabled
+    />
+  </div>
+</div>
+
 
                     <!-- Role Selection - DINAMIS -->
                     <div class="row mb-6">
@@ -431,33 +394,20 @@ const handleImageUpload = (event: Event) => {
                     </div>
 
                     <!-- Phone Input -->
-                    <div class="row mb-6">
-                        <label
-                            class="col-lg-4 col-form-label required fw-semibold fs-6"
-                        >
-                            Nomor Telepon
-                            <i
-                                class="fas fa-exclamation-circle ms-1 fs-7"
-                                data-bs-toggle="tooltip"
-                                title="Nomor telepon harus aktif"
-                            ></i>
-                        </label>
-                        <div class="col-lg-8 fv-row">
-                            <Field
-                                type="tel"
-                                name="phone"
-                                class="form-control form-control-lg form-control-solid"
-                                placeholder="Contoh: 081234567890"
-                                v-model="profileDetails.phone"
-                            />
-                            <div class="fv-plugins-message-container">
-                                <div class="fv-help-block">
-                                    <ErrorMessage name="phone" />
-                                </div>
-                            </div>
-                            <div class="form-text">Format: 08xxxxxxxxxx</div>
-                        </div>
-                    </div>
+<div class="row mb-6">
+  <label class="col-lg-4 col-form-label fw-semibold fs-6">
+    Nomor Telepon
+  </label>
+  <div class="col-lg-8 fv-row">
+    <Field
+      type="tel"
+      name="phone"
+      class="form-control form-control-lg form-control-solid"
+      v-model="profileDetails.phone"
+      disabled
+    />
+  </div>
+</div>
 
                     <!-- Action Buttons -->
                     <div
@@ -468,10 +418,10 @@ const handleImageUpload = (event: Event) => {
                             class="btn btn-light btn-active-light-primary me-3"
                             @click="router.go(-1)"
                         >
-                            Batal
+                            Kembali
                         </button>
 
-                        <button
+                        <!-- <button
                             type="submit"
                             ref="submitButton"
                             class="btn btn-primary"
@@ -485,7 +435,7 @@ const handleImageUpload = (event: Event) => {
                                     class="spinner-border spinner-border-sm align-middle ms-2"
                                 ></span>
                             </span>
-                        </button>
+                        </button> -->
                     </div>
                 </form>
             </VForm>
