@@ -33,7 +33,7 @@
                     <!--end::Input group-->
 
                     <!--begin::Input group-->
-                    <div class="fv-row mb-8">
+                    <!-- <div class="fv-row mb-8">
                         <label class="form-label fw-bold fs-6 required">Pemerintahan</label>
                         <Field class="form-control form-control-lg form-control-solid" type="text" name="pemerintah"
                             autocomplete="off" v-model="formData.pemerintah" />
@@ -42,7 +42,7 @@
                                 <ErrorMessage name="pemerintah" />
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <!--end::Input group-->
 
                     <!--begin::Input group-->
@@ -153,7 +153,7 @@ export default defineComponent({
             app: Yup.string().required('Nama aplikasi wajib diisi'),
             description: Yup.string().required('Deskripsi wajib diisi'),
             email: Yup.string().required('Email wajib diisi'),
-            pemerintah: Yup.string().required('Nama pemerintah wajib diisi'),
+            // pemerintah: Yup.string().required('Nama pemerintah wajib diisi'),
             telepon: Yup.string().required('Telepon wajib diisi'),
         })
 

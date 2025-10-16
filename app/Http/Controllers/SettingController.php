@@ -20,7 +20,7 @@ class SettingController extends Controller
             $request->validate([
                 'app' => 'required',
                 'description' => 'required',
-                'pemerintah' => 'required',
+                // 'pemerintah' => 'required',
                 'alamat' => 'required',
                 'dinas' => 'nullable',
                 'telepon' => 'required',
