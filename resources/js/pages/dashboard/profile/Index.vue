@@ -92,64 +92,6 @@ onMounted(async () => {
     }
 });
 
-// const profileDetailsValidator = Yup.object().shape({
-//     name: Yup.string().required().label("Nama"),
-//     role: Yup.string().required().label("Role"),
-//     phone: Yup.string().required().label("Nomor Telepon"),
-// });
-
-// const profileDetailsValidator = Yup.object().shape({
-//     name: Yup.string().required().label("Nama"),
-//     phone: Yup.string().required().label("Nomor Telepon"),
-// });
-
-// const saveChanges = async (values: any) => {
-//     if (submitButton.value) {
-//         submitButton.value.setAttribute("data-kt-indicator", "on");
-
-//         try {
-//             const formData = new FormData();
-//             formData.append("name", values.name);
-//             formData.append("phone", values.phone || "");
-
-//             // Foto
-//             const photoInput = document.querySelector(
-//                 'input[name="avatar"]'
-//             ) as HTMLInputElement;
-//             if (photoInput?.files?.[0]) {
-//                 formData.append("photo", photoInput.files[0]);
-//             }
-
-//             await axios.put("/me", formData, {
-//                 headers: { "Content-Type": "multipart/form-data" },
-//             });
-
-//             Swal.fire({
-//                 text: "Profile berhasil diperbarui!",
-//                 icon: "success",
-//                 confirmButtonText: "Ok",
-//                 buttonsStyling: false,
-//                 heightAuto: false,
-//                 customClass: { confirmButton: "btn btn-light-primary" },
-//             });
-
-//             await loadProfile();
-//         } catch (error) {
-//             console.error("Save error:", error);
-//             let errorMessage = "Terjadi kesalahan saat menyimpan";
-
-//             if (error.response?.data?.errors) {
-//                 const errors = Object.values(error.response.data.errors).flat();
-//                 errorMessage = errors.join(", ");
-//             }
-
-//             Swal.fire("Gagal", errorMessage, "error");
-//         } finally {
-//             submitButton.value.removeAttribute("data-kt-indicator");
-//         }
-//     }
-// };
-
 const saveChanges = async (values: any) => {
     if (submitButton.value) {
         submitButton.value.setAttribute("data-kt-indicator", "on");
@@ -278,213 +220,197 @@ const handleImageUpload = (event: Event) => {
         reader.readAsDataURL(file);
     }
 };
-
-// Handle role selection chang
 </script>
 
 <template>
-    <!-- Profile Details Card -->
-    <div class="card mb-5 mb-xl-10">
-        <!-- Card Header -->
-        <div class="card-header border-0">
-            <div class="card-title m-0">
-                <h3 class="fw-bold m-0">Detail Profile</h3>
-            </div>
-        </div>
-
-        <!-- Card Content -->
-        <div class="card-body border-top p-9">
-            <!-- Profile Form -->
-            <!-- <VForm
-                class="form"
-                novalidate
-                @submit="saveChanges()"
-                :validation-schema="profileDetailsValidator"
-            > -->
-            <VForm
-                class="form"
-                novalidate
-                v-slot="{ handleSubmit }"
-                :validation-schema="profileDetailsValidator"
-            >
-                <form @submit.prevent="handleSubmit(saveChanges)">
-                    <!-- semua input -->
-                  <!-- Foto Profile (read-only) -->
-<div class="row mb-8">
-  <label class="col-lg-4 col-form-label fw-semibold fs-6">
-    Foto Profile
-  </label>
-  <div class="col-lg-8">
-    <div
-      class="image-input image-input-outline"
-      data-kt-image-input="true"
-      :style="{
-        backgroundImage: `url(${getAssetPath('/media/avatars/blank.png')})`,
-      }"
-    >
-      <!-- Image Preview -->
-      <div
-        class="image-input-wrapper w-125px h-125px"
-        :style="`background-image: url(${profileDetails.photo})`"
-      ></div>
-    </div>
-
-    <div class="form-text">
-      (Foto profil tidak dapat diubah)
-    </div>
-  </div>
-</div>
-
-
-                    <!-- Name Input -->
-<div class="row mb-6">
-  <label class="col-lg-4 col-form-label fw-semibold fs-6">
-    Nama Lengkap
-  </label>
-  <div class="col-lg-8 fv-row">
-    <Field
-      type="text"
-      name="name"
-      class="form-control form-control-lg form-control-solid"
-      v-model="profileDetails.name"
-      disabled
-    />
-  </div>
-</div>
-
-
-                    <!-- Role Selection - DINAMIS -->
-                    <div class="row mb-6">
-                        <label
-                            class="col-lg-4 col-form-label required fw-semibold fs-6"
-                        >
-                            Role
-                        </label>
-                        <div class="col-lg-8 fv-row">
-                            <!-- <Field
-                                as="select"
-                                name="role"
-                                class="form-select form-select-solid form-select-lg"
-                                v-model="profileDetails.role"
-                                @change="onRoleChange"
-                            >
-                                <option value="">Pilih Role</option>
-                                <option
-                                    v-for="role in roles"
-                                    :key="role.id"
-                                    :value="role.name"
-                                >
-                                    {{ role.name }}
-                                </option>
-                            </Field> -->
-                            <Field
-                                type="text"
-                                name="role"
-                                class="form-control form-control-lg form-control-solid"
-                                placeholder="Role"
-                                v-model="profileDetails.role"
-                                disabled
-                            />
-                            <div class="fv-plugins-message-container">
-                                <div class="fv-help-block">
-                                    <ErrorMessage name="role" />
-                                </div>
+    <div class="row g-5 g-xl-8">
+        <!-- Left Column - Profile Card -->
+        <div class="col-xl-4">
+            <!-- Profile Summary Card -->
+            <div class="card shadow-sm">
+                <div class="card-body pt-9 pb-0">
+                    <!-- Profile Image -->
+                    <div class="d-flex flex-center flex-column mb-5">
+                        <div class="symbol symbol-150px symbol-circle mb-7 border border-4 border-white shadow">
+                            <img :src="profileDetails.photo" alt="Profile Photo" />
+                        </div>
+                        
+                        <div class="text-center">
+                            <h3 class="fw-bold text-gray-900 mb-1">
+                                {{ profileDetails.name || "Nama belum diisi" }}
+                            </h3>
+                            <div class="badge badge-light-primary fw-bold mb-3">
+                                {{ profileDetails.role || "Role belum dipilih" }}
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Contact Info -->
+                    <div class="separator mb-6"></div>
+                    
+                    <div class="pb-8">
+                        <div class="d-flex align-items-center bg-light-primary rounded p-4 mb-4">
+                            <span class="svg-icon svg-icon-primary svg-icon-2x me-4">
+                                <i class="bi bi-person-fill text-primary fs-4 me-2"></i>
+                            </span>
+                            <div class="flex-grow-1">
+                                <span class="text-gray-600 fw-semibold d-block fs-7">Nama Lengkap</span>
+                                <span class="text-gray-800 fw-bold fs-6">
+                                    {{ profileDetails.name || "Belum diisi" }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center bg-light-info rounded p-4">
+                            <span class="svg-icon svg-icon-info svg-icon-2x me-4">
+                                <i class="bi bi-shield-check text-primary fs-4 me-2"></i>
+                            </span>
+                            <div class="flex-grow-1">
+                                <span class="text-gray-600 fw-semibold d-block fs-7">Role</span>
+                                <span class="text-gray-800 fw-bold fs-6">
+                                    {{ profileDetails.role || "Belum diisi" }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                    <!-- Phone Input -->
-<div class="row mb-6">
-  <label class="col-lg-4 col-form-label fw-semibold fs-6">
-    Nomor Telepon
-  </label>
-  <div class="col-lg-8 fv-row">
-    <Field
-      type="tel"
-      name="phone"
-      class="form-control form-control-lg form-control-solid"
-      v-model="profileDetails.phone"
-      disabled
-    />
-  </div>
-</div>
+        <!-- Right Column - Profile Details -->
+        <div class="col-xl-8">
+            <div class="card shadow-sm">
+                <!-- Card Header with Icon -->
+                <div class="card-header border-0 pt-6">
+                    <div class="card-title">
+                        <span class="svg-icon svg-icon-primary svg-icon-2x me-3">
+                            <i class="bi bi-person-circle fs-2"></i>
+                        </span>
+                        <h3 class="fw-bold m-0">Informasi Profile</h3>
+                    </div>
+                </div>
 
-                    <!-- Action Buttons -->
-                    <div
-                        class="card-footer d-flex justify-content-end py-6 px-9"
+                <!-- Card Content -->
+                <div class="card-body pt-6">
+                    <VForm
+                        class="form"
+                        novalidate
+                        v-slot="{ handleSubmit }"
+                        :validation-schema="profileDetailsValidator"
                     >
-                        <button
-                            type="reset"
-                            class="btn btn-light btn-active-light-primary me-3"
-                            @click="router.go(-1)"
-                        >
-                            Kembali
-                        </button>
+                        <form @submit.prevent="handleSubmit(saveChanges)">
+                            <!-- Info Alert -->
+                            <div class="alert alert-dismissible bg-light-warning border border-warning d-flex flex-column flex-sm-row p-5 mb-8">
+                                <span class="svg-icon svg-icon-2hx svg-icon-warning me-4 mb-5 mb-sm-0">
+                                    <i class="bi bi-info-circle-fill fs-2"></i>
+                                </span>
+                                <div class="d-flex flex-column pe-0 pe-sm-10">
+                                    <h5 class="mb-1">Mode Tampilan Saja</h5>
+                                    <span>Data profil Anda ditampilkan dalam mode read-only dan tidak dapat diubah pada halaman ini.</span>
+                                </div>
+                            </div>
 
-                        <!-- <button
-                            type="submit"
-                            ref="submitButton"
-                            class="btn btn-primary"
-                        >
-                            <span class="indicator-label">
-                                Simpan Perubahan
-                            </span>
-                            <span class="indicator-progress">
-                                Menyimpan...
-                                <span
-                                    class="spinner-border spinner-border-sm align-middle ms-2"
-                                ></span>
-                            </span>
-                        </button> -->
-                    </div>
-                </form>
-            </VForm>
-        </div>
-    </div>
+                            <!-- Foto Profile Section -->
+                            <div class="mb-8">
+                                <h4 class="fw-bold text-gray-800 mb-5">
+                                    <i class="bi bi-image me-2 text-primary"></i>Foto Profile
+                                </h4>
+                                <div class="d-flex align-items-center bg-light rounded p-6">
+                                    <div
+                                        class="image-input image-input-outline me-5"
+                                        data-kt-image-input="true"
+                                        :style="{
+                                            backgroundImage: `url(${getAssetPath('/media/avatars/blank.png')})`,
+                                        }"
+                                    >
+                                        <div
+                                            class="image-input-wrapper w-100px h-100px rounded-circle"
+                                            :style="`background-image: url(${profileDetails.photo})`"
+                                        ></div>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-700 fw-semibold mb-1">Foto profil Anda</p>
+                                        <p class="text-muted fs-7 mb-0">
+                                            <i class="bi bi-lock-fill me-1"></i>Foto profil tidak dapat diubah
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
 
-    <!-- Profile Summary Card -->
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title">
-                <h3 class="fw-bold m-0">Preview Profile</h3>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="d-flex align-items-center">
-                <!-- Profile Image -->
-                <div class="me-5">
-                    <div
-                        class="symbol symbol-100px symbol-circle"
-                        :style="`background-image: url(${profileDetails.photo})`"
-                    ></div>
+                            <!-- Personal Information Section -->
+                            <div class="mb-8">
+                                <h4 class="fw-bold text-gray-800 mb-5">
+                                    <i class="bi bi-person-lines-fill me-2 text-primary"></i>Informasi Pribadi
+                                </h4>
+                                
+                                <!-- Name Input -->
+                                <div class="row mb-6">
+                                    <label class="col-lg-4 col-form-label fw-semibold fs-6 align-items-center d-flex">
+                                        <i class="bi bi-person-fill text-primary fs-4 me-2"></i>
+                                        Nama Lengkap
+                                    </label>
+                                    <div class="col-lg-8">
+                                        <Field
+                                            type="text"
+                                            name="name"
+                                            class="form-control form-control-lg form-control-solid bg-light"
+                                            v-model="profileDetails.name"
+                                            disabled
+                                        />
+                                    </div>
+                                </div>
+
+                                <!-- Role Input -->
+                                <div class="row mb-6">
+                                    <label class="col-lg-4 col-form-label fw-semibold fs-6 align-items-center d-flex">
+                                        <i class="bi bi-shield-check text-primary fs-4 me-2"></i>
+                                        Role
+                                    </label>
+                                    <div class="col-lg-8">
+                                        <Field
+                                            type="text"
+                                            name="role"
+                                            class="form-control form-control-lg form-control-solid bg-light"
+                                            v-model="profileDetails.role"
+                                            disabled
+                                        />
+                                    </div>
+                                </div>
+
+                                <!-- Phone Input -->
+                                <div class="row mb-6">
+                                    <label class="col-lg-4 col-form-label fw-semibold fs-6 align-items-center d-flex">
+                                        <i class="bi bi-telephone-fill text-primary fs-4 me-2"></i>
+                                        Nomor Telepon
+                                    </label>
+                                    <div class="col-lg-8">
+                                        <Field
+                                            type="tel"
+                                            name="phone"
+                                            class="form-control form-control-lg form-control-solid bg-light"
+                                            v-model="profileDetails.phone"
+                                            disabled
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="separator mb-6"></div>
+                            <div class="d-flex justify-content-end pt-2">
+                                <button
+                                    type="button"
+                                    class="btn btn-light-primary btn-lg"
+                                    @click="router.go(-1)"
+                                >
+                                    <i class="bi bi-arrow-left me-2"></i>
+                                    Kembali
+                                </button>
+                            </div>
+                        </form>
+                    </VForm>
                 </div>
-
-                <!-- Profile Info -->
-                <div class="flex-grow-1">
-                    <h4 class="fw-bold text-gray-800 mb-2">
-                        {{ profileDetails.name || "Nama belum diisi" }}
-                    </h4>
-                    <div class="text-muted mb-1">
-                        <i class="bi bi-person-badge me-2"></i>
-                        {{ profileDetails.role || "Role belum dipilih" }}
-                    </div>
-                    <div class="text-muted">
-                        <i class="bi bi-telephone me-2"></i>
-                        {{
-                            profileDetails.phone || "Nomor telepon belum diisi"
-                        }}
-                    </div>
-                </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Debug Info (hapus setelah testing) -->
-    <div class="card mt-5" v-if="false">
-        <div class="card-body">
-            <h5>Debug Info:</h5>
-            <pre>{{ JSON.stringify(profileDetails, null, 2) }}</pre>
-            <pre>{{ JSON.stringify(roles, null, 2) }}</pre>
         </div>
     </div>
 </template>
