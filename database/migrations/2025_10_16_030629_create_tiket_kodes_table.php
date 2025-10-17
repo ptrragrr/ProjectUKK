@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('homes', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+       Schema::create('tiket_kodes', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('transaksi_detail_id')->constrained()->onDelete('cascade');
+    $table->string('kode_tiket')->unique();
+    $table->timestamps();
+});
     }
 
     /**
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('homes');
+        Schema::dropIfExists('tiket_kodes');
     }
 };

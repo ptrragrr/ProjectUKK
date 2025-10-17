@@ -139,26 +139,26 @@ const routes: Array<RouteRecordRaw> = [
         
 //     ],
 // },
-{
-    path: "/contact",
-    name: "contact",
-    component: () => import("@/pages/dashboard/users/contact/index.vue"),
-    meta: {
-        pageTitle: "Kontak",
-        breadcrumbs: ["Contact"],
-    },
-},
-{
-        path: "/home",
-        name: "home",
-        component: () => import("@/pages/dashboard/users/home/index.vue"),
-        meta: {
-            pageTitle: "Beranda Pengguna",
-            breadcrumbs: ["Home"],
-        },
-    },
+// {
+//     path: "/contact",
+//     name: "contact",
+//     component: () => import("@/pages/dashboard/users/contact/index.vue"),
+//     meta: {
+//         pageTitle: "Kontak",
+//         breadcrumbs: ["Contact"],
+//     },
+// },
+// {
+//         path: "/home",
+//         name: "home",
+//         component: () => import("@/pages/dashboard/users/home/index.vue"),
+//         meta: {
+//             pageTitle: "Beranda Pengguna",
+//             breadcrumbs: ["Home"],
+//         },
+//     },
     {
-        path: "/",
+        path: "/sign-in",
         component: () => import("@/layouts/AuthLayout.vue"),
         children: [
             {
@@ -199,7 +199,78 @@ const routes: Array<RouteRecordRaw> = [
         path: "/:pathMatch(.*)*",
         redirect: "/404",
     },
+
+    {
+        path: "/dashboard_pengguna",
+        // redirect: "/dashboard",
+        component: () => import("@/pages/dashboard_pengguna/navbarpg.vue"),
+        meta: {
+            middleware: "auth",
+        },
+        children: [
+            // {
+            //     path: "/dashboard",
+            //     name: "dashboard",
+            //     component: () => import("@/pages/dashboard/Index.vue"),
+            //     meta: {
+            //         pageTitle: "Dashboard",
+            //         breadcrumbs: ["Dashboard"],
+            //     },
+            // },
+            {
+                path: "",
+                name: "home",
+                component: () => import("@/pages/dashboard_pengguna/home.vue"),
+                meta: {
+                    pageTitle: "Home",
+                    breadcrumbs: ["Home"],
+                },
+            },
+            {
+                path: "ticket",
+                name: "ticket",
+                component: () => import("@/pages/dashboard_pengguna/tiket.vue"),
+                meta: {
+                    pageTitle: "Ticket",
+                    breadcrumbs: ["Ticket"],
+                },
+            },
+             {
+                path: "about",
+                name: "about",
+                component: () => import("@/pages/dashboard_pengguna/about.vue"),
+                meta: {
+                    pageTitle: "About",
+                    breadcrumbs: ["About"],
+                },
+            },
+            
+             {
+                path: "contact",
+                name: "contact",
+                component: () => import("@/pages/dashboard_pengguna/contact.vue"),
+                meta: {
+                    pageTitle: "Contact",
+                    breadcrumbs: ["Contact"],
+                },
+            },
+            {
+                path: "checkout",
+                name: "checkout",
+                component: () => import("@/pages/dashboard_pengguna/checkout.vue"),
+                meta: {
+                    pageTitle: "Checkout",
+                    breadcrumbs: ["Checkout"],
+                },
+            },
+            
+            
+            
+        ],
+    },
 ];
+
+
 
 const router = createRouter({
     history: createWebHistory(),
@@ -250,7 +321,7 @@ router.beforeEach(async (to, from, next) => {
         return next();
       }
     } else {
-      return next({ name: "sign-in" });
+      return next({ name: "dashboard_pengguna" });
     }
   }
 

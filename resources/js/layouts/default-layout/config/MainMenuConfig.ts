@@ -10,6 +10,17 @@ const MainMenuConfig: Array<MenuItem> = [
         ],
     },
 
+    {
+        pages: [
+            {
+                heading: "Dashboard_pengguna",
+                name: "dashboard_pengguna",
+                route: "/dashboard_pengguna",
+                keenthemesIcon: "element-11",
+            },
+        ],
+    },
+
     // WEBSITE SECTION
     {
         heading: "Website",

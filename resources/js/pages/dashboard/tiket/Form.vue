@@ -19,6 +19,7 @@ const showErrors = ref(false);
 const formSchema = Yup.object({
     nama_event: Yup.string().required("Nama event wajib diisi"),
     tanggal: Yup.date().required("Tanggal wajib diisi"),
+
     harga_tiket: Yup.number()
         .transform((value, originalValue) => {
             if (typeof originalValue === "number") return value;
@@ -28,16 +29,20 @@ const formSchema = Yup.object({
             }
             return undefined;
         })
+        .typeError("Harga tiket harus berupa angka")
         .required("Harga tiket wajib diisi")
         .min(1, "Harga tiket harus lebih dari 0"),
+
     jenis_tiket: Yup.string()
         .required("Jenis tiket wajib diisi")
         .matches(/^[A-Za-zÀ-ÿ\s]+$/, "Hanya boleh huruf dan spasi"),
-    harga_tiket: Yup.number().required("Harga wajib diisi"),
+
     deskripsi: Yup.string().required("Deskripsi wajib diisi"),
+
     stok_tiket: Yup.number()
         .typeError("Stok tiket harus berupa angka")
-        .required("Stok tiket wajib diisi"),
+        .required("Stok tiket wajib diisi")
+        .min(0, "Stok tiket tidak boleh kurang dari 0"),
 });
 
 // VeeValidate
