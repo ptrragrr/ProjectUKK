@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\pengguna;
 
 use Illuminate\Http\Request;
 use App\Models\Transaksi;
 use Illuminate\Support\Str;
+use App\Http\Controllers\Controller;
 
 class PaymentController extends Controller
 {

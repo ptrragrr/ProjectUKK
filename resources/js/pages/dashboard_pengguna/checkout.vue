@@ -1,153 +1,3 @@
-<template>
-  <div class="checkout-wrapper">
-    <div class="checkout-container">
-      <!-- Left Section - Form -->
-      <div class="checkout-form-section">
-        <div class="section-header">
-          <h1>Informasi Pembeli</h1>
-          <p>Lengkapi data diri Anda untuk melanjutkan pembayaran</p>
-        </div>
-
-        <form @submit.prevent="startPayment" id="checkout-form">
-          <div class="form-group">
-            <label for="nama_pembeli">
-              <span class="label-icon">👤</span>
-              Nama Lengkap
-            </label>
-            <input
-              type="text"
-              id="nama_pembeli"
-              v-model="form.nama_pembeli"
-              class="form-input"
-              placeholder="Masukkan nama lengkap"
-              required
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="email">
-              <span class="label-icon">✉️</span>
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              v-model="form.email"
-              class="form-input"
-              placeholder="email@example.com"
-              required
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="telepon">
-              <span class="label-icon">📱</span>
-              Nomor Telepon
-            </label>
-            <input
-              type="tel"
-              id="telepon"
-              v-model="form.telepon"
-              class="form-input"
-              placeholder="+62 812 3456 7890"
-              required
-            />
-          </div>
-
-          <div class="payment-info">
-            <div class="info-icon">🔒</div>
-            <div class="info-text">
-              <strong>Pembayaran Aman</strong>
-              <span>Transaksi Anda dilindungi dengan enkripsi SSL</span>
-            </div>
-          </div>
-        </form>
-      </div>
-
-      <!-- Right Section - Summary -->
-      <div class="checkout-summary-section">
-        <div class="summary-header">
-          <h2>Ringkasan Pesanan</h2>
-        </div>
-
-        <div v-if="keranjang.length > 0" class="ticket-list">
-          <div
-            v-for="(item, i) in keranjang"
-            :key="i"
-            class="ticket-item"
-          >
-            <div class="ticket-details">
-              <div class="ticket-name">{{ item.nama_event }}</div>
-              <div class="ticket-type" v-if="item.jenis_tiket">{{ item.jenis_tiket }}</div>
-              <div class="ticket-qty">Jumlah: {{ item.qty }} tiket</div>
-            </div>
-            <div class="ticket-price">
-              Rp {{ formatHarga(item.harga_tiket * item.qty) }}
-            </div>
-          </div>
-        </div>
-        <div v-else class="empty-cart">
-          <div class="empty-icon">🛒</div>
-          <p>Keranjang Anda kosong</p>
-          <button type="button" class="btn-browse" @click="goToEvents">
-            Jelajahi Event
-          </button>
-        </div>
-
-        <div class="summary-calculations" v-if="keranjang.length > 0">
-          <div class="calc-row">
-            <span>Subtotal</span>
-            <span>Rp {{ formatHarga(subtotal) }}</span>
-          </div>
-          <div class="calc-row">
-            <span>Pajak (10%)</span>
-            <span>Rp {{ formatHarga(tax) }}</span>
-          </div>
-          <div class="calc-row">
-            <span>Biaya Platform</span>
-            <span>Rp {{ formatHarga(platformFee) }}</span>
-          </div>
-        </div>
-
-        <div class="summary-total" v-if="keranjang.length > 0">
-          <span>Total Pembayaran</span>
-          <span class="total-amount">Rp {{ formatHarga(total) }}</span>
-        </div>
-
-        <div class="action-buttons">
-          <button
-            type="button"
-            class="btn-primary"
-            @click="startPayment"
-            :disabled="loading || keranjang.length === 0"
-          >
-            <span v-if="!loading">
-              <span class="btn-icon">💳</span>
-              Bayar Sekarang
-            </span>
-            <span v-else>
-              <span class="btn-spinner"></span>
-              Processing...
-            </span>
-          </button>
-          <button type="button" class="btn-secondary" @click="batal">
-            <span class="btn-icon">←</span>
-            Kembali
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Loading Modal -->
-    <div v-if="modalVisible" class="modal-overlay">
-      <div class="modal-content">
-        <div class="spinner"></div>
-        <p>{{ modalText }}</p>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, watch, computed, onMounted } from "vue";
 import axios from "@/libs/axios";
@@ -419,21 +269,171 @@ async function startPayment() {
 }
 </script>
 
+<template>
+  <div class="checkout-wrapper">
+    <div class="checkout-container">
+      <!-- Left Section - Form -->
+      <div class="checkout-form-section">
+        <div class="section-header">
+          <h1>Informasi Pembeli</h1>
+          <p>Lengkapi data diri Anda untuk melanjutkan pembayaran</p>
+        </div>
+
+        <form @submit.prevent="startPayment" id="checkout-form">
+          <div class="form-group">
+            <label for="nama_pembeli">
+              <span class="label-icon">👤</span>
+              Nama Lengkap
+            </label>
+            <input
+              type="text"
+              id="nama_pembeli"
+              v-model="form.nama_pembeli"
+              class="form-input"
+              placeholder="Masukkan nama lengkap"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">
+              <span class="label-icon">✉️</span>
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              v-model="form.email"
+              class="form-input"
+              placeholder="email@example.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="telepon">
+              <span class="label-icon">📱</span>
+              Nomor Telepon
+            </label>
+            <input
+              type="tel"
+              id="telepon"
+              v-model="form.telepon"
+              class="form-input"
+              placeholder="+62 812 3456 7890"
+              required
+            />
+          </div>
+
+          <div class="payment-info">
+            <div class="info-icon">🔒</div>
+            <div class="info-text">
+              <strong>Pembayaran Aman</strong>
+              <span>Transaksi Anda dilindungi dengan enkripsi SSL</span>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Right Section - Summary -->
+      <div class="checkout-summary-section">
+        <div class="summary-header">
+          <h2>Ringkasan Pesanan</h2>
+        </div>
+
+        <div v-if="keranjang.length > 0" class="ticket-list">
+          <div
+            v-for="(item, i) in keranjang"
+            :key="i"
+            class="ticket-item"
+          >
+            <div class="ticket-details">
+              <div class="ticket-name">{{ item.nama_event }}</div>
+              <div class="ticket-type" v-if="item.jenis_tiket">{{ item.jenis_tiket }}</div>
+              <div class="ticket-qty">Jumlah: {{ item.qty }} tiket</div>
+            </div>
+            <div class="ticket-price">
+              Rp {{ formatHarga(item.harga_tiket * item.qty) }}
+            </div>
+          </div>
+        </div>
+        <div v-else class="empty-cart">
+          <div class="empty-icon">🛒</div>
+          <p>Keranjang Anda kosong</p>
+          <button type="button" class="btn-browse" @click="goToEvents">
+            Jelajahi Event
+          </button>
+        </div>
+
+        <div class="summary-calculations" v-if="keranjang.length > 0">
+          <div class="calc-row">
+            <span>Subtotal</span>
+            <span>Rp {{ formatHarga(subtotal) }}</span>
+          </div>
+          <div class="calc-row">
+            <span>Pajak (10%)</span>
+            <span>Rp {{ formatHarga(tax) }}</span>
+          </div>
+          <div class="calc-row">
+            <span>Biaya Platform</span>
+            <span>Rp {{ formatHarga(platformFee) }}</span>
+          </div>
+        </div>
+
+        <div class="summary-total" v-if="keranjang.length > 0">
+          <span>Total Pembayaran</span>
+          <span class="total-amount">Rp {{ formatHarga(total) }}</span>
+        </div>
+
+        <div class="action-buttons">
+          <button
+            type="button"
+            class="btn-primary"
+            @click="startPayment"
+            :disabled="loading || keranjang.length === 0"
+          >
+            <span v-if="!loading">
+              <span class="btn-icon">💳</span>
+              Bayar Sekarang
+            </span>
+            <span v-else>
+              <span class="btn-spinner"></span>
+              Processing...
+            </span>
+          </button>
+          <button type="button" class="btn-secondary" @click="batal">
+            <span class="btn-icon">←</span>
+            Kembali
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div v-if="modalVisible" class="modal-overlay">
+      <div class="modal-content">
+        <div class="spinner"></div>
+        <p>{{ modalText }}</p>
+      </div>
+    </div>
+  </div>
+</template>
+
 <style>
 :root {
-  --primary-color: #4F46E5;
-  --primary-hover: #4338CA;
-  --secondary-color: #10B981;
+  --primary-color: #676F53;
+  --primary-hover: #1C290D;
+  --secondary-color: #A19379;
   --danger-color: #EF4444;
-  --text-dark: #1F2937;
-  --text-light: #6B7280;
-  --border-color: #E5E7EB;
-  --bg-light: #F9FAFB;
+  --text-dark: #381D03;
+  --text-light: #736046;
+  --border-color: rgba(179, 180, 154, 0.3);
+  --bg-light: #FEFAE0;
   --white: #FFFFFF;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.15);
+  --shadow-sm: 0 1px 3px rgba(28, 41, 13, 0.1);
+  --shadow-md: 0 4px 6px rgba(28, 41, 13, 0.1);
+  --shadow-lg: 0 10px 25px rgba(28, 41, 13, 0.1);
+  --shadow-xl: 0 20px 40px rgba(28, 41, 13, 0.15);
 }
 
 * {
@@ -444,7 +444,7 @@ async function startPayment() {
 
 body {
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #FEFAE0 0%, #B3B49A 100%);
   min-height: 100vh;
   padding: 40px 20px;
 }
@@ -520,7 +520,7 @@ body {
 .form-input:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+  box-shadow: 0 0 0 4px rgba(103, 111, 83, 0.1);
 }
 
 .form-input::placeholder {
@@ -532,9 +532,9 @@ body {
   align-items: center;
   gap: 16px;
   padding: 20px;
-  background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+  background: linear-gradient(135deg, #FEFAE0 0%, #F5F1E3 100%);
   border-radius: 16px;
-  border: 2px solid #BBF7D0;
+  border: 2px solid #B3B49A;
   margin-top: 32px;
 }
 
@@ -550,12 +550,12 @@ body {
 }
 
 .info-text strong {
-  color: var(--secondary-color);
+  color: #676F53;
   font-size: 15px;
 }
 
 .info-text span {
-  color: #059669;
+  color: #736046;
   font-size: 14px;
 }
 
@@ -614,7 +614,7 @@ body {
 .ticket-type {
   display: inline-block;
   padding: 4px 12px;
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+  background: linear-gradient(135deg, #676F53, #1C290D);
   color: white;
   border-radius: 8px;
   font-size: 12px;
@@ -658,10 +658,10 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 24px 20px;
-  background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+  background: linear-gradient(135deg, #FEFAE0 0%, #F5F1E3 100%);
   border-radius: 16px;
   margin-bottom: 28px;
-  border: 2px solid #C7D2FE;
+  border: 2px solid #B3B49A;
 }
 
 .summary-total span:first-child {
@@ -699,14 +699,14 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+  background: linear-gradient(135deg, #676F53, #1C290D);
   color: white;
-  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+  box-shadow: 0 4px 15px rgba(103, 111, 83, 0.4);
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
+  box-shadow: 0 6px 20px rgba(103, 111, 83, 0.5);
 }
 
 .btn-primary:disabled {
@@ -739,6 +739,38 @@ body {
   border-top-color: white;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-cart p {
+  color: var(--text-light);
+  margin-bottom: 24px;
+  font-size: 16px;
+}
+
+.btn-browse {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #676F53, #1C290D);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-browse:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(103, 111, 83, 0.4);
 }
 
 /* Modal */
@@ -790,7 +822,7 @@ body {
 
 .spinner {
   border: 4px solid #E5E7EB;
-  border-top: 4px solid var(--primary-color);
+  border-top: 4px solid #676F53;
   border-radius: 50%;
   width: 60px;
   height: 60px;

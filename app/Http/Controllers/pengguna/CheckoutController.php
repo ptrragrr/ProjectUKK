@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\pengguna;
 
 use App\Http\Controllers\Controller;
+use App\Mail\TicketPaidMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -10,12 +11,11 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Ticket;
 use App\Models\Transaksi;
-use App\Models\TransaksiDetail;
 use Midtrans\Config;
 use Midtrans\Snap;
 use Midtrans\Transaction;
-use App\Mail\TicketPaidMail;
 use App\Models\pengguna\TiketKode;
+use App\Models\TransaksiDetail;
 
 class CheckoutController extends Controller
 {
@@ -27,13 +27,13 @@ class CheckoutController extends Controller
         Config::$is3ds        = (bool) config('midtrans.is_3ds', true);
     }
 
-public function store(Request $request)
-{
-    return response()->json([
-        'success' => true,
-        'message' => 'Checkout berhasil!',
-    ]);
-}
+    public function store(Request $request)
+    {
+        return response()->json([
+            'success' => true,
+            'message' => 'Checkout berhasil!',
+        ]);
+    }
 
     /**
      * Halaman checkout
@@ -191,6 +191,8 @@ public function store(Request $request)
                     'jumlah' => $t['qty'],
                     'harga_satuan' => $price,
                     'total_harga' => $totalLine,
+                    'kode_tiket' => 'TKT-' . $transaksi->id . '-' . strtoupper(Str::random(6)),
+                    'status' => 'Available',
                 ]);
             }
 
@@ -276,7 +278,8 @@ public function store(Request $request)
             }
 
             try {
-                Mail::to($transaksi->email)->send(new TicketPaidMail($transaksi));
+                $codes = TiketKode::whereIn('transaksi_detail_id', $transaksi->details->pluck('id'))->pluck('kode_tiket');
+                Mail::to($transaksi->email)->send(new TicketPaidMail($transaksi, $codes));
                 Log::info("Email tiket berhasil dikirim ke {$transaksi->email}");
             } catch (\Exception $e) {
                 Log::error("Gagal kirim email ke {$transaksi->email}: " . $e->getMessage());
@@ -310,6 +313,8 @@ public function store(Request $request)
 
     public function success(Request $request)
     {
+        Log::info('Success Request Received');
+        Log::info('Success Request Data: ', $request->all());
         $orderId = $request->query('order_id');
         $transaksi = Transaksi::where('kode_transaksi', $orderId)->first();
 

@@ -22,7 +22,7 @@
           Ikuti panduan lengkap di bawah ini untuk mendapatkan tiket OURSKY.FEST 2025 dengan mudah dan aman
         </p>
 
-        <div class="hero-stats">
+        <!-- <div class="hero-stats">
           <div class="stat-item">
             <span class="stat-icon">📅</span>
             <div class="stat-content">
@@ -46,7 +46,7 @@
               <div class="stat-value">10,000+</div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </section>
 
@@ -125,11 +125,6 @@
                 <span>{{ f }}</span>
               </li>
             </ul>
-
-            <!-- <button class="ticket-button" :class="{ 'button-premium': ticket.premium }">
-              <span class="button-icon">🎟️</span>
-              Pilih Tiket Ini
-            </button> -->
           </div>
         </div>
       </div>
@@ -209,44 +204,6 @@
         </div>
       </div>
     </section>
-
-    <!-- CTA Section -->
-    <!-- <section class="cta-section">
-      <div class="cta-background"></div>
-      <div class="cta-container">
-        <div class="cta-icon">🎵</div>
-        <h2 class="cta-title">Siap Merasakan Pengalaman Tak Terlupakan?</h2>
-        <p class="cta-text">Jangan sampai kehabisan tiket! Pesan sekarang dan jadilah bagian dari OURSKY.FEST 2025</p>
-        
-        <div class="cta-countdown">
-          <div class="countdown-item">
-            <div class="countdown-value">45</div>
-            <div class="countdown-label">Hari</div>
-          </div>
-          <div class="countdown-separator">:</div>
-          <div class="countdown-item">
-            <div class="countdown-value">12</div>
-            <div class="countdown-label">Jam</div>
-          </div>
-          <div class="countdown-separator">:</div>
-          <div class="countdown-item">
-            <div class="countdown-value">34</div>
-            <div class="countdown-label">Menit</div>
-          </div>
-        </div>
-
-        <div class="cta-buttons">
-          <button class="cta-button cta-primary">
-            <span class="btn-icon">🎟️</span>
-            Pesan Tiket Sekarang
-          </button>
-          <button class="cta-button cta-secondary">
-            <span class="btn-icon">💬</span>
-            Butuh Bantuan?
-          </button>
-        </div>
-      </div>
-    </section> -->
 
     <!-- Footer -->
     <footer class="footer">
@@ -398,14 +355,14 @@ const rules = [
 
 <style>
 :root {
-  --primary-color: #4F46E5;
-  --primary-hover: #4338CA;
-  --secondary-color: #10B981;
-  --accent-color: #F59E0B;
-  --text-dark: #1F2937;
-  --text-light: #6B7280;
-  --border-color: #E5E7EB;
-  --bg-light: #F9FAFB;
+  --primary-color: #676F53;
+  --primary-hover: #1C290D;
+  --secondary-color: #A19379;
+  --accent-color: #FEFAE0;
+  --text-dark: #381D03;
+  --text-light: #736046;
+  --border-color: rgba(179, 180, 154, 0.3);
+  --bg-light: #FEFAE0;
   --white: #FFFFFF;
 }
 
@@ -417,7 +374,7 @@ const rules = [
 
 body {
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: var(--bg-light);
+  background: linear-gradient(135deg, #FEFAE0 0%, #B3B49A 100%);
 }
 </style>
 
@@ -430,7 +387,7 @@ body {
 /* Hero Section */
 .hero-section {
   position: relative;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1C290D 0%, #676F53 50%, #A19379 100%);
   color: white;
   overflow: hidden;
   padding: 120px 20px 80px;
@@ -512,7 +469,7 @@ body {
 }
 
 .hero-title-gradient {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  background: linear-gradient(135deg, #FEFAE0 0%, #B3B49A 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -658,7 +615,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 10px 30px rgba(103, 111, 83, 0.3);
 }
 
 .step-number {
@@ -755,7 +712,7 @@ body {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.03), transparent);
+  background: linear-gradient(90deg, transparent, rgba(103, 111, 83, 0.03), transparent);
   transition: left 0.5s ease;
 }
 
@@ -765,18 +722,18 @@ body {
 
 .ticket-card:hover {
   border-color: var(--primary-color);
-  box-shadow: 0 20px 40px rgba(79, 70, 229, 0.15);
+  box-shadow: 0 20px 40px rgba(103, 111, 83, 0.15);
   transform: translateY(-8px);
 }
 
 .ticket-premium {
-  border: 2px solid #F59E0B;
-  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+  border: 2px solid #A19379;
+  background: linear-gradient(135deg, #FEFAE0 0%, #F5F1E8 100%);
 }
 
 .ticket-premium:hover {
-  border-color: #F59E0B;
-  box-shadow: 0 20px 40px rgba(245, 158, 11, 0.25);
+  border-color: #A19379;
+  box-shadow: 0 20px 40px rgba(161, 147, 121, 0.25);
 }
 
 .ticket-active {
@@ -787,7 +744,7 @@ body {
   position: absolute;
   top: 20px;
   right: 20px;
-  background: linear-gradient(135deg, #F59E0B, #D97706);
+  background: linear-gradient(135deg, #A19379, #736046);
   color: white;
   padding: 6px 14px;
   border-radius: 50px;
@@ -797,7 +754,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 12px rgba(161, 147, 121, 0.3);
 }
 
 .badge-star {
@@ -832,7 +789,7 @@ body {
 }
 
 .ticket-premium .ticket-price {
-  background: linear-gradient(135deg, #F59E0B, #D97706);
+  background: linear-gradient(135deg, #A19379, #736046);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -884,40 +841,6 @@ body {
   margin-top: 1px;
 }
 
-.ticket-button {
-  width: 100%;
-  padding: 16px;
-  border-radius: 14px;
-  font-size: 16px;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.ticket-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
-}
-
-.button-premium {
-  background: linear-gradient(135deg, #F59E0B, #D97706);
-}
-
-.button-premium:hover {
-  box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
-}
-
-.button-icon {
-  font-size: 18px;
-}
-
 /* Payment Section */
 .payment-section {
   padding: 100px 0;
@@ -959,7 +882,7 @@ body {
 .payment-card:hover {
   border-color: var(--primary-color);
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(79, 70, 229, 0.2);
+  box-shadow: 0 20px 40px rgba(103, 111, 83, 0.2);
 }
 
 .payment-icon-wrapper {
@@ -1176,149 +1099,9 @@ body {
   border: 2px solid #FCA5A5;
 }
 
-/* CTA Section */
-.cta-section {
-  position: relative;
-  padding: 100px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  overflow: hidden;
-}
-
-.cta-background {
-  position: absolute;
-  inset: 0;
-  background-image: 
-    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1) 2px, transparent 2px),
-    radial-gradient(circle at 70% 70%, rgba(255,255,255,0.1) 2px, transparent 2px);
-  background-size: 60px 60px;
-  animation: float 25s linear infinite;
-}
-
-.cta-container {
-  position: relative;
-  max-width: 1000px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.cta-icon {
-  font-size: 80px;
-  margin-bottom: 32px;
-  animation: bounce 2s ease-in-out infinite;
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
-}
-
-.cta-title {
-  font-size: 48px;
-  font-weight: 800;
-  margin-bottom: 20px;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-}
-
-.cta-text {
-  font-size: 20px;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 48px;
-  line-height: 1.6;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.cta-countdown {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 48px;
-  flex-wrap: wrap;
-}
-
-.countdown-item {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  padding: 24px 32px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.countdown-value {
-  font-size: 48px;
-  font-weight: 800;
-  line-height: 1;
-  margin-bottom: 8px;
-}
-
-.countdown-label {
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.countdown-separator {
-  font-size: 40px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.cta-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.cta-button {
-  padding: 18px 40px;
-  border-radius: 14px;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.cta-primary {
-  background: linear-gradient(135deg, #F59E0B, #D97706);
-  color: white;
-  box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
-}
-
-.cta-primary:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 15px 40px rgba(245, 158, 11, 0.5);
-}
-
-.cta-secondary {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.cta-secondary:hover {
-  background: white;
-  color: var(--primary-color);
-  transform: translateY(-4px);
-}
-
-.btn-icon {
-  font-size: 20px;
-}
-
 /* Footer */
 .footer {
-  background: #1F2937;
+  background: #1C290D;
   color: white;
   padding: 60px 20px 40px;
 }
@@ -1336,7 +1119,7 @@ body {
 .footer-logo {
   font-size: 32px;
   font-weight: 800;
-  background: linear-gradient(135deg, #FFD700, #FFA500);
+  background: linear-gradient(135deg, #FEFAE0, #B3B49A);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1481,32 +1264,6 @@ body {
   .payment-card,
   .rules-card {
     padding: 24px;
-  }
-
-  .cta-title {
-    font-size: 32px;
-  }
-
-  .cta-text {
-    font-size: 16px;
-  }
-
-  .countdown-item {
-    padding: 16px 24px;
-  }
-
-  .countdown-value {
-    font-size: 36px;
-  }
-
-  .cta-buttons {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .cta-button {
-    width: 100%;
-    justify-content: center;
   }
 
   .rules-warning {

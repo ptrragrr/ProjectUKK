@@ -10,7 +10,7 @@ use App\Http\Controllers\RegisterController;
 // use App\Http\Controllers\KonserController;
 use App\Http\Controllers\InputKodeController;
 use App\Http\Controllers\pengguna\CheckoutController;
-use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\pengguna\PaymentController;
 // use App\Http\Controllers\TicketTransaksiController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
 
 // Authentication Route
 Route::middleware(['auth', 'json'])->prefix('auth')->group(function () {

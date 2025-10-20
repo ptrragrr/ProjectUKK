@@ -43,14 +43,14 @@
                 class="social-link"
                 title="Instagram"
               >
-                <img src="/images/ig.png" alt="Instagram" class="social-img" />
+                <img src="/storage/photo/ig.png" alt="Instagram" class="social-img" />
               </a>
               <a
                 href="https://x.com/NCTsmtown_DREAM"
                 class="social-link"
                 title="Twitter"
               >
-                <img src="/images/x.png" alt="Twitter" class="social-img" />
+                <img src="/storage/photo/x.jpeg" alt="Twitter" class="social-img" />
               </a>
             </div>
           </div>

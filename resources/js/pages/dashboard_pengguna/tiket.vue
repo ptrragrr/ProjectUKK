@@ -165,13 +165,13 @@ const checkout = async () => {
       </div>
 
       <div class="banner-section">
-        <img src="/images/banner.jpeg" alt="Festival Banner" class="banner-image" />
-        <div class="banner-overlay">
+        <img src="/storage/photo/banner1.jpg" alt="Festival Banner" class="banner-image" />
+        <!-- <div class="banner-overlay">
           <div class="banner-info">
             <span class="info-badge">📅 15-17 Desember 2025</span>
             <span class="info-badge">📍 Surabaya, Indonesia</span>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <div v-if="loading" class="state-container">
@@ -344,14 +344,14 @@ const checkout = async () => {
 
 <style>
 :root {
-  --primary-color: #4F46E5;
-  --primary-hover: #4338CA;
-  --secondary-color: #10B981;
-  --accent-color: #F59E0B;
-  --text-dark: #1F2937;
-  --text-light: #6B7280;
-  --border-color: #E5E7EB;
-  --bg-light: #F9FAFB;
+  --primary-color: #676F53;
+  --primary-hover: #1C290D;
+  --secondary-color: #A19379;
+  --accent-color: #FEFAE0;
+  --text-dark: #381D03;
+  --text-light: #736046;
+  --border-color: rgba(179, 180, 154, 0.3);
+  --bg-light: #FEFAE0;
   --white: #FFFFFF;
 }
 </style>
@@ -359,7 +359,7 @@ const checkout = async () => {
 <style scoped>
 .page-wrapper {
   min-height: 100vh;
-  background: linear-gradient(180deg, var(--bg-light) 0%, white 100%);
+  background: linear-gradient(135deg, #FEFAE0 0%, #B3B49A 100%);
   padding: 40px 20px 60px;
 }
 
@@ -387,7 +387,7 @@ const checkout = async () => {
   padding: 8px 20px;
   border-radius: 50px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 4px 12px rgba(103, 111, 83, 0.3);
 }
 
 .sparkle {
@@ -426,7 +426,7 @@ const checkout = async () => {
   margin-bottom: 48px;
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 40px rgba(28, 41, 13, 0.15);
 }
 
 .banner-image {
@@ -434,6 +434,7 @@ const checkout = async () => {
   height: 400px;
   object-fit: cover;
   display: block;
+  border-radius: 24px;
 }
 
 .banner-overlay {
@@ -441,7 +442,7 @@ const checkout = async () => {
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  background: linear-gradient(to top, rgba(28, 41, 13, 0.9), transparent);
   padding: 32px;
 }
 
@@ -452,14 +453,14 @@ const checkout = async () => {
 }
 
 .info-badge {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(254, 250, 224, 0.2);
   backdrop-filter: blur(10px);
   color: white;
   padding: 10px 20px;
   border-radius: 50px;
   font-size: 14px;
   font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(254, 250, 224, 0.3);
 }
 
 .state-container {
@@ -472,7 +473,7 @@ const checkout = async () => {
   border-radius: 24px;
   padding: 60px 40px;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(28, 41, 13, 0.1);
   border: 2px solid var(--border-color);
 }
 
@@ -568,16 +569,16 @@ const checkout = async () => {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 4px 12px rgba(103, 111, 83, 0.3);
 }
 
 .btn-retry:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+  box-shadow: 0 6px 20px rgba(103, 111, 83, 0.4);
 }
 
 .btn-retry.secondary {
-  background: linear-gradient(135deg, var(--text-dark), #374151);
+  background: linear-gradient(135deg, var(--text-dark), #4A3F2E);
 }
 
 .main-content {
@@ -599,20 +600,21 @@ const checkout = async () => {
   padding: 32px;
   border: 2px solid var(--border-color);
   transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(28, 41, 13, 0.05);
 }
 
 .category-section:hover {
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(28, 41, 13, 0.1);
   border-color: var(--primary-color);
 }
 
 .vvip-section {
-  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
-  border-color: #F59E0B;
+  background: linear-gradient(135deg, #FEFAE0 0%, #F5F1E8 100%);
+  border-color: #A19379;
 }
 
 .vvip-section:hover {
-  border-color: #D97706;
+  border-color: #736046;
 }
 
 .category-header {
@@ -625,7 +627,7 @@ const checkout = async () => {
 }
 
 .vvip-section .category-header {
-  border-bottom-color: #FDE68A;
+  border-bottom-color: rgba(161, 147, 121, 0.3);
 }
 
 .header-left {
@@ -663,11 +665,12 @@ const checkout = async () => {
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(103, 111, 83, 0.2);
 }
 
 .category-count.premium {
-  background: linear-gradient(135deg, #F59E0B, #D97706);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  background: linear-gradient(135deg, #A19379, #736046);
+  box-shadow: 0 4px 12px rgba(161, 147, 121, 0.3);
 }
 
 .tickets-grid {
@@ -688,7 +691,7 @@ const checkout = async () => {
   background: white;
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(28, 41, 13, 0.1);
   border: 2px solid var(--border-color);
 }
 
@@ -718,13 +721,13 @@ const checkout = async () => {
 }
 
 .item-count {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(254, 250, 224, 0.2);
   backdrop-filter: blur(10px);
   padding: 6px 16px;
   border-radius: 50px;
   font-size: 14px;
   font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(254, 250, 224, 0.3);
 }
 
 .summary-body {
@@ -745,8 +748,8 @@ const checkout = async () => {
 }
 
 .selected-item:hover {
-  background: #F3F4F6;
-  border-color: #D1D5DB;
+  background: #F5F1E8;
+  border-color: rgba(179, 180, 154, 0.5);
 }
 
 .selected-item:last-child {
@@ -802,7 +805,7 @@ const checkout = async () => {
 
 .summary-divider.bold {
   height: 2px;
-  background: #D1D5DB;
+  background: rgba(179, 180, 154, 0.5);
 }
 
 .calculations {
@@ -848,7 +851,7 @@ const checkout = async () => {
 .btn-checkout {
   width: 100%;
   padding: 18px;
-  background: linear-gradient(135deg, var(--secondary-color), #059669);
+  background: linear-gradient(135deg, var(--secondary-color), #736046);
   color: white;
   border: none;
   border-radius: 14px;
@@ -856,13 +859,13 @@ const checkout = async () => {
   font-size: 16px;
   font-weight: 700;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 12px rgba(161, 147, 121, 0.3);
 }
 
 .btn-checkout:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-  background: linear-gradient(135deg, #059669, #047857);
+  box-shadow: 0 8px 20px rgba(161, 147, 121, 0.4);
+  background: linear-gradient(135deg, #736046, #5C4D39);
 }
 
 .btn-checkout:disabled {
@@ -916,8 +919,8 @@ const checkout = async () => {
 }
 
 .info-card {
-  background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
-  border: 2px solid #C7D2FE;
+  background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+  border: 2px solid #BBF7D0;
   border-radius: 20px;
   padding: 24px;
   display: flex;

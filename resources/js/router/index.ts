@@ -202,11 +202,11 @@ const routes: Array<RouteRecordRaw> = [
 
     {
         path: "/dashboard_pengguna",
-        // redirect: "/dashboard",
+        name: "dashboard_pengguna",
         component: () => import("@/pages/dashboard_pengguna/navbarpg.vue"),
-        meta: {
-            middleware: "auth",
-        },
+        // meta: {
+        //     middleware: "auth",
+        // },
         children: [
             // {
             //     path: "/dashboard",
