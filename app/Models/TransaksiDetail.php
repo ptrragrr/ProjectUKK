@@ -21,6 +21,7 @@ class TransaksiDetail extends Model
         'jumlah',
         'harga_satuan',
         'total_harga',
+        'kode_tiket',
     ];
 
     /**
@@ -44,8 +45,8 @@ class TransaksiDetail extends Model
     /**
      * (Opsional) Relasi ke kode tiket jika kamu punya tabel tiket_kodes
      */
-    // public function kodeTiket()
-    // {
-    //     return $this->hasMany(TiketKode::class, 'transaksi_detail_id');
-    // }
+    public function tiketKodes()
+{
+    return $this->hasMany(\App\Models\pengguna\TiketKode::class, 'transaksi_detail_id');
+}
 }

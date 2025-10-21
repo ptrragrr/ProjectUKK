@@ -129,7 +129,7 @@ const checkout = async () => {
       })),
       subtotal: subtotal.value,
       tax: tax.value,
-      fee: fee.value,
+      fee: fee.value, 
       total: total.value,
     };
 

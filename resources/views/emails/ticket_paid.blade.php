@@ -26,7 +26,6 @@
             
             <p><strong>Detail Tiket:</strong></p>
             <ul>
-              $codes = json_decode($detail->kode_tiket_json, true) ?? [];
 @foreach ($codes as $kode)
     <p>Kode Tiket: <b>{{ $kode }}</b></p>
 @endforeach

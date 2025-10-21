@@ -185,15 +185,28 @@ class CheckoutController extends Controller
                 $price = (int) $ticket->harga_tiket;
                 $totalLine = $price * $t['qty'];
 
-                TransaksiDetail::create([
-                    'transaksi_id' => $transaksi->id,
-                    'ticket_id' => $ticket->id,
-                    'jumlah' => $t['qty'],
-                    'harga_satuan' => $price,
-                    'total_harga' => $totalLine,
-                    'kode_tiket' => 'TKT-' . $transaksi->id . '-' . strtoupper(Str::random(6)),
-                    'status' => 'Available',
-                ]);
+                // TransaksiDetail::create([
+                //     'transaksi_id' => $transaksi->id,
+                //     'ticket_id' => $ticket->id,
+                //     'jumlah' => $t['qty'],
+                //     'harga_satuan' => $price,
+                //     'total_harga' => $totalLine,
+                //     'kode_tiket' => 'TKT-' . $transaksi->id . '-' . strtoupper(Str::random(6)),
+                //     'status' => 'Available',
+                // ]);
+                for ($u = 0; $u < $t['qty']; $u++) {
+    $kode = 'TKT-' . $transaksi->id . '-' . strtoupper(Str::random(6));
+
+    TransaksiDetail::create([
+        'transaksi_id'   => $transaksi->id,
+        'ticket_id'      => $ticket->id,
+        'jumlah'         => 1,
+        'harga_satuan'   => $price,
+        'total_harga'    => $price,
+        'kode_tiket'     => $kode,
+        'status'         => 'Available',
+    ]);
+}
             }
 
             $params = [
@@ -261,32 +274,81 @@ class CheckoutController extends Controller
         $transaksi->update($updateData);
 
         // ✅ Jika status baru adalah paid, buat kode tiket
-        if ($newStatus === 'paid' && $previousStatus !== 'paid') {
-            foreach ($transaksi->details as $detail) {
-                $ticket = Ticket::find($detail->ticket_id);
-                if ($ticket && $ticket->stok_tiket >= $detail->jumlah) {
-                    $ticket->decrement('stok_tiket', $detail->jumlah);
-                }
+//         if ($newStatus === 'paid' && $previousStatus !== 'paid') {
+//             foreach ($transaksi->details as $detail) {
+//                 $ticket = Ticket::find($detail->ticket_id);
+//                 if ($ticket && $ticket->stok_tiket >= $detail->jumlah) {
+//                     $ticket->decrement('stok_tiket', $detail->jumlah);
+//                 }
 
-                // Buat kode tiket sebanyak jumlah yang dibeli
-                for ($i = 0; $i < $detail->jumlah; $i++) {
-                    TiketKode::create([
-                        'transaksi_detail_id' => $detail->id,
-                        'kode_tiket' => strtoupper(Str::random(8)),
-                    ]);
-                }
-            }
+//                 // Buat kode tiket sebanyak jumlah yang dibeli
+//                 // for ($i = 0; $i < $detail->jumlah; $i++) {
+//                 //     TiketKode::create([
+//                 //         'transaksi_detail_id' => $detail->id,
+//                 //         'kode_tiket' => strtoupper(Str::random(8)),
+//                 //     ]);
+//                 // }
+//                 for ($i = 0; $i < $detail->jumlah; $i++) {
+//     $kode = strtoupper(Str::random(8));
 
-            try {
-                $codes = TiketKode::whereIn('transaksi_detail_id', $transaksi->details->pluck('id'))->pluck('kode_tiket');
-                Mail::to($transaksi->email)->send(new TicketPaidMail($transaksi, $codes));
-                Log::info("Email tiket berhasil dikirim ke {$transaksi->email}");
-            } catch (\Exception $e) {
-                Log::error("Gagal kirim email ke {$transaksi->email}: " . $e->getMessage());
-            }
+//     // Simpan ke tabel tiket_kodes
+//     TiketKode::create([
+//         'transaksi_detail_id' => $detail->id,
+//         'kode_tiket' => $kode,
+//     ]);
+
+//     // Update kolom kode_tiket di transaksi_details (hanya jika NULL)
+//    $detail->update(['kode_tiket' => $kode]);
+// }
+//             }
+
+//             try {
+//                 $codes = TiketKode::whereIn('transaksi_detail_id', $transaksi->details->pluck('id'))->pluck('kode_tiket');
+//                 Mail::to($transaksi->email)->send(new TicketPaidMail($transaksi, $codes));
+//                 Log::info("Email tiket berhasil dikirim ke {$transaksi->email}");
+//             } catch (\Exception $e) {
+//                 Log::error("Gagal kirim email ke {$transaksi->email}: " . $e->getMessage());
+//             }
+//         }
+
+//         Log::info("Status transaksi {$orderId} diubah menjadi {$newStatus}");
+//     }
+if ($newStatus === 'paid' && $previousStatus !== 'paid') {
+    // Kurangi stok per ticket_id (jumlah seluruh details untuk ticket tersebut)
+    $transaksi->load('details'); // pastikan details ter-load
+
+    // Kurangi stok berdasarkan agregasi jumlah per ticket_id
+    $qtyPerTicket = $transaksi->details->groupBy('ticket_id')->map(function($group) {
+        return $group->count(); // karena setiap detail sekarang jumlah=1
+    });
+
+    foreach ($qtyPerTicket as $ticketId => $qty) {
+        $ticket = Ticket::find($ticketId);
+        if ($ticket && $ticket->stok_tiket >= $qty) {
+            $ticket->decrement('stok_tiket', $qty);
+        } else {
+            Log::warning("Stok tidak mencukupi saat settlement untuk ticket_id: {$ticketId}");
         }
+    }
 
-        Log::info("Status transaksi {$orderId} diubah menjadi {$newStatus}");
+    // Buat/ sinkron tiket_kodes dari tiap transaksi_detail (1:1)
+    foreach ($transaksi->details as $detail) {
+        // Jika kamu masih ingin menyimpan di tabel tiket_kodes
+        TiketKode::create([
+            'transaksi_detail_id' => $detail->id,
+            'kode_tiket' => $detail->kode_tiket,
+        ]);
+    }
+
+    // Kirim email menggunakan kode dari transaksi_details (atau dari tiket_kodes)
+    try {
+        $codes = $transaksi->details->pluck('kode_tiket');
+        Mail::to($transaksi->email)->send(new TicketPaidMail($transaksi, $codes));
+        Log::info("Email tiket berhasil dikirim ke {$transaksi->email}");
+    } catch (\Exception $e) {
+        Log::error("Gagal kirim email ke {$transaksi->email}: " . $e->getMessage());
+    }
+}
     }
 
     public function callback(Request $request)
