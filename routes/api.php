@@ -78,6 +78,7 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
 
 Route::get('/tickets-transaksi', [TransaksiController::class, 'index']);
 
+Route::get('/tickets/get', [TicketController::class, 'get']);
 Route::get('/tickets', [TicketController::class, 'index']);
 Route::post('/tickets', [TicketController::class, 'store']);
 // Route::get('/tickets/{id}', [TicketController::class, 'show']);

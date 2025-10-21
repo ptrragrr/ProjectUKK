@@ -28,9 +28,9 @@
         </div>
       </div>
 
-      <div class="back-button">
-        <RouterLink to="/" class="back-link">Kembali ke Beranda</RouterLink>
-      </div>
+      <!-- <div class="back-button">
+        <RouterLink to="/home" class="back-link">Kembali ke Beranda</RouterLink>
+      </div> -->
     </div>
   </div>
 </template>

@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import TicketCard from "@/components/TicketCard.vue";
 import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
+// import echo from "@/libs/echo";
 
 interface Ticket {
   id: number;
@@ -15,22 +16,25 @@ interface Ticket {
   qty?: number;
 }
 
-const tickets = ref<Ticket[]>([]);
+// const tickets = ref<Ticket[]>([]);
 const loading = ref(false);
 const checkoutLoading = ref(false);
 const errorMessage = ref("");
 const router = useRouter();
+const tickets = ref<any[]>([]);
 
 const loadTickets = async () => {
-  loading.value = true;
-  errorMessage.value = "";
+  // loading.value = true;
+  // errorMessage.value = "";
+  const res = await axios.get("/tickets/get");
+  tickets.value = res.data;
   
   try {
     let response;
     try {
-      response = await axios.get("/tickets");
+      response = await axios.get("/tickets/get");
     } catch (e) {
-      response = await axios.get("/api/tickets");
+      response = await axios.get("/api/tickets/get");
     }
     
     let ticketData = [];
@@ -59,7 +63,14 @@ const loadTickets = async () => {
 };
 
 onMounted(() => {
+  
   loadTickets();
+  window.Echo.channel("tickets").listen("ticket.added", (e: any) => {
+    loadTickets();
+    console.log("Tiket baru ditambahkan:", e.data.ticket);
+    tickets.value.push({ ...e.data.ticket});
+    toast.info(`🎫 Tiket baru ditambahkan: ${e.ticket.nama_event}`);
+  });
 });
 
 const vvipTickets = computed(() =>

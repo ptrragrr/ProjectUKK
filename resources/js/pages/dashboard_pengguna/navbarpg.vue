@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
     <div class="container-fluid px-4">
       <a class="navbar-brand fw-bold me-auto" href="#">
-        <i class="fas fa-music me-2"></i>OURSKY.FEST
+      OURSKY.FEST
       </a>
 
       <button

@@ -105,10 +105,10 @@
               { 'ticket-active': activeTicket === i }
             ]"
           >
-            <div v-if="ticket.premium" class="ticket-badge-top">
+            <!-- <div v-if="ticket.premium" class="ticket-badge-top">
               <span class="badge-star">⭐</span>
               MOST POPULAR
-            </div>
+            </div> -->
             
             <div class="ticket-icon-large">{{ ticket.icon }}</div>
             <h4 class="ticket-name">{{ ticket.name }}</h4>

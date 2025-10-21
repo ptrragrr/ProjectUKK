@@ -17,6 +17,29 @@ import Swal from 'sweetalert2'
 
 window.Swal = Swal;
 
+import Pusher from 'pusher-js';
+import Echo from 'laravel-echo';
+import ApiService from "./core/services/ApiService";
+import JwtService from "./core/services/JwtService";
+window.Pusher = Pusher;
+
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: 'local', // atau key kamu di .env
+    cluster: 'mt1',
+    wsHost: import.meta.env.VITE_PUSHER_HOST,
+    wsPort: 6001,
+    forceTLS: false,
+    disableStats: true,
+    enabledTransports: ['ws', 'wss'],
+    authEndpoint: '/broadcasting/auth',
+    auth: {
+        headers: {
+            Authorization: `Bearer ${JwtService.getToken()}`,
+        }
+    }
+});
+
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -32,7 +55,7 @@ window.Swal = Swal;
 //     broadcaster: 'pusher',
 //     key: import.meta.env.VITE_PUSHER_APP_KEY,
 //     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER ?? 'mt1',
-//     wsHost: import.meta.env.VITE_PUSHER_HOST ? import.meta.env.VITE_PUSHER_HOST : `ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER}.pusher.com`,
+//     wsHost: import.meta.env.VITE_PUSHER_HOST ? import.meta.env.VITE_PUSHER_HOST : ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER}.pusher.com,
 //     wsPort: import.meta.env.VITE_PUSHER_PORT ?? 80,
 //     wssPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
 //     forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',

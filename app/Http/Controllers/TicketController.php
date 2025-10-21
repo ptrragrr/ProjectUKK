@@ -3,10 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
+use App\Events\TicketAdded;
 use Illuminate\Http\Request;
 
 class TicketController extends Controller
 {
+
+    public function get(){
+        $tickets = Ticket::orderBy('id', 'desc')->get();
+
+        return response()->json($tickets);
+    }
+
     public function index(Request $request)
     {
         $query = Ticket::query();
@@ -44,12 +52,22 @@ class TicketController extends Controller
             'stok_tiket' => 'required|integer',
         ]);
 
-        $ticket = Ticket::create($validated);
+        $ticket = Ticket::create($request->all());
 
-        return response()->json([
-            'message' => 'Tiket berhasil ditambahkan',
-            'data' => $ticket
-        ], 201);
+    // Kirim event ke semua client
+    broadcast(new TicketAdded($ticket))->toOthers();
+
+    return response()->json([
+        'success' => true,
+        'data' => $ticket,
+    ]);
+
+        // $ticket = Ticket::create($validated);
+
+        // return response()->json([
+        //     'message' => 'Tiket berhasil ditambahkan',
+        //     'data' => $ticket
+        // ], 201);
     }
 
     public function show($id)
