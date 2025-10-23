@@ -315,9 +315,19 @@ router.beforeEach(async (to, from, next) => {
     if (authStore.isAuthenticated) {
       if (to.meta.permission && !authStore.user.permission.includes(to.meta.permission)) {
         return next({ name: "404" });
-      } else if (to.name === "dashboard" && authStore.user.role?.name === "pengguna") {
-        return next({ name: "home" });
-      } else {
+      } 
+    //   else if (to.name === "dashboard" && authStore.user.role?.name === "pengguna") {
+    //     return next({ name: "home" });
+    //   } 
+    else if (
+  to.name === "dashboard" &&
+  authStore.user &&
+  authStore.user.role &&
+  authStore.user.role.name === "pengguna"
+) {
+  return next({ name: "home" });
+}
+      else {
         return next();
       }
     } else {

@@ -133,12 +133,34 @@ const lihatDetail = (id: number) => {
     });
 };
 
+// const fetchTransaksis = async () => {
+//     try {
+//         const res = await axios.get("/transaksi");
+//         transaksis.value = res.data;
+//     } catch (err) {
+//         console.error(err);
+//     } finally {
+//         loading.value = false;
+//     }
+// };
+
 const fetchTransaksis = async () => {
     try {
         const res = await axios.get("/transaksi");
-        transaksis.value = res.data;
+
+        // pastikan hasilnya array, walau API kadang bungkus dengan "data"
+        if (Array.isArray(res.data)) {
+            transaksis.value = res.data;
+        } else if (Array.isArray(res.data.data)) {
+            transaksis.value = res.data.data;
+        } else {
+            transaksis.value = [];
+        }
+
+        console.log("Transaksi:", transaksis.value);
     } catch (err) {
-        console.error(err);
+        console.error("Gagal memuat transaksi:", err);
+        transaksis.value = [];
     } finally {
         loading.value = false;
     }

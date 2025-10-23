@@ -17,55 +17,81 @@ interface Ticket {
 }
 
 // const tickets = ref<Ticket[]>([]);
-const loading = ref(false);
+const loading = ref(true);
 const checkoutLoading = ref(false);
 const errorMessage = ref("");
 const router = useRouter();
 const tickets = ref<any[]>([]);
 
-const loadTickets = async () => {
-  // loading.value = true;
-  // errorMessage.value = "";
-  const res = await axios.get("/tickets/get");
-  tickets.value = res.data;
+// const loadTickets = async () => {
+//   // loading.value = true;
+//   // errorMessage.value = "";
+//   const res = await axios.get("/tickets/get");
+//   tickets.value = res.data;
   
+//   try {
+//     let response;
+//     try {
+//       response = await axios.get("/tickets/get");
+//     } catch (e) {
+//       response = await axios.get("/api/tickets/get");
+//     }
+    
+//     let ticketData = [];
+//     if (Array.isArray(response.data)) {
+//       ticketData = response.data;
+//     } else if (response.data.success && response.data.data) {
+//       ticketData = response.data.data;
+//     } else if (response.data.data && Array.isArray(response.data.data)) {
+//       ticketData = response.data.data;
+//     } else if (response.data.tickets) {
+//       ticketData = response.data.tickets;
+//     }
+    
+//     tickets.value = ticketData.map((t: Ticket) => ({ ...t, qty: 0 }));
+//   } catch (error: any) {
+//     if (error.response) {
+//       errorMessage.value = `Error ${error.response.status}: ${error.response.data?.message || 'Gagal memuat data tiket'}`;
+//     } else if (error.request) {
+//       errorMessage.value = "Tidak dapat terhubung ke server. Pastikan backend Laravel berjalan.";
+//     } else {
+//       errorMessage.value = error.message || "Terjadi kesalahan saat memuat data";
+//     }
+//   } finally {
+//     loading.value = false;
+//   }
+// };
+
+const loadTickets = async () => {
   try {
-    let response;
-    try {
-      response = await axios.get("/tickets/get");
-    } catch (e) {
-      response = await axios.get("/api/tickets/get");
-    }
-    
-    let ticketData = [];
-    if (Array.isArray(response.data)) {
-      ticketData = response.data;
-    } else if (response.data.success && response.data.data) {
-      ticketData = response.data.data;
-    } else if (response.data.data && Array.isArray(response.data.data)) {
-      ticketData = response.data.data;
-    } else if (response.data.tickets) {
-      ticketData = response.data.tickets;
-    }
-    
-    tickets.value = ticketData.map((t: Ticket) => ({ ...t, qty: 0 }));
-  } catch (error: any) {
-    if (error.response) {
-      errorMessage.value = `Error ${error.response.status}: ${error.response.data?.message || 'Gagal memuat data tiket'}`;
-    } else if (error.request) {
-      errorMessage.value = "Tidak dapat terhubung ke server. Pastikan backend Laravel berjalan.";
+    const res = await axios.get("/tickets/get");
+    console.log("Response dari API:", res.data);
+
+    if (Array.isArray(res.data)) {
+      tickets.value = res.data;
+    } else if (Array.isArray(res.data.data)) {
+      tickets.value = res.data.data;
     } else {
-      errorMessage.value = error.message || "Terjadi kesalahan saat memuat data";
+      tickets.value = [];
     }
+  } catch (err) {
+    console.error("Gagal memuat tiket:", err);
+    tickets.value = [];
   } finally {
     loading.value = false;
   }
 };
 
+const filteredTickets = computed(() => {
+  if (!Array.isArray(tickets.value)) return [];
+  return tickets.value.filter(t => t.stok_tiket > 0);
+});
+
 onMounted(() => {
   
   loadTickets();
-  window.Echo.channel("tickets").listen("ticket.added", (e: any) => {
+  window.Echo.channel("tickets")
+  .listen("ticket.added", (e: any) => {
     loadTickets();
     console.log("Tiket baru ditambahkan:", e.data.ticket);
     tickets.value.push({ ...e.data.ticket});
