@@ -176,7 +176,7 @@ const checkout = async () => {
       </div>
 
       <div class="banner-section">
-        <img src="/storage/photo/banner1.jpg" alt="Festival Banner" class="banner-image" />
+        <img src="/storage/photo/banner3.jpeg" alt="Festival Banner" class="banner-image" />
       </div>
 
       <div v-if="loading" class="state-container">
@@ -244,7 +244,7 @@ const checkout = async () => {
                   <p class="category-desc">Nikmati kenyamanan ekstra dengan akses VIP</p>
                 </div>
               </div>
-              <span class="category-count">{{ vipTickets.length }} tersedia</span>
+              <span class="category-count premium">{{ vipTickets.length }} tersedia</span>
             </div>
             <div class="tickets-grid">
               <TicketCard 
@@ -265,7 +265,7 @@ const checkout = async () => {
                   <p class="category-desc">Akses penuh ke semua area festival</p>
                 </div>
               </div>
-              <span class="category-count">{{ regulerTickets.length }} tersedia</span>
+             <span class="category-count premium">{{ regulerTickets.length }} tersedia</span>
             </div>
             <div class="tickets-grid">
               <TicketCard 
@@ -456,7 +456,7 @@ const checkout = async () => {
 
 .banner-image {
   width: 100%;
-  height: 400px;
+  height: 650px;
   object-fit: cover;
   display: block;
   border-radius: 24px;
@@ -882,7 +882,7 @@ const checkout = async () => {
   color: var(--secondary-color);
 }
 
-.btn-checkout {
+/* .btn-checkout {
   width: 100%;
   padding: 18px;
   background: linear-gradient(135deg, var(--secondary-color), #736046);
@@ -894,6 +894,20 @@ const checkout = async () => {
   font-weight: 700;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(161, 147, 121, 0.3);
+} */
+
+.btn-checkout {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, #A19379, #736046);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 16px rgba(161, 147, 121, 0.4);
 }
 
 .btn-checkout:hover:not(:disabled) {
@@ -1020,9 +1034,17 @@ const checkout = async () => {
     font-size: 16px;
   }
 
-  .banner-image {
+  /* .banner-image {
     height: 300px;
-  }
+  } */
+
+  .banner-image {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+  display: block;
+  border-radius: 24px;
+}
 
   .main-content {
     grid-template-columns: 1fr;

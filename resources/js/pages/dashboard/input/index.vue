@@ -135,7 +135,7 @@ const batalCari = () => {
                                     type="text"
                                     v-model="kodeTiket"
                                     class="form-control form-control-lg"
-                                    placeholder="Contoh: E6TMIKXB"
+                                    placeholder="Contoh: TKT-116-N24W0Y"
                                     style="
                                         padding-left: 2.5rem;
                                         border-radius: 8px;

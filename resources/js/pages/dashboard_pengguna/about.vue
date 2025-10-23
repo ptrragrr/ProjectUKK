@@ -1,14 +1,19 @@
 <template>
   <div class="about-wrapper">
     <div class="container">
+      <!-- Hero Section -->
       <div class="hero-section">
         <h1>OURSKY.FEST</h1>
         <p class="subtitle">Platform Tiket Konser Terdepan di Indonesia</p>
       </div>
 
+      <!-- Content Grid -->
       <div class="content-grid">
         <div class="about-card">
-          <h2>Siapa Kami?</h2>
+          <div class="card-header">
+            <span class="card-icon">🎪</span>
+            <h2>Siapa Kami?</h2>
+          </div>
           <p>
             OURSKY.FEST adalah platform pemesanan tiket konser online yang hadir untuk memberikan
             kemudahan dan kenyamanan bagi para pecinta musik di seluruh Indonesia. Kami
@@ -18,7 +23,22 @@
         </div>
 
         <div class="about-card">
-          <h2>Misi Kami</h2>
+          <div class="card-header">
+            <span class="card-icon">🎯</span>
+            <h2>Visi Kami</h2>
+          </div>
+          <p>
+            Menjadi platform tiket konser terpercaya dan terdepan di Indonesia yang menghubungkan
+            jutaan penggemar musik dengan pengalaman hiburan berkelas dunia, serta mendukung
+            pertumbuhan industri musik dan hiburan tanah air.
+          </p>
+        </div>
+
+        <div class="about-card">
+          <div class="card-header">
+            <span class="card-icon">🚀</span>
+            <h2>Misi Kami</h2>
+          </div>
           <p>
             Kami berkomitmen untuk menyajikan pengalaman pemesanan tiket yang cepat, aman, dan
             menyenangkan, demi mendukung industri hiburan tanah air. Dengan teknologi terdepan,
@@ -27,33 +47,38 @@
           </p>
         </div>
       </div>
-
-      <!-- <div class="back-button">
-        <RouterLink to="/home" class="back-link">Kembali ke Beranda</RouterLink>
-      </div> -->
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// Tidak perlu logic tambahan di sini
+// Component logic
 </script>
 
 <style scoped>
+:root {
+  --primary-color: #676F53;
+  --primary-hover: #1C290D;
+  --secondary-color: #A19379;
+  --accent-color: #FEFAE0;
+  --text-dark: #381D03;
+  --text-light: #736046;
+  --border-color: rgba(179, 180, 154, 0.3);
+  --white: #FFFFFF;
+}
+
 .about-wrapper {
-  padding: 100px 0 80px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #381D03;
-  background: linear-gradient(135deg, #FEFAE0 0%, #B3B49A 100%);
   min-height: 100vh;
+  background: linear-gradient(135deg, #FEFAE0 0%, #B3B49A 100%);
+  padding: 100px 20px 80px;
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
 }
 
+/* Hero Section */
 .hero-section {
   text-align: center;
   margin-bottom: 80px;
@@ -95,6 +120,7 @@
   margin-bottom: 20px;
   position: relative;
   z-index: 2;
+  letter-spacing: -0.02em;
 }
 
 .hero-section .subtitle {
@@ -105,11 +131,11 @@
   z-index: 2;
 }
 
+/* Content Grid */
 .content-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 40px;
-  margin-bottom: 80px;
 }
 
 .about-card {
@@ -117,7 +143,7 @@
   padding: 40px;
   border-radius: 24px;
   box-shadow: 0 12px 30px rgba(28, 41, 13, 0.1);
-  border: 1px solid rgba(179, 180, 154, 0.3);
+  border: 2px solid var(--border-color);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -136,67 +162,42 @@
 .about-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 20px 40px rgba(28, 41, 13, 0.15);
+  border-color: var(--primary-color);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.card-icon {
+  font-size: 36px;
 }
 
 .about-card h2 {
   font-size: 1.8em;
-  margin-bottom: 20px;
-  color: #381D03;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-}
-
-.about-card h2::before {
-  content: '';
-  width: 8px;
-  height: 8px;
-  background: #676F53;
-  border-radius: 50%;
-  margin-right: 12px;
+  color: var(--text-dark);
+  font-weight: 700;
+  margin: 0;
 }
 
 .about-card p {
   line-height: 1.8;
-  color: #736046;
-  font-size: 1.1em;
+  color: var(--text-light);
+  font-size: 1.05em;
 }
 
-.back-button {
-  text-align: center;
-  margin-top: 60px;
-}
+/* Responsive */
+@media (max-width: 968px) {
+  .about-wrapper {
+    padding: 80px 16px 60px;
+  }
 
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  background: linear-gradient(135deg, #676F53 0%, #381D03 100%);
-  color: white;
-  padding: 15px 30px;
-  text-decoration: none;
-  border-radius: 50px;
-  font-weight: 600;
-  font-size: 1.1em;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 20px rgba(103, 111, 83, 0.3);
-}
-
-.back-link::before {
-  content: '←';
-  margin-right: 10px;
-  font-size: 1.2em;
-}
-
-.back-link:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 30px rgba(103, 111, 83, 0.4);
-  background: linear-gradient(135deg, #1C290D 0%, #381D03 100%);
-}
-
-@media (max-width: 768px) {
-  .content-grid {
-    grid-template-columns: 1fr;
-    gap: 30px;
+  .hero-section {
+    padding: 50px 32px;
+    margin-bottom: 60px;
   }
 
   .hero-section h1 {
@@ -207,13 +208,52 @@
     font-size: 1.1em;
   }
 
+  .content-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
   .about-card {
-    padding: 30px 20px;
+    padding: 32px;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-wrapper {
+    padding: 60px 12px 48px;
   }
 
   .hero-section {
-    padding: 40px 20px;
-    margin-bottom: 50px;
+    padding: 40px 24px;
+    margin-bottom: 48px;
+  }
+
+  .hero-section h1 {
+    font-size: 2em;
+  }
+
+  .hero-section .subtitle {
+    font-size: 1em;
+  }
+
+  .content-grid {
+    gap: 24px;
+  }
+
+  .about-card {
+    padding: 28px 20px;
+  }
+
+  .card-icon {
+    font-size: 32px;
+  }
+
+  .about-card h2 {
+    font-size: 1.5em;
+  }
+
+  .about-card p {
+    font-size: 1em;
   }
 }
 </style>

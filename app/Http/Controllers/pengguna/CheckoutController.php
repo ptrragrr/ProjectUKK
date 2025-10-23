@@ -195,7 +195,7 @@ class CheckoutController extends Controller
                 //     'status' => 'Available',
                 // ]);
                 for ($u = 0; $u < $t['qty']; $u++) {
-    $kode = 'TKT-' . $transaksi->id . '-' . strtoupper(Str::random(6));
+    $kode = 'PTR-' . $transaksi->id . '-' . strtoupper(Str::random(6));
 
     TransaksiDetail::create([
         'transaksi_id'   => $transaksi->id,
