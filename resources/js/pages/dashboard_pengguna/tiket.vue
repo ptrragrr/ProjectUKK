@@ -4,7 +4,6 @@ import { useRouter } from "vue-router";
 import TicketCard from "@/components/TicketCard.vue";
 import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
-// import echo from "@/libs/echo";
 
 interface Ticket {
   id: number;
@@ -16,51 +15,11 @@ interface Ticket {
   qty?: number;
 }
 
-// const tickets = ref<Ticket[]>([]);
 const loading = ref(true);
 const checkoutLoading = ref(false);
 const errorMessage = ref("");
 const router = useRouter();
 const tickets = ref<any[]>([]);
-
-// const loadTickets = async () => {
-//   // loading.value = true;
-//   // errorMessage.value = "";
-//   const res = await axios.get("/tickets/get");
-//   tickets.value = res.data;
-  
-//   try {
-//     let response;
-//     try {
-//       response = await axios.get("/tickets/get");
-//     } catch (e) {
-//       response = await axios.get("/api/tickets/get");
-//     }
-    
-//     let ticketData = [];
-//     if (Array.isArray(response.data)) {
-//       ticketData = response.data;
-//     } else if (response.data.success && response.data.data) {
-//       ticketData = response.data.data;
-//     } else if (response.data.data && Array.isArray(response.data.data)) {
-//       ticketData = response.data.data;
-//     } else if (response.data.tickets) {
-//       ticketData = response.data.tickets;
-//     }
-    
-//     tickets.value = ticketData.map((t: Ticket) => ({ ...t, qty: 0 }));
-//   } catch (error: any) {
-//     if (error.response) {
-//       errorMessage.value = `Error ${error.response.status}: ${error.response.data?.message || 'Gagal memuat data tiket'}`;
-//     } else if (error.request) {
-//       errorMessage.value = "Tidak dapat terhubung ke server. Pastikan backend Laravel berjalan.";
-//     } else {
-//       errorMessage.value = error.message || "Terjadi kesalahan saat memuat data";
-//     }
-//   } finally {
-//     loading.value = false;
-//   }
-// };
 
 const loadTickets = async () => {
   try {
@@ -88,15 +47,14 @@ const filteredTickets = computed(() => {
 });
 
 onMounted(() => {
-  
   loadTickets();
+
   window.Echo.channel("tickets")
-  .listen("ticket.added", (e: any) => {
-    loadTickets();
-    console.log("Tiket baru ditambahkan:", e.data.ticket);
-    tickets.value.push({ ...e.data.ticket});
-    toast.info(`🎫 Tiket baru ditambahkan: ${e.ticket.nama_event}`);
-  });
+    .listen("ticket.added", (e: any) => {
+      console.log("Event tiket baru:", e);
+      tickets.value.push(e.ticket);
+      toast.info(`🎫 Tiket baru ditambahkan: ${e.ticket.nama_event}`);
+    });
 });
 
 const vvipTickets = computed(() =>
@@ -122,6 +80,22 @@ const regulerTickets = computed(() =>
 const updateQty = (id: number, qty: number) => {
   const ticket = tickets.value.find((t) => t.id === id);
   if (ticket) ticket.qty = qty;
+};
+
+// Fungsi baru untuk menghapus item dari keranjang
+const removeItem = (id: number) => {
+  const ticket = tickets.value.find((t) => t.id === id);
+  if (ticket) {
+    // Reset qty ke 0 di ticket data
+    ticket.qty = 0;
+    
+    // Force update dengan nextTick untuk memastikan reactivity
+    setTimeout(() => {
+      updateQty(id, 0);
+    }, 0);
+    
+    toast.success("Item berhasil dihapus dari keranjang");
+  }
 };
 
 const selectedTickets = computed(() =>
@@ -203,12 +177,6 @@ const checkout = async () => {
 
       <div class="banner-section">
         <img src="/storage/photo/banner1.jpg" alt="Festival Banner" class="banner-image" />
-        <!-- <div class="banner-overlay">
-          <div class="banner-info">
-            <span class="info-badge">📅 15-17 Desember 2025</span>
-            <span class="info-badge">📍 Surabaya, Indonesia</span>
-          </div>
-        </div> -->
       </div>
 
       <div v-if="loading" class="state-container">
@@ -258,7 +226,12 @@ const checkout = async () => {
               <span class="category-count premium">{{ vvipTickets.length }} tersedia</span>
             </div>
             <div class="tickets-grid">
-              <TicketCard v-for="ticket in vvipTickets" :key="ticket.id" :ticket="ticket" @updateQty="updateQty" />
+              <TicketCard 
+                v-for="ticket in vvipTickets" 
+                :key="`vvip-${ticket.id}-${ticket.qty || 0}`" 
+                :ticket="ticket" 
+                @updateQty="updateQty" 
+              />
             </div>
           </section>
 
@@ -274,7 +247,12 @@ const checkout = async () => {
               <span class="category-count">{{ vipTickets.length }} tersedia</span>
             </div>
             <div class="tickets-grid">
-              <TicketCard v-for="ticket in vipTickets" :key="ticket.id" :ticket="ticket" @updateQty="updateQty" />
+              <TicketCard 
+                v-for="ticket in vipTickets" 
+                :key="`vip-${ticket.id}-${ticket.qty || 0}`" 
+                :ticket="ticket" 
+                @updateQty="updateQty" 
+              />
             </div>
           </section>
 
@@ -290,7 +268,12 @@ const checkout = async () => {
               <span class="category-count">{{ regulerTickets.length }} tersedia</span>
             </div>
             <div class="tickets-grid">
-              <TicketCard v-for="ticket in regulerTickets" :key="ticket.id" :ticket="ticket" @updateQty="updateQty" />
+              <TicketCard 
+                v-for="ticket in regulerTickets" 
+                :key="`reguler-${ticket.id}-${ticket.qty || 0}`" 
+                :ticket="ticket" 
+                @updateQty="updateQty" 
+              />
             </div>
           </section>
         </div>
@@ -310,11 +293,16 @@ const checkout = async () => {
                 <div v-for="item in selectedTickets" :key="item.id" class="selected-item">
                   <div class="item-header">
                     <span class="item-name">{{ item.nama_event }}</span>
-                    <span class="item-price">{{ formatRupiah(item.harga_tiket * item.qty) }}</span>
+                    <button @click="removeItem(item.id)" class="btn-remove" title="Hapus dari keranjang">
+                      <span class="remove-icon">🗑️</span>
+                    </button>
                   </div>
                   <div class="item-details">
                     <span class="item-type">{{ item.jenis_tiket }}</span>
                     <span class="item-qty">{{ formatRupiah(item.harga_tiket) }} × {{ item.qty }}</span>
+                  </div>
+                  <div class="item-total">
+                    <span class="item-price">{{ formatRupiah(item.harga_tiket * item.qty) }}</span>
                   </div>
                 </div>
               </div>
@@ -379,7 +367,7 @@ const checkout = async () => {
   </div>
 </template>
 
-<style>
+<style scoped>
 :root {
   --primary-color: #676F53;
   --primary-hover: #1C290D;
@@ -390,10 +378,10 @@ const checkout = async () => {
   --border-color: rgba(179, 180, 154, 0.3);
   --bg-light: #FEFAE0;
   --white: #FFFFFF;
+  --danger-color: #DC2626;
+  --danger-hover: #B91C1C;
 }
-</style>
 
-<style scoped>
 .page-wrapper {
   min-height: 100vh;
   background: linear-gradient(135deg, #FEFAE0 0%, #B3B49A 100%);
@@ -472,32 +460,6 @@ const checkout = async () => {
   object-fit: cover;
   display: block;
   border-radius: 24px;
-}
-
-.banner-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba(28, 41, 13, 0.9), transparent);
-  padding: 32px;
-}
-
-.banner-info {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.info-badge {
-  background: rgba(254, 250, 224, 0.2);
-  backdrop-filter: blur(10px);
-  color: white;
-  padding: 10px 20px;
-  border-radius: 50px;
-  font-size: 14px;
-  font-weight: 600;
-  border: 1px solid rgba(254, 250, 224, 0.3);
 }
 
 .state-container {
@@ -798,6 +760,7 @@ const checkout = async () => {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 8px;
+  gap: 12px;
 }
 
 .item-name {
@@ -808,18 +771,39 @@ const checkout = async () => {
   line-height: 1.4;
 }
 
-.item-price {
-  font-weight: 800;
-  color: var(--primary-color);
+.btn-remove {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn-remove:hover {
+  background: rgba(220, 38, 38, 0.1);
+  transform: scale(1.1);
+}
+
+.remove-icon {
   font-size: 16px;
-  white-space: nowrap;
-  margin-left: 12px;
+  filter: grayscale(100%);
+  transition: filter 0.2s ease;
+}
+
+.btn-remove:hover .remove-icon {
+  filter: grayscale(0%);
 }
 
 .item-details {
   display: flex;
   justify-content: space-between;
   font-size: 13px;
+  margin-bottom: 8px;
 }
 
 .item-type {
@@ -832,6 +816,19 @@ const checkout = async () => {
 
 .item-qty {
   color: var(--text-light);
+}
+
+.item-total {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-color);
+}
+
+.item-price {
+  font-weight: 800;
+  color: var(--primary-color);
+  font-size: 16px;
 }
 
 .summary-divider {
@@ -1073,15 +1070,6 @@ const checkout = async () => {
     height: 220px;
   }
 
-  .banner-overlay {
-    padding: 20px;
-  }
-
-  .info-badge {
-    font-size: 12px;
-    padding: 8px 16px;
-  }
-
   .state-container {
     margin: 40px auto;
   }
@@ -1194,6 +1182,14 @@ const checkout = async () => {
     font-size: 12px;
   }
 
+  .btn-remove {
+    padding: 2px 6px;
+  }
+
+  .remove-icon {
+    font-size: 14px;
+  }
+
   .calc-row {
     font-size: 14px;
     padding: 8px 0;
@@ -1271,16 +1267,6 @@ const checkout = async () => {
     height: 180px;
   }
 
-  .banner-info {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .info-badge {
-    font-size: 11px;
-    padding: 6px 12px;
-  }
-
   .category-section {
     padding: 16px;
   }
@@ -1312,13 +1298,7 @@ const checkout = async () => {
   }
 
   .item-header {
-    flex-direction: column;
-    gap: 6px;
-    align-items: flex-start;
-  }
-
-  .item-price {
-    margin-left: 0;
+    gap: 8px;
   }
 
   .total-value {
