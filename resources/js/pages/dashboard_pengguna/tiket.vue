@@ -166,10 +166,10 @@ const checkout = async () => {
     <div class="page-container">
       <div class="page-hero">
         <div class="hero-content">
-          <div class="hero-badge">
+          <!-- <div class="hero-badge">
             <span class="sparkle">✨</span>
             <span class="badge-text">OURSKY.FEST 2025</span>
-          </div>
+          </div> -->
           <h1 class="page-title">Pilih Tiket Festival</h1>
           <p class="page-subtitle">Dapatkan tiket Anda sekarang dan rasakan pengalaman tak terlupakan</p>
         </div>
@@ -261,7 +261,7 @@ const checkout = async () => {
               <div class="header-left">
                 <span class="category-icon">🎫</span>
                 <div class="header-text">
-                  <h2 class="category-title">Regular Tickets</h2>
+                  <h2 class="category-title">REGULER Tickets</h2>
                   <p class="category-desc">Akses penuh ke semua area festival</p>
                 </div>
               </div>
@@ -396,6 +396,7 @@ const checkout = async () => {
 .page-hero {
   text-align: center;
   margin-bottom: 40px;
+  margin-top: 80px;
 }
 
 .hero-content {

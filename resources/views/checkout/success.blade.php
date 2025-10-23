@@ -204,7 +204,7 @@
         </div>
 
         <div class="button-group">
-            <a href="/dashboard_pengguna/home" class="btn btn-primary">Kembali ke Beranda</a>
+            <a href="/dashboard_pengguna" class="btn btn-primary">Kembali ke Beranda</a>
             <!-- <a href="/my-tickets" class="btn btn-secondary">Lihat Tiket Saya</a> -->
         </div>
 

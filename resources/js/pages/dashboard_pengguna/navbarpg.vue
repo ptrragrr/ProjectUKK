@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
     <div class="container-fluid px-4">
       <a class="navbar-brand fw-bold me-auto" href="#">
-      OURSKY.FEST
+        OURSKY.FEST
       </a>
 
       <button
@@ -18,25 +18,25 @@
       <div class="collapse navbar-collapse" :class="{ show: isExpanded }" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item px-3">
-                        <router-link :to="{ name: 'home' }" class="nav-link fw-bold">
-                            Home
-                        </router-link>
-                    </li>
-                    <li class="nav-item px-3">
-                        <router-link :to="{ name: 'ticket' }" class="nav-link fw-bold">
-                            Ticket
-                        </router-link>
-                    </li>
-                    <li class="nav-item px-3">
-                        <router-link :to="{ name: 'contact' }" class="nav-link fw-bold">
-                            Contact
-                        </router-link>
-                    </li>
-                    <li class="nav-item px-3">
-                        <router-link :to="{ name: 'about' }" class="nav-link fw-bold">
-                            About Us
-                        </router-link>
-                    </li>
+            <router-link :to="{ name: 'home' }" class="nav-link fw-bold" style="color: #FEFAE0 !important;">
+              Home
+            </router-link>
+          </li>
+          <li class="nav-item px-3">
+            <router-link :to="{ name: 'ticket' }" class="nav-link fw-bold" style="color: #FEFAE0 !important;">
+              Ticket
+            </router-link>
+          </li>
+          <li class="nav-item px-3">
+            <router-link :to="{ name: 'contact' }" class="nav-link fw-bold" style="color: #FEFAE0 !important;">
+              Contact
+            </router-link>
+          </li>
+          <li class="nav-item px-3">
+            <router-link :to="{ name: 'about' }" class="nav-link fw-bold" style="color: #FEFAE0 !important;">
+              About Us
+            </router-link>
+          </li>
         </ul>
       </div>
     </div>
@@ -45,49 +45,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref } from "vue";
 import { RouterView } from "vue-router";
 
-const links = [
-  { name: "home", label: "Home", icon: "fa-home" },
-  { name: "tickets", label: "Tiket", icon: "fa-ticket-alt" },
-  { name: "about", label: "About Us", icon: "fa-users" },
-  { name: "contact", label: "Contact", icon: "fa-envelope" },
-];
-
-const activeLink = ref("home");
 const isExpanded = ref(false);
 
 function toggleNavbar() {
   isExpanded.value = !isExpanded.value;
 }
 
-function setActive(name: string) {
-  activeLink.value = name;
-  if (window.innerWidth < 992) {
-    isExpanded.value = false; // Tutup navbar di mobile
-  }
-}
-
-// Efek scroll
-function handleScroll() {
-  const navbar = document.querySelector(".navbar-custom") as HTMLElement;
-  if (window.scrollY > 50) {
-    navbar.style.background =
-      "linear-gradient(135deg, rgba(28, 41, 13, 0.95), rgba(103, 111, 83, 0.95))";
-  } else {
-    navbar.style.background =
-      "linear-gradient(135deg, var(--primary-green), var(--sage-green))";
-  }
-}
-
-onMounted(() => {
-  window.addEventListener("scroll", handleScroll);
-});
-
-onUnmounted(() => {
-  window.removeEventListener("scroll", handleScroll);
-});
+// Hapus semua event listener scroll yang menyebabkan masalah
 </script>
 
 <style scoped>
@@ -109,14 +76,15 @@ body {
   min-height: 100vh;
 }
 
-/* ==== STYLE PERSIS DARI HTML ==== */
+/* Navbar dengan background konsisten */
 .navbar-custom {
-  background: linear-gradient(135deg, var(--primary-green) 0%, var(--sage-green) 100%);
+  background: linear-gradient(135deg, #1c290d 0%, #676f53 100%) !important;
   backdrop-filter: blur(10px);
   border-bottom: 3px solid var(--brown);
   box-shadow: 0 8px 32px rgba(28, 41, 13, 0.3);
   transition: all 0.3s ease;
   padding: 1rem 0;
+  z-index: 1000;
 }
 
 .navbar-custom:hover {
@@ -126,11 +94,13 @@ body {
 .navbar-brand {
   font-size: 2.2rem !important;
   font-weight: 800 !important;
-  color: var(--cream) !important;
+  color: #FEFAE0 !important;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   letter-spacing: 2px;
   position: relative;
   overflow: hidden;
+  transition: all 0.3s ease;
+  text-decoration: none;
 }
 
 .navbar-brand::before {
@@ -149,12 +119,12 @@ body {
 }
 
 .navbar-brand:hover {
-  color: var(--cream) !important;
+  color: #FEFAE0 !important;
   transform: translateY(-2px);
 }
 
 .nav-link {
-  color: var(--cream) !important;
+  color: #FEFAE0 !important;
   font-weight: 600;
   font-size: 1.1rem;
   margin: 0 0.5rem;
@@ -174,9 +144,10 @@ body {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, var(--taupe), var(--brown));
+  background: linear-gradient(135deg, #A19379, #736046);
   transition: left 0.3s ease;
   z-index: -1;
+  border-radius: 50px;
 }
 
 .nav-link:hover::before {
@@ -184,16 +155,12 @@ body {
 }
 
 .nav-link:hover {
-  color: var(--cream) !important;
+  color: #FEFAE0 !important;
   transform: translateY(-3px);
   box-shadow: 0 6px 20px rgba(115, 96, 70, 0.4);
 }
 
-.nav-link.active {
-  background: linear-gradient(135deg, var(--brown), var(--dark-brown));
-  color: var(--cream) !important;
-  box-shadow: 0 4px 15px rgba(56, 29, 3, 0.5);
-}
+/* Hapus styling active yang menyebabkan background bulat */
 
 .navbar-toggler {
   border: 2px solid var(--cream);
@@ -209,6 +176,17 @@ body {
 
 .navbar-toggler-icon {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23FEFAE0' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .navbar-collapse {
+    background: linear-gradient(135deg, rgba(28, 41, 13, 0.98), rgba(103, 111, 83, 0.98));
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+  }
 }
 
 @media (max-width: 768px) {
