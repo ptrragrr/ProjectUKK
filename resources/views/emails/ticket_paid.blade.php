@@ -44,15 +44,15 @@
             margin-bottom: 20px;
         }
         .greeting strong {
-            color: #667eea;
+            color: #676F53;
             font-weight: 600;
         }
         .order-summary {
-            background: linear-gradient(135deg, #f6f8fb 0%, #f1f4f9 100%);
+            background: linear-gradient(135deg, #FEFAE0 0%, #F5F1E8 100%);
             border-radius: 12px;
             padding: 25px;
             margin: 25px 0;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #676F53;
         }
         .order-row {
             display: flex;
@@ -64,11 +64,11 @@
         .order-row:last-child {
             border-bottom: none;
             font-weight: 600;
-            color: #667eea;
+            color: #676F53;
             font-size: 18px;
             margin-top: 10px;
             padding-top: 15px;
-            border-top: 2px solid #667eea;
+            border-top: 2px solid #676F53;
         }
         .order-label {
             color: #64748b;
@@ -101,8 +101,8 @@
             overflow: hidden;
         }
         .ticket-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+            border-color: #676F53;
+            box-shadow: 0 8px 20px rgba(103, 111, 83, 0.15);
             transform: translateY(-2px);
         }
         .ticket-card::before {
@@ -112,7 +112,7 @@
             left: 0;
             width: 5px;
             height: 100%;
-            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(180deg, #676F53 0%, #A19379 100%);
         }
         .ticket-event {
             font-size: 18px;
@@ -123,7 +123,7 @@
         }
         .ticket-code {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #676F53 0%, #1C290D 100%);
             color: white;
             padding: 10px 20px;
             border-radius: 8px;
@@ -132,7 +132,7 @@
             font-weight: 700;
             letter-spacing: 2px;
             margin-left: 15px;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 12px rgba(103, 111, 83, 0.3);
         }
         .info-box {
             background: #fef3c7;
@@ -218,13 +218,16 @@
             <div class="tickets-section">
                 <div class="section-title">
                     <span class="icon">🎫</span>
-                    <span>Tiket Kamu</span>
+                    <span> Kode Tiket Kamu</span>
                 </div>
 
                 @foreach ($transaksi->details as $index => $detail)
                 <div class="ticket-card">
                     <div class="ticket-event">
-                        {{ $detail->ticket->nama_event ?? 'Event Tidak Diketahui' }}
+                        {{ $detail->ticket->event->nama ?? $detail->ticket->nama_event ?? 'Event Tidak Diketahui' }}
+                    </div>
+                    <div style="font-size: 14px; color: #64748b; padding-left: 15px; margin-bottom: 10px;">
+                        Jenis Tiket: <strong style="color: #676F53;">{{ $detail->ticket->jenis_tiket ?? $detail->ticket->kategori ?? 'Reguler' }}</strong>
                     </div>
                     <div class="ticket-code">
                         {{ $codes[$index] ?? 'N/A' }}
@@ -242,7 +245,8 @@
 
         <!-- Footer -->
         <div class="footer">
-            <p>Jika kamu merasa tidak melakukan pembelian ini atau memiliki pertanyaan, silakan hubungi customer service kami. (+62 812 3456 7890)</p>
+            <p>Jika kamu merasa tidak melakukan pembelian ini atau memiliki pertanyaan, silakan hubungi customer service kami. (+62 31 1234 5678 / +62 812 3456 7890
+)</p>
             <p>Email ini dikirim secara otomatis, mohon untuk tidak membalas.</p>
             <p class="copyright">&copy; {{ date('Y') }} Tiket Konser. All rights reserved.</p>
         </div>
