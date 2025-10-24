@@ -341,13 +341,26 @@ if ($newStatus === 'paid' && $previousStatus !== 'paid') {
     }
 
     // Kirim email menggunakan kode dari transaksi_details (atau dari tiket_kodes)
-    try {
-        $codes = $transaksi->details->pluck('kode_tiket');
-        Mail::to($transaksi->email)->send(new TicketPaidMail($transaksi, $codes));
-        Log::info("Email tiket berhasil dikirim ke {$transaksi->email}");
-    } catch (\Exception $e) {
-        Log::error("Gagal kirim email ke {$transaksi->email}: " . $e->getMessage());
-    }
+    // try {
+    //     $codes = $transaksi->details->pluck('kode_tiket');
+    //     Mail::to($transaksi->email)->send(new TicketPaidMail($transaksi, $codes));
+    //     Log::info("Email tiket berhasil dikirim ke {$transaksi->email}");
+    // } catch (\Exception $e) {
+    //     Log::error("Gagal kirim email ke {$transaksi->email}: " . $e->getMessage());
+    // }
+
+try {
+    $codes = $transaksi->details->pluck('kode_tiket');
+
+    // ✅ Gabungkan semua kode tiket jadi satu string
+    $eventName = $codes->join(', ');
+
+    Mail::to($transaksi->email)->send(new TicketPaidMail($transaksi, $codes, $eventName));
+
+    Log::info("Email tiket berhasil dikirim ke {$transaksi->email}");
+} catch (\Exception $e) {
+    Log::error("Gagal kirim email ke {$transaksi->email}: " . $e->getMessage());
+}
 }
     }
 

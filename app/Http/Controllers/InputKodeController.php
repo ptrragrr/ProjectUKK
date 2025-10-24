@@ -38,18 +38,41 @@ class InputKodeController extends Controller
     }
 
     // ✅ Cetak tiket (halaman blade)
+    // public function cetak($kode)
+    // {
+    //     $detail = TransaksiDetail::with(['transaksi', 'ticket'])
+    //         ->where('kode_tiket', $kode)
+    //         ->firstOrFail();
+
+    //     if( $detail->status == 'Expired') {
+    //         return "Tiket ini sudah expired.";
+    //     }
+    //       if( $transaksi->status_payment == 'Pending') {
+    //         return "Tiket ini belum melakukan pembayaran.";
+    //     }
+
+    //     return view('tiket.cetak', compact('detail'));
+    // }
+
     public function cetak($kode)
-    {
-        $detail = TransaksiDetail::with(['transaksi', 'ticket'])
-            ->where('kode_tiket', $kode)
-            ->firstOrFail();
+{
+    $detail = TransaksiDetail::with(['transaksi', 'ticket'])
+        ->where('kode_tiket', $kode)
+        ->firstOrFail();
 
-        if( $detail->status == 'Expired') {
-            return "Tiket ini sudah expired.";
-        }
-
-        return view('tiket.cetak', compact('detail'));
+    // ❌ Cek kalau tiket sudah expired
+    if ($detail->status === 'Expired') {
+        return "Tiket ini sudah expired.";
     }
+
+    // ❌ Cek kalau transaksi belum dibayar
+    if ($detail->transaksi->status_payment === 'Pending') {
+        return "Tiket ini belum melakukan pembayaran.";
+    }
+
+    // ✅ Jika sudah dibayar
+    return view('tiket.cetak', compact('detail'));
+}
 
     // ✅ Selesai → Expired
     public function selesai($kode)
