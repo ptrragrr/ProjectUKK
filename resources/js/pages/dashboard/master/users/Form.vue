@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { block, unblock } from "@/libs/utils";
 import { onMounted, ref, watch, computed } from "vue";
+import { Field, Form as VForm, ErrorMessage } from "vee-validate";
 import * as Yup from "yup";
 import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
@@ -22,17 +23,34 @@ const fileTypes = ref(["image/jpeg", "image/png", "image/jpg"]);
 const photo = ref<any>([]);
 const formRef = ref();
 
+// const formSchema = Yup.object().shape({
+//     name: Yup.string().required("Nama harus diisi"),
+//     email: Yup.string()
+//         .email("Email harus valid")
+//         .required("Email harus diisi"),
+//     password: Yup.string().min(8, "Minimal 8 karakter").nullable(),
+//     passwordConfirmation: Yup.string()
+//         .oneOf([Yup.ref("password")], "Konfirmasi password harus sama")
+//         .nullable(),
+//     phone: Yup.string().required("Nomor Telepon harus diisi"),
+//     role_id: Yup.string().required("Pilih role"),
+// });
+
 const formSchema = Yup.object().shape({
-    name: Yup.string().required("Nama harus diisi"),
-    email: Yup.string()
-        .email("Email harus valid")
-        .required("Email harus diisi"),
-    password: Yup.string().min(8, "Minimal 8 karakter").nullable(),
-    passwordConfirmation: Yup.string()
-        .oneOf([Yup.ref("password")], "Konfirmasi password harus sama")
-        .nullable(),
-    phone: Yup.string().required("Nomor Telepon harus diisi"),
-    role_id: Yup.string().required("Pilih role"),
+  name: Yup.string().required("Nama harus diisi"),
+  email: Yup.string().email("Email harus valid").required("Email harus diisi"),
+  phone: Yup.string().required("Nomor Telepon harus diisi"),
+  role_id: Yup.string().required("Pilih role"),
+  password: Yup.string()
+    .nullable()
+    .when([], {
+      is: () => !props.selected,
+      then: (schema) => schema.required("Password harus diisi").min(8, "Minimal 8 karakter"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+  passwordConfirmation: Yup.string()
+    .nullable()
+    .oneOf([Yup.ref("password")], "Konfirmasi password harus sama"),
 });
 
 // function getEdit() {
@@ -172,14 +190,23 @@ const roles = computed(() =>
                         <label class="form-label fw-bold fs-6 required">
                             Email
                         </label>
-                        <Field
+                        <!-- <Field
                             class="form-control form-control-lg form-control-solid"
                             type="text"
                             name="email"
                             autocomplete="off"
                             v-model="user.email"
                             placeholder="Masukkan Email"
-                        />
+                        /> -->
+ <Field
+  class="form-control form-control-lg form-control-solid"
+  type="text"
+  name="email"
+  autocomplete="new-email"
+  v-model="user.email"
+  placeholder="Masukkan Email"
+/>
+
                         <div class="fv-plugins-message-container">
                             <div class="fv-help-block">
                                 <ErrorMessage name="email" />
@@ -194,14 +221,23 @@ const roles = computed(() =>
                         <label class="form-label fw-bold fs-6">
                             Password
                         </label>
-                        <Field
+                        <!-- <Field
                             class="form-control form-control-lg form-control-solid"
                             type="password"
                             name="password"
                             autocomplete="off"
                             v-model="user.password"
                             placeholder="Masukkan password"
-                        />
+                        /> -->
+<Field
+  class="form-control form-control-lg form-control-solid"
+  type="password"
+  name="password"
+  autocomplete="new-password"
+  v-model="user.password"
+  placeholder="Masukkan password"
+/>
+
                         <div class="fv-plugins-message-container">
                             <div class="fv-help-block">
                                 <ErrorMessage name="password" />
@@ -216,14 +252,23 @@ const roles = computed(() =>
                         <label class="form-label fw-bold fs-6">
                             Konfirmasi Password
                         </label>
-                        <Field
+                        <!-- <Field
                             class="form-control form-control-lg form-control-solid"
                             type="password"
                             name="passwordConfirmation"
                             autocomplete="off"
                             v-model="user.passwordConfirmation"
                             placeholder="Konfirmasi password"
-                        />
+                        /> -->
+<Field
+  class="form-control form-control-lg form-control-solid"
+  type="password"
+  name="passwordConfirmation"
+  autocomplete="new-password"
+  v-model="user.passwordConfirmation"
+  placeholder="Konfirmasi password"
+/>
+
                         <div class="fv-plugins-message-container">
                             <div class="fv-help-block">
                                 <ErrorMessage name="passwordConfirmation" />

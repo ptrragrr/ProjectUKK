@@ -52,8 +52,20 @@ const cekTiket = async () => {
     }
 };
 
+// const cetakTiket = () => {
+//     if (!transaksi.value) return;
+//     window.open(`/cetak-tiket/${transaksi.value.kode_tiket}`, "_blank");
+// };
+
 const cetakTiket = () => {
     if (!transaksi.value) return;
+
+    // Tambahkan validasi status pembayaran
+    if (transaksi.value.transaksi.status_payment !== "paid") {
+        alert("Tiket belum dibayar! Tidak bisa dicetak.");
+        return;
+    }
+
     window.open(`/cetak-tiket/${transaksi.value.kode_tiket}`, "_blank");
 };
 
@@ -135,7 +147,7 @@ const batalCari = () => {
                                     type="text"
                                     v-model="kodeTiket"
                                     class="form-control form-control-lg"
-                                    placeholder="Contoh: TKT-116-N24W0Y"
+                                    placeholder="Contoh: PTR-140-A3YUWQ"
                                     style="
                                         padding-left: 2.5rem;
                                         border-radius: 8px;
@@ -262,7 +274,7 @@ const batalCari = () => {
                                         transaksi.transaksi.status_payment ===
                                         "paid"
                                             ? "Paid"
-                                            : "Menunggu Pembayaran"
+                                            : "Pending"
                                     }}
                                 </span>
                             </div>
@@ -466,14 +478,34 @@ const batalCari = () => {
                                     <i class="la la-arrow-left me-2"></i>
                                     Kembali
                                 </button>
-                                <button
+                                <!-- <button
                                     @click="cetakTiket"
                                     class="btn btn-success fw-bold"
                                     style="border-radius: 8px"
                                 >
                                     <i class="la la-print me-2"></i>
                                     Cetak Tiket
-                                </button>
+                                </button> -->
+                                <button
+    v-if="transaksi.transaksi.status_payment === 'paid'"
+    @click="cetakTiket"
+    class="btn btn-success fw-bold"
+    style="border-radius: 8px"
+>
+    <i class="la la-print me-2"></i>
+    Cetak Tiket
+</button>
+
+<!-- Opsional: tampilkan disabled button jika belum bayar -->
+<button
+    v-else
+    class="btn btn-secondary fw-bold"
+    style="border-radius: 8px"
+    disabled
+>
+    <i class="la la-lock me-2"></i>
+    Cetak Tidak Tersedia
+</button>
                             </div>
                         </div>
                     </div>

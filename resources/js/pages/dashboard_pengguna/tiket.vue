@@ -139,7 +139,7 @@ const checkout = async () => {
         harga_tiket: t.harga_tiket,
       })),
       subtotal: subtotal.value,
-      tax: tax.value,
+      tax: tax.value, 
       fee: fee.value, 
       total: total.value,
     };
