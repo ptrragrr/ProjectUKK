@@ -8,10 +8,26 @@ use Illuminate\Http\Request;
 class JenisTiketController extends Controller
 {
     // 🔹 List dengan pagination (opsional)
-    public function index()
-    {
-        return response()->json(JenisTiket::paginate(10));
+    // public function index()
+    // {
+    //     return response()->json(JenisTiket::paginate(10));
+    // }
+
+    public function index(Request $request)
+{
+    $query = JenisTiket::query();
+
+    // 🔍 Jika ada parameter pencarian
+    if ($request->has('search') && !empty($request->search)) {
+        $search = $request->search;
+        $query->where('jenis_tiket', 'like', "%{$search}%");
     }
+
+    // 🔹 Ambil parameter perPage dari frontend jika ada
+    $perPage = $request->get('per', 10);
+
+    return response()->json($query->paginate($perPage));
+}
 
     // 🔹 Ambil semua tanpa pagination
     public function all()

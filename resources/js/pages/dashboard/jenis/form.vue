@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
-// import { useForm } from "vee-validate";
 
 interface Props {
     selected?: string;
@@ -9,18 +8,35 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits(["close", "refresh"]);
 
-// Form state
 const formData = ref({
     jenis_tiket: "",
     harga: "",
 });
 
 const isEdit = ref(false);
-
-// Form hooks
 const processing = ref(false);
 
-// Fetch data untuk edit
+// Fungsi format ke Rupiah
+const formatRupiah = (value: string | number) => {
+    const numberString = value
+        .toString()
+        .replace(/[^,\d]/g, "")
+        .replace(",", ".");
+    const number = parseFloat(numberString);
+    if (isNaN(number)) return "";
+    return number.toLocaleString("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0,
+    });
+};
+
+// Fungsi untuk menghapus format rupiah (ambil angka asli)
+const parseRupiah = (value: string) => {
+    return value.replace(/[^0-9]/g, "");
+};
+
+// Ambil data untuk edit
 const fetchData = async () => {
     if (!props.selected) return;
 
@@ -30,7 +46,7 @@ const fetchData = async () => {
             const data = await response.json();
             formData.value = {
                 jenis_tiket: data.jenis_tiket || "",
-                harga: data.harga || "",
+                harga: formatRupiah(data.harga || 0),
             };
             isEdit.value = true;
         }
@@ -40,8 +56,6 @@ const fetchData = async () => {
 };
 
 // Submit form
-// const processing = ref(false);
-
 const handleSubmit = async () => {
     processing.value = true;
     const url = isEdit.value
@@ -49,11 +63,16 @@ const handleSubmit = async () => {
         : `/api/jenis-tiket`;
     const method = isEdit.value ? "PUT" : "POST";
 
+    const payload = {
+        jenis_tiket: formData.value.jenis_tiket,
+        harga: parseRupiah(formData.value.harga),
+    };
+
     try {
         const response = await fetch(url, {
             method,
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData.value),
+            body: JSON.stringify(payload),
         });
 
         if (response.ok) {
@@ -68,7 +87,6 @@ const handleSubmit = async () => {
     }
 };
 
-// Reset form
 const resetForm = () => {
     formData.value = {
         jenis_tiket: "",
@@ -77,7 +95,7 @@ const resetForm = () => {
     isEdit.value = false;
 };
 
-// Watch selected prop
+// Watch prop selected
 watch(
     () => props.selected,
     (val) => {
@@ -91,21 +109,16 @@ watch(
 );
 
 onMounted(() => {
-    if (props.selected) {
-        fetchData();
-    }
+    if (props.selected) fetchData();
 });
 </script>
 
 <template>
     <div class="card shadow-sm border-0 mb-6 overflow-hidden">
-        <!-- Header -->
         <div class="card-header bg-gradient-primary border-0 py-4 px-6">
             <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center gap-3">
-                    <div
-                        class="symbol symbol-45px bg-white bg-opacity-20 rounded"
-                    >
+                    <div class="symbol symbol-45px bg-white bg-opacity-20 rounded">
                         <i class="la la-tag fs-2x text-white"></i>
                     </div>
                     <div>
@@ -114,32 +127,19 @@ onMounted(() => {
                         </h3>
                         <p class="text-white text-opacity-75 mb-0 fs-7">
                             Isi form di bawah untuk
-                            {{ isEdit ? "mengubah" : "menambahkan" }} jenis
-                            tiket
+                            {{ isEdit ? "mengubah" : "menambahkan" }} jenis tiket
                         </p>
                     </div>
                 </div>
-                <!-- <button
-                    type="button"
-                    class="btn btn-sm btn-icon btn-light"
-                    @click="emit('close')"
-                    title="Tutup Form"
-                >
-                    <i class="la la-times fs-2"></i>
-                </button> -->
             </div>
         </div>
 
-        <!-- Form Body -->
         <div class="card-body p-6">
             <form @submit.prevent="handleSubmit" class="form">
                 <div class="row g-4">
-                    <!-- Jenis Tiket -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="form-label fw-bold required">
-                                Jenis Tiket
-                            </label>
+                            <label class="form-label fw-bold required">Jenis Tiket</label>
                             <input
                                 v-model="formData.jenis_tiket"
                                 type="text"
@@ -153,20 +153,16 @@ onMounted(() => {
                         </div>
                     </div>
 
-                    <!-- Harga -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="form-label fw-bold required">
-                                Harga (Rp)
-                            </label>
+                            <label class="form-label fw-bold required">Harga (Rp)</label>
                             <input
-                                v-model="formData.harga"
-                                type="number"
-                                step="0.01"
+                                :value="formData.harga"
+                                @input="formData.harga = formatRupiah($event.target.value)"
+                                type="text"
                                 class="form-control"
-                                placeholder="0"
+                                placeholder="Rp 0"
                                 required
-                                min="0"
                             />
                             <div class="form-text">
                                 Masukkan harga tiket dalam Rupiah
@@ -175,7 +171,6 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
                 <div class="d-flex gap-3 mt-6 justify-content-end">
                     <button
                         type="button"
@@ -196,9 +191,7 @@ onMounted(() => {
                             {{ isEdit ? "Update" : "Simpan" }}
                         </span>
                         <span v-else>
-                            <span
-                                class="spinner-border spinner-border-sm me-2"
-                            ></span>
+                            <span class="spinner-border spinner-border-sm me-2"></span>
                             Menyimpan...
                         </span>
                     </button>
@@ -212,12 +205,10 @@ onMounted(() => {
 .bg-gradient-primary {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
-
 .card {
     border-radius: 12px;
     animation: slideDown 0.3s ease-out;
 }
-
 @keyframes slideDown {
     from {
         opacity: 0;
@@ -228,51 +219,41 @@ onMounted(() => {
         transform: translateY(0);
     }
 }
-
 .form-label.required::after {
     content: " *";
     color: #dc3545;
 }
-
 .form-control:focus {
     border-color: #667eea;
     box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
 }
-
 .btn {
     border-radius: 8px;
     transition: all 0.3s ease;
 }
-
 .btn:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-
 .btn-primary {
     background-color: #667eea;
     border: none;
 }
-
 .btn-primary:hover:not(:disabled) {
     background-color: #5568d3;
 }
-
 .btn-light-secondary {
     background-color: #f3f4f6;
     color: #6b7280;
     border: none;
 }
-
 .btn-light-secondary:hover:not(:disabled) {
     background-color: #e5e7eb;
 }
-
 .btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
-
 .symbol {
     display: flex;
     align-items: center;

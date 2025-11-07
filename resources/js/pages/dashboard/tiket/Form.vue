@@ -13,7 +13,9 @@ const emit = defineEmits(["close", "refresh"]);
 // State
 const hargaDisplay = ref("Rp 0");
 const showErrors = ref(false);
-const jenisTiketList = ref<{ id: number; jenis_tiket: string; harga: number }[]>([]);
+const jenisTiketList = ref<
+    { id: number; jenis_tiket: string; harga: number }[]
+>([]);
 
 // Yup Schema
 const formSchema = Yup.object({
@@ -72,7 +74,15 @@ const preventRpDeletion = (e: KeyboardEvent) => {
     if (cursorPos <= 3 && (e.key === "Backspace" || e.key === "Delete")) {
         e.preventDefault();
     }
-    const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End"];
+    const allowedKeys = [
+        "Backspace",
+        "Delete",
+        "ArrowLeft",
+        "ArrowRight",
+        "Tab",
+        "Home",
+        "End",
+    ];
     if (!allowedKeys.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
 };
 
@@ -117,12 +127,13 @@ const fetchJenisTiket = async () => {
     }
 };
 
-
 // Jika user pilih jenis tiket, otomatis isi harga
 watch(
     () => values.jenis_tiket,
     (val) => {
-        const selected = jenisTiketList.value.find((t) => t.jenis_tiket === val);
+        const selected = jenisTiketList.value.find(
+            (t) => t.jenis_tiket === val
+        );
         if (selected) {
             setFieldValue("harga_tiket", selected.harga);
             hargaDisplay.value = formatRupiah(selected.harga);
@@ -209,7 +220,9 @@ const submit = handleSubmit(
                     toast.error(firstError[0]);
                 }
             } else {
-                toast.error(err.response?.data?.message || "Gagal menyimpan tiket");
+                toast.error(
+                    err.response?.data?.message || "Gagal menyimpan tiket"
+                );
             }
         } finally {
             unblock(document.getElementById("form-tiket"));
@@ -225,7 +238,11 @@ const submit = handleSubmit(
     <form @submit.prevent="submit" id="form-tiket" class="form card mb-10">
         <div class="card-header d-flex align-items-center">
             <h2 class="mb-0">{{ selected ? "Edit" : "Tambah" }} Tiket</h2>
-            <button type="button" class="btn btn-sm btn-light-danger ms-auto" @click="emit('close')">
+            <button
+                type="button"
+                class="btn btn-sm btn-light-danger ms-auto"
+                @click="emit('close')"
+            >
                 Batal <i class="la la-times-circle p-0"></i>
             </button>
         </div>
@@ -233,83 +250,146 @@ const submit = handleSubmit(
         <div class="row px-4 pt-4">
             <!-- Nama Event -->
             <div class="col-md-6 mb-7">
-                <label class="form-label fw-bold fs-6 required ps-2">Nama Event</label>
-                <Field name="nama_event" v-model="values.nama_event" type="text"
-                    class="form-control form-control-lg form-control-solid" placeholder="Masukkan nama event" />
-                <span v-if="showErrors && errors.nama_event" class="text-danger ps-2 text-sm">
+                <label class="form-label fw-bold fs-6 required ps-2"
+                    >Nama Event</label
+                >
+                <Field
+                    name="nama_event"
+                    v-model="values.nama_event"
+                    type="text"
+                    class="form-control form-control-lg form-control-solid"
+                    placeholder="Masukkan nama event"
+                />
+                <span
+                    v-if="showErrors && errors.nama_event"
+                    class="text-danger ps-2 text-sm"
+                >
                     {{ errors.nama_event }}
                 </span>
             </div>
 
             <!-- Tanggal -->
             <div class="col-md-6 mb-7">
-                <label class="form-label fw-bold fs-6 required ps-2">Tanggal</label>
-                <Field name="tanggal" v-model="values.tanggal" type="date"
-                    class="form-control form-control-lg form-control-solid" />
-                <span v-if="showErrors && errors.tanggal" class="text-danger ps-2 text-sm">
+                <label class="form-label fw-bold fs-6 required ps-2"
+                    >Tanggal</label
+                >
+                <Field
+                    name="tanggal"
+                    v-model="values.tanggal"
+                    type="date"
+                    class="form-control form-control-lg form-control-solid"
+                />
+                <span
+                    v-if="showErrors && errors.tanggal"
+                    class="text-danger ps-2 text-sm"
+                >
                     {{ errors.tanggal }}
                 </span>
             </div>
 
             <!-- Jenis Tiket (Dropdown) -->
             <div class="col-md-6 mb-7">
-                <label class="form-label fw-bold fs-6 required ps-2">Jenis Tiket</label>
+                <label class="form-label fw-bold fs-6 required ps-2"
+                    >Jenis Tiket</label
+                >
                 <!-- <select v-model="values.jenis_tiket" class="form-select form-select-lg form-select-solid">
                     <option value="" disabled>Pilih Jenis Tiket</option>
                     <option v-for="t in jenisTiketList" :key="t.id" :value="t.jenis_tiket">
                         {{ t.jenis_tiket }}
                     </option>
                 </select> -->
-   <select
-  :value="values.jenis_tiket"
-  @change="(e) => setFieldValue('jenis_tiket', e.target.value)"
-  class="form-select form-select-lg form-select-solid"
->
-  <option value="" disabled>Pilih Jenis Tiket</option>
-  <option v-for="t in jenisTiketList" :key="t.id" :value="t.jenis_tiket">
-    {{ t.jenis_tiket }}
-  </option>
-</select>
-                <span v-if="showErrors && errors.jenis_tiket" class="text-danger ps-2 text-sm">
+                <select
+                    :value="values.jenis_tiket"
+                    @change="
+                        (e) => setFieldValue('jenis_tiket', e.target.value)
+                    "
+                    class="form-select form-select-lg form-select-solid"
+                >
+                    <option value="" disabled>Pilih Jenis Tiket</option>
+                    <option
+                        v-for="t in jenisTiketList"
+                        :key="t.id"
+                        :value="t.jenis_tiket"
+                    >
+                        {{ t.jenis_tiket }}
+                    </option>
+                </select>
+                <span
+                    v-if="showErrors && errors.jenis_tiket"
+                    class="text-danger ps-2 text-sm"
+                >
                     {{ errors.jenis_tiket }}
                 </span>
             </div>
 
             <!-- Harga Tiket (Otomatis) -->
             <div class="col-md-6 mb-7">
-                <label class="form-label fw-bold fs-6 required ps-2">Harga Tiket</label>
-                <input :value="hargaDisplay" @input="onHargaInput" @keydown="preventRpDeletion" type="text"
-                    class="form-control form-control-lg form-control-solid" placeholder="Masukkan harga" readonly />
-                <span v-if="showErrors && errors.harga_tiket" class="text-danger ps-2 text-sm">
+                <label class="form-label fw-bold fs-6 required ps-2"
+                    >Harga Tiket</label
+                >
+                <input
+                    :value="hargaDisplay"
+                    @input="onHargaInput"
+                    @keydown="preventRpDeletion"
+                    type="text"
+                    class="form-control form-control-lg form-control-solid"
+                    placeholder="Masukkan harga"
+                    readonly
+                />
+                <span
+                    v-if="showErrors && errors.harga_tiket"
+                    class="text-danger ps-2 text-sm"
+                >
                     {{ errors.harga_tiket }}
                 </span>
             </div>
 
             <!-- Stok Tiket -->
             <div class="col-md-6 mb-7">
-                <label class="form-label fw-bold fs-6 required ps-2">Stok Tiket</label>
-                <Field name="stok_tiket" v-model="values.stok_tiket" type="number"
+                <label class="form-label fw-bold fs-6 required ps-2"
+                    >Stok Tiket</label
+                >
+                <Field
+                    name="stok_tiket"
+                    v-model="values.stok_tiket"
+                    type="number"
                     class="form-control form-control-lg form-control-solid"
-                    placeholder="Masukkan jumlah stok tiket" />
-                <span v-if="showErrors && errors.stok_tiket" class="text-danger ps-2 text-sm">
+                    placeholder="Masukkan jumlah stok tiket"
+                />
+                <span
+                    v-if="showErrors && errors.stok_tiket"
+                    class="text-danger ps-2 text-sm"
+                >
                     {{ errors.stok_tiket }}
                 </span>
             </div>
 
             <!-- Deskripsi -->
             <div class="col-12 mb-7">
-                <label class="form-label fw-bold fs-6 required ps-2">Lineup Artis</label>
-                <Field name="deskripsi" v-model="values.deskripsi" as="textarea" rows="3"
+                <label class="form-label fw-bold fs-6 required ps-2"
+                    >Lineup Artis</label
+                >
+                <Field
+                    name="deskripsi"
+                    v-model="values.deskripsi"
+                    as="textarea"
+                    rows="3"
                     class="form-control form-control-lg form-control-solid"
-                    placeholder="Masukkan deskripsi atau lineup artis" />
-                <span v-if="showErrors && errors.deskripsi" class="text-danger ps-2 text-sm">
+                    placeholder="Masukkan deskripsi atau lineup artis"
+                />
+                <span
+                    v-if="showErrors && errors.deskripsi"
+                    class="text-danger ps-2 text-sm"
+                >
                     {{ errors.deskripsi }}
                 </span>
             </div>
         </div>
 
         <div class="card-footer d-flex">
-            <button type="submit" class="btn btn-sm btn-primary ms-auto">Simpan</button>
+            <button type="submit" class="btn btn-sm btn-primary ms-auto">
+                Simpan
+            </button>
         </div>
     </form>
 </template>
