@@ -102,6 +102,12 @@ const MainMenuConfig: Array<MenuItem> = [
                 name: "tiket",
                 keenthemesIcon: "bi bi-plus-circle",
             },
+             {
+                heading: "Tambah jenis tiket",
+                route: "/dashboard/jenis",
+                name: "jenis",
+                keenthemesIcon: "bi bi-plus-circle",
+            },
             {
                 heading: "Input kode tiket",
                 route: "/dashboard/input",

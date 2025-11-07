@@ -60,7 +60,16 @@ const routes: Array<RouteRecordRaw> = [
                 //     breadcrumbs: ["Website", "Setting"],
                 // },
             },
-
+              {
+                path: "/dashboard/jenis",
+                name: "dashboard.jenis",
+                component: () => import("@/pages/dashboard/jenis/index.vue"),
+                // meta: {
+                //     pageTitle: "Website Setting",
+                //     breadcrumbs: ["Website", "Setting"],
+                // },
+            },
+            
             // MASTER
             {
                 path: "/dashboard/master/users/roles",

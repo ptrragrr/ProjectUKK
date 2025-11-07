@@ -9,6 +9,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\RegisterController;
 // use App\Http\Controllers\KonserController;
 use App\Http\Controllers\InputKodeController;
+use App\Http\Controllers\JenisTiketController;
 use App\Http\Controllers\pengguna\CheckoutController;
 use App\Http\Controllers\pengguna\PaymentController;
 // use App\Http\Controllers\TicketTransaksiController;
@@ -101,6 +102,15 @@ Route::post('/checkout/callback', [CheckoutController::class, 'callback'])->name
 Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
 Route::get('/checkout/failed', [CheckoutController::class, 'failed'])->name('checkout.failed');
 Route::get('/checkout/check-status/{orderId}', [CheckoutController::class, 'checkStatus'])->name('checkout.checkStatus');
+
+Route::prefix('jenis-tiket')->controller(JenisTiketController::class)->group(function () {
+    Route::get('/', 'index');          // 🔹 List semua jenis tiket (bisa tambah pagination nanti)
+    Route::get('/all', 'all');         // 🔹 (opsional) Ambil semua tanpa pagination
+    Route::post('/', 'store');         // 🔹 Tambah jenis tiket baru
+    Route::get('/{id}', 'show');       // 🔹 Detail satu jenis tiket
+    Route::put('/{id}', 'update');     // 🔹 Update jenis tiket
+    Route::delete('/{id}', 'destroy'); // 🔹 Hapus jenis tiket
+});
 
 Route::post('/pay', [CheckoutController::class, 'pay'])->name('checkout.pay');
 Route::post('/midtrans/callback', [CheckoutController::class, 'callback'])->name('midtrans.callback');

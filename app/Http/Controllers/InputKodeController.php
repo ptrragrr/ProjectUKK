@@ -54,64 +54,64 @@ class InputKodeController extends Controller
     //     return view('tiket.cetak', compact('detail'));
     // }
 
-//     public function cetak($kode)
-// {
-//     $detail = TransaksiDetail::with(['transaksi', 'ticket'])
-//         ->where('kode_tiket', $kode)
-//         ->firstOrFail();
+    //     public function cetak($kode)
+    // {
+    //     $detail = TransaksiDetail::with(['transaksi', 'ticket'])
+    //         ->where('kode_tiket', $kode)
+    //         ->firstOrFail();
 
-//     // ❌ Cek kalau tiket sudah expired
-//     if ($detail->status === 'Expired') {
-//         return "Tiket ini sudah expired.";
-//     }
+    //     // ❌ Cek kalau tiket sudah expired
+    //     if ($detail->status === 'Expired') {
+    //         return "Tiket ini sudah expired.";
+    //     }
 
-//     // ❌ Cek kalau transaksi belum dibayar
-//     if ($detail->transaksi->status_payment === 'Pending') {
-//         return "Tiket ini belum melakukan pembayaran.";
-//     }
+    //     // ❌ Cek kalau transaksi belum dibayar
+    //     if ($detail->transaksi->status_payment === 'Pending') {
+    //         return "Tiket ini belum melakukan pembayaran.";
+    //     }
 
-//     // ✅ Jika sudah dibayar
-//     return view('tiket.cetak', compact('detail'));
-// }
+    //     // ✅ Jika sudah dibayar
+    //     return view('tiket.cetak', compact('detail'));
+    // }
 
-public function cetak($kode)
-{
-    $detail = TransaksiDetail::with(['transaksi', 'ticket'])
-        ->where('kode_tiket', $kode)
-        ->firstOrFail();
+    public function cetak($kode)
+    {
+        $detail = TransaksiDetail::with(['transaksi', 'ticket'])
+            ->where('kode_tiket', $kode)
+            ->firstOrFail();
 
-    if ($detail->transaksi->status_payment !== 'paid') {
-        return response('Tiket belum dibayar, tidak bisa dicetak.', 403);
+        if ($detail->transaksi->status_payment !== 'paid') {
+            return response('Tiket belum dibayar, tidak bisa dicetak.', 403);
+        }
+
+        if ($detail->status === 'Expired') {
+            return response('Tiket ini sudah expired.', 403);
+        }
+
+        return view('tiket.cetak', ['detail' => $detail]);
     }
-
-    if ($detail->status === 'Expired') {
-        return response('Tiket ini sudah expired.', 403);
-    }
-
-    return view('tiket.cetak', ['detail' => $detail]);
-}
 
     // ✅ Selesai → Expired
     public function selesai($kode)
-{
-    // Pastikan field yang dipakai sesuai tabel
-    $transaksi = \App\Models\TransaksiDetail::where('kode_tiket', $kode)->first();
+    {
+        // Pastikan field yang dipakai sesuai tabel
+        $transaksi = \App\Models\TransaksiDetail::where('kode_tiket', $kode)->first();
 
-    if (!$transaksi) {
+        if (!$transaksi) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tiket tidak ditemukan'
+            ], 404);
+        }
+
+        // Update status tiket
+        $transaksi->status = 'Expired';
+        $transaksi->save();
+
         return response()->json([
-            'success' => false,
-            'message' => 'Tiket tidak ditemukan'
-        ], 404);
+            'success' => true,
+            'message' => 'Tiket berhasil diselesaikan',
+            'data' => $transaksi
+        ]);
     }
-
-    // Update status tiket
-    $transaksi->status = 'Expired';
-    $transaksi->save();
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Tiket berhasil diselesaikan',
-        'data' => $transaksi
-    ]);
-}
 }

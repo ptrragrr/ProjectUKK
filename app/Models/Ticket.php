@@ -26,4 +26,9 @@ class Ticket extends Model
             ->withPivot('jumlah')
             ->withTimestamps();
     }
+
+    public function jenisTiket()
+{
+    return $this->belongsTo(JenisTiket::class, 'jenis_tiket_id');
+}
 }

@@ -13,7 +13,7 @@ interface TransaksiDetail {
         stok_tiket: number;
         status: string;
     };
-    transaksi: { 
+    transaksi: {
         id: number;
         nama_pembeli: string;
         email: string;
@@ -213,12 +213,12 @@ const batalCari = () => {
                             Data tiket berhasil ditemukan dan terverifikasi
                         </p>
                     </div>
-                    <button
+                    <!-- <button
                         @click="batalCari"
                         class="btn btn-sm btn-light-success"
                     >
                         <i class="la la-times"></i>
-                    </button>
+                    </button> -->
                 </div>
 
                 <!-- Ticket Card -->
@@ -487,25 +487,28 @@ const batalCari = () => {
                                     Cetak Tiket
                                 </button> -->
                                 <button
-    v-if="transaksi.transaksi.status_payment === 'paid'"
-    @click="cetakTiket"
-    class="btn btn-success fw-bold"
-    style="border-radius: 8px"
->
-    <i class="la la-print me-2"></i>
-    Cetak Tiket
-</button>
+                                    v-if="
+                                        transaksi.transaksi.status_payment ===
+                                        'paid'
+                                    "
+                                    @click="cetakTiket"
+                                    class="btn btn-success fw-bold"
+                                    style="border-radius: 8px"
+                                >
+                                    <i class="la la-print me-2"></i>
+                                    Cetak Tiket
+                                </button>
 
-<!-- Opsional: tampilkan disabled button jika belum bayar -->
-<button
-    v-else
-    class="btn btn-secondary fw-bold"
-    style="border-radius: 8px"
-    disabled
->
-    <i class="la la-lock me-2"></i>
-    Cetak Tidak Tersedia
-</button>
+                                <!-- Opsional: tampilkan disabled button jika belum bayar -->
+                                <button
+                                    v-else
+                                    class="btn btn-secondary fw-bold"
+                                    style="border-radius: 8px"
+                                    disabled
+                                >
+                                    <i class="la la-lock me-2"></i>
+                                    Cetak Tidak Tersedia
+                                </button>
                             </div>
                         </div>
                     </div>
