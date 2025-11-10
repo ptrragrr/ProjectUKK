@@ -242,7 +242,7 @@ const batalCari = () => {
                                         <h3
                                             class="text-white fw-bold fs-2 mb-1"
                                         >
-                                            {{ transaksi.ticket.jenis_tiket }}
+                                            {{ transaksi?.ticket?.jenis_tiket }}
                                         </h3>
                                         <p
                                             class="text-white text-opacity-75 mb-0"

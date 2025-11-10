@@ -106,11 +106,6 @@ const fetchJenisTiket = async () => {
     try {
         const { data } = await axios.get("/jenis-tiket/all");
         jenisTiketList.value = data || [];
-        
-        // Reinitialize Select2 setelah data dimuat
-        nextTick(() => {
-            initSelect2();
-        });
     } catch (error) {
         console.error(error);
         toast.error("Gagal memuat daftar jenis tiket");
@@ -151,18 +146,24 @@ const initSelect2 = () => {
 // Jika user pilih jenis tiket, otomatis isi harga
 watch(
     () => values.jenis_tiket,
-    (val) => {
-        const selected = jenisTiketList.value.find(
-            (t) => t.jenis_tiket === val
-        );
-        if (selected) {
-            setFieldValue("harga_tiket", selected.harga);
-            hargaDisplay.value = formatRupiah(selected.harga);
+    (val, oldVal) => {
+        // Hanya update Select2 jika nilai berubah
+        if (val !== oldVal && jenisTiketSelect.value) {
+            const $select = $(jenisTiketSelect.value);
+            if ($select.val() !== val) {
+                $select.val(val || "").trigger("change.select2");
+            }
         }
         
-        // Update Select2 value
-        if (jenisTiketSelect.value && val) {
-            $(jenisTiketSelect.value).val(val).trigger("change.select2");
+        // Update harga hanya jika user memilih dari dropdown (bukan saat load edit)
+        if (val && val !== oldVal) {
+            const selected = jenisTiketList.value.find(
+                (t) => t.jenis_tiket === val
+            );
+            if (selected) {
+                setFieldValue("harga_tiket", selected.harga);
+                hargaDisplay.value = formatRupiah(selected.harga);
+            }
         }
     }
 );
@@ -189,7 +190,9 @@ const getEdit = async () => {
         // Update Select2 value after data loaded
         nextTick(() => {
             if (jenisTiketSelect.value && t.jenis_tiket) {
-                $(jenisTiketSelect.value).val(t.jenis_tiket).trigger("change.select2");
+                const $select = $(jenisTiketSelect.value);
+                // Set nilai tanpa trigger watcher untuk menghindari loop
+                $select.val(t.jenis_tiket).trigger("change.select2");
             }
         });
     } catch (err: any) {
@@ -205,6 +208,12 @@ watch(
     async (newVal) => {
         showErrors.value = false;
         if (newVal) {
+            // Pastikan data jenis tiket sudah dimuat sebelum edit
+            if (jenisTiketList.value.length === 0) {
+                await fetchJenisTiket();
+                await nextTick();
+                initSelect2();
+            }
             await getEdit();
         } else {
             resetForm();
@@ -219,8 +228,10 @@ watch(
 );
 
 // Fetch dropdown data saat mount
-onMounted(() => {
-    fetchJenisTiket();
+onMounted(async () => {
+    await fetchJenisTiket();
+    await nextTick();
+    initSelect2();
 });
 
 // Submit Form
@@ -428,7 +439,6 @@ const submit = handleSubmit(
 </template>
 
 <style scoped>
-/* Styling tambahan untuk Select2 agar sesuai dengan form-control-lg dan form-control-solid */
 /* ===== Perataan teks Select2 agar pas di tengah ===== */
 :deep(.select2-container--default .select2-selection--single) {
   display: flex !important;
@@ -459,22 +469,6 @@ const submit = handleSubmit(
   align-items: center;
 }
 
-:deep(.select2-container--default .select2-selection--single) {
-    height: calc(1.5em + 1.65rem + 2px) !important;
-    padding: 0.825rem 1rem !important;
-    border: 1px solid #e4e6ef !important;
-    border-radius: 0.475rem !important;
-    background-color: #f5f8fa !important;
-    font-size: 1.15rem !important;
-    font-weight: 500 !important;
-}
-
-:deep(.select2-container--default .select2-selection--single .select2-selection__rendered) {
-    line-height: calc(1.5em + 1.65rem) !important;
-    padding-left: 0 !important;
-    color: #181c32 !important;
-}
-
 :deep(.select2-container--default .select2-selection--single .select2-selection__placeholder) {
     color: #a1a5b7 !important;
     opacity: 1 !important;
@@ -483,17 +477,6 @@ const submit = handleSubmit(
 /* Untuk teks yang sudah dipilih */
 :deep(.select2-selection__rendered) {
     color: #181c32 !important;
-}
-
-/* Khusus untuk placeholder saat belum dipilih */
-:deep(.select2-container .select2-selection--single .select2-selection__rendered) {
-    color: #a1a5b7 !important;
-}
-
-:deep(.select2-container--default .select2-selection--single .select2-selection__arrow) {
-    height: calc(1.5em + 1.65rem + 2px) !important;
-    top: 0 !important;
-    right: 10px !important;
 }
 
 :deep(.select2-container--default.select2-container--focus .select2-selection--single) {
