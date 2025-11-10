@@ -37,19 +37,42 @@ const parseRupiah = (value: string) => {
 };
 
 // Ambil data untuk edit
+// const fetchData = async () => {
+//     if (!props.selected) return;
+
+//     try {
+//         // const response = await fetch(`/jenis-tiket/${props.selected}`);
+//         const response = await fetch(`/api/jenis-tiket/${props.selected}`);
+//         if (response.ok) {
+//             const data = await response.json();
+//             formData.value = {
+//                 jenis_tiket: data.jenis_tiket || "",
+//                 harga: formatRupiah(data.harga || 0),
+//             };
+//             isEdit.value = true;
+//         }
+//     } catch (error) {
+//         console.error("Error fetching data:", error);
+//     }
+// };
+
 const fetchData = async () => {
     if (!props.selected) return;
 
     try {
-        const response = await fetch(`/jenis-tiket/${props.selected}`);
-        if (response.ok) {
-            const data = await response.json();
-            formData.value = {
-                jenis_tiket: data.jenis_tiket || "",
-                harga: formatRupiah(data.harga || 0),
-            };
-            isEdit.value = true;
+        const response = await fetch(`/api/jenis-tiket/${props.selected}`);
+
+        if (!response.ok) {
+            console.error("Gagal ambil data:", await response.text());
+            return;
         }
+
+        const data = await response.json();
+        formData.value = {
+            jenis_tiket: data.jenis_tiket || "",
+            harga: formatRupiah(data.harga || 0),
+        };
+        isEdit.value = true;
     } catch (error) {
         console.error("Error fetching data:", error);
     }

@@ -52,11 +52,20 @@ class JenisTiketController extends Controller
     }
 
     // 🔹 Detail satu jenis tiket
+    // public function show($id)
+    // {
+    //     $jenis = JenisTiket::findOrFail($id);
+    //     return response()->json($jenis);
+    // }
+
     public function show($id)
-    {
-        $jenis = JenisTiket::findOrFail($id);
-        return response()->json($jenis);
+{
+    $data = JenisTiket::find($id);
+    if (!$data) {
+        return response()->json(['message' => 'Not found'], 404);
     }
+    return response()->json($data);
+}
 
     // 🔹 Update data jenis tiket
     public function update(Request $request, $id)
