@@ -150,7 +150,7 @@ function hideLoading() {
 
 // Navigation functions
 function batal() {
-  window.location.href = "/";
+  window.location.href = "/dashboard_pengguna/ticket";
 }
 
 function goToEvents() {
