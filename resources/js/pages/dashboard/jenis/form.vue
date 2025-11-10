@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 interface Props {
     selected?: string;
@@ -99,6 +101,7 @@ const handleSubmit = async () => {
         });
 
         if (response.ok) {
+            toast.success("Jenis tiket berhasil disimpan");
             emit("refresh");
             emit("close");
             resetForm();
@@ -194,7 +197,7 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <div class="d-flex gap-3 mt-6 justify-content-end">
+                <!-- <div class="d-flex gap-3 mt-6 justify-content-end">
                     <button
                         type="button"
                         class="btn btn-light-secondary"
@@ -212,6 +215,30 @@ onMounted(() => {
                         <span v-if="!processing">
                             <i class="la la-save me-2"></i>
                             {{ isEdit ? "Update" : "Simpan" }}
+                        </span>
+                        <span v-else>
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                            Menyimpan...
+                        </span>
+                    </button>
+                </div> -->
+                <div class="d-flex gap-3 mt-6 justify-content-end">
+                    <button
+                        type="button"
+                        class="btn btn-light"
+                        @click="emit('close')"
+                        :disabled="processing"
+                    >
+                        Batal
+                    </button>
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        :disabled="processing"
+                    >
+                        <span v-if="!processing">
+                            <i class="la la-save me-2"></i>
+                            Simpan
                         </span>
                         <span v-else>
                             <span class="spinner-border spinner-border-sm me-2"></span>
