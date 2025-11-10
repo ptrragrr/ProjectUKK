@@ -5,6 +5,8 @@ import { toast } from "vue3-toastify";
 import { block, unblock } from "@/libs/utils";
 import { ref, watch, nextTick, onMounted } from "vue";
 import { Field, useForm } from "vee-validate";
+import $ from "jquery";
+import "select2";
 
 // Props & Emits
 const props = defineProps<{ selected: number | string | null }>();
@@ -16,6 +18,7 @@ const showErrors = ref(false);
 const jenisTiketList = ref<
     { id: number; jenis_tiket: string; harga: number }[]
 >([]);
+const jenisTiketSelect = ref<HTMLSelectElement | null>(null);
 
 // Yup Schema
 const formSchema = Yup.object({
@@ -98,32 +101,50 @@ const onHargaInput = (e: Event) => {
     });
 };
 
-// Batasi input Jenis Tiket agar hanya huruf dan spasi
-const onJenisTiketInput = (e: Event) => {
-    const target = e.target as HTMLInputElement;
-    target.value = target.value.replace(/[^A-Za-zÀ-ÿ\s]/g, "");
-    setFieldValue("jenis_tiket", target.value);
-};
-
 // Fetch semua jenis tiket dari tabel jenis_tiket
-// const fetchJenisTiket = async () => {
-//     try {
-//         const { data } = await axios.get("/api/jenis-tiket");
-//         jenisTiketList.value = data; // pastikan backend return array { id, jenis_tiket, harga }
-//     } catch (error) {
-//         console.error(error);
-//         toast.error("Gagal memuat daftar jenis tiket");
-//     }
-// };
-
 const fetchJenisTiket = async () => {
     try {
         const { data } = await axios.get("/jenis-tiket/all");
-        // Ambil hanya isi array-nya dari pagination
         jenisTiketList.value = data || [];
+        
+        // Reinitialize Select2 setelah data dimuat
+        nextTick(() => {
+            initSelect2();
+        });
     } catch (error) {
         console.error(error);
         toast.error("Gagal memuat daftar jenis tiket");
+    }
+};
+
+// Initialize Select2
+const initSelect2 = () => {
+    if (jenisTiketSelect.value) {
+        const $select = $(jenisTiketSelect.value);
+        
+        // Destroy existing Select2 instance if any
+        if ($select.hasClass("select2-hidden-accessible")) {
+            $select.select2("destroy");
+        }
+        
+        // Initialize Select2
+        $select.select2({
+            placeholder: "Pilih Jenis Tiket",
+            allowClear: false,
+            width: "100%",
+        });
+
+        // Handle Select2 change event
+        $select.off("select2:select select2:clear"); // Remove old handlers
+        
+        $select.on("select2:select", (e: any) => {
+            const value = e.params.data.id;
+            setFieldValue("jenis_tiket", value);
+        });
+
+        $select.on("select2:clear", () => {
+            setFieldValue("jenis_tiket", "");
+        });
     }
 };
 
@@ -137,6 +158,11 @@ watch(
         if (selected) {
             setFieldValue("harga_tiket", selected.harga);
             hargaDisplay.value = formatRupiah(selected.harga);
+        }
+        
+        // Update Select2 value
+        if (jenisTiketSelect.value && val) {
+            $(jenisTiketSelect.value).val(val).trigger("change.select2");
         }
     }
 );
@@ -159,6 +185,13 @@ const getEdit = async () => {
             stok_tiket: t.stok_tiket,
         });
         hargaDisplay.value = formatRupiah(harga);
+        
+        // Update Select2 value after data loaded
+        nextTick(() => {
+            if (jenisTiketSelect.value && t.jenis_tiket) {
+                $(jenisTiketSelect.value).val(t.jenis_tiket).trigger("change.select2");
+            }
+        });
     } catch (err: any) {
         toast.error(err.response?.data?.message || "Gagal mengambil data");
     } finally {
@@ -176,6 +209,10 @@ watch(
         } else {
             resetForm();
             hargaDisplay.value = "Rp 0";
+            // Clear Select2
+            if (jenisTiketSelect.value) {
+                $(jenisTiketSelect.value).val("").trigger("change.select2");
+            }
         }
     },
     { immediate: true }
@@ -212,6 +249,11 @@ const submit = handleSubmit(
             resetForm();
             hargaDisplay.value = "Rp 0";
             showErrors.value = false;
+            
+            // Clear Select2
+            if (jenisTiketSelect.value) {
+                $(jenisTiketSelect.value).val("").trigger("change.select2");
+            }
         } catch (err: any) {
             if (err.response?.data?.errors) {
                 setErrors(err.response.data.errors);
@@ -287,25 +329,16 @@ const submit = handleSubmit(
                 </span>
             </div>
 
-            <!-- Jenis Tiket (Dropdown) -->
+            <!-- Jenis Tiket (Select2) -->
             <div class="col-md-6 mb-7">
                 <label class="form-label fw-bold fs-6 required ps-2"
                     >Jenis Tiket</label
                 >
-                <!-- <select v-model="values.jenis_tiket" class="form-select form-select-lg form-select-solid">
-                    <option value="" disabled>Pilih Jenis Tiket</option>
-                    <option v-for="t in jenisTiketList" :key="t.id" :value="t.jenis_tiket">
-                        {{ t.jenis_tiket }}
-                    </option>
-                </select> -->
                 <select
-                    :value="values.jenis_tiket"
-                    @change="
-                        (e) => setFieldValue('jenis_tiket', e.target.value)
-                    "
+                    ref="jenisTiketSelect"
                     class="form-select form-select-lg form-select-solid"
                 >
-                    <option value="" disabled>Pilih Jenis Tiket</option>
+                    <option value="">Pilih Jenis Tiket</option>
                     <option
                         v-for="t in jenisTiketList"
                         :key="t.id"
@@ -393,3 +426,96 @@ const submit = handleSubmit(
         </div>
     </form>
 </template>
+
+<style scoped>
+/* Styling tambahan untuk Select2 agar sesuai dengan form-control-lg dan form-control-solid */
+/* ===== Perataan teks Select2 agar pas di tengah ===== */
+:deep(.select2-container--default .select2-selection--single) {
+  display: flex !important;
+  align-items: center !important;
+  height: calc(1.5em + 1.65rem + 2px) !important;
+  padding: 0 1rem !important;
+  border: 1px solid #e4e6ef !important;
+  border-radius: 0.475rem !important;
+  background-color: #f5f8fa !important;
+  font-size: 1.15rem !important;
+  font-weight: 500 !important;
+}
+
+/* Pastikan teks di tengah vertikal */
+:deep(.select2-selection__rendered) {
+  padding-left: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  color: #181c32 !important;
+}
+
+:deep(.select2-container--default .select2-selection--single .select2-selection__arrow) {
+  height: 100% !important;
+  top: 0 !important;
+  right: 10px !important;
+  display: flex;
+  align-items: center;
+}
+
+:deep(.select2-container--default .select2-selection--single) {
+    height: calc(1.5em + 1.65rem + 2px) !important;
+    padding: 0.825rem 1rem !important;
+    border: 1px solid #e4e6ef !important;
+    border-radius: 0.475rem !important;
+    background-color: #f5f8fa !important;
+    font-size: 1.15rem !important;
+    font-weight: 500 !important;
+}
+
+:deep(.select2-container--default .select2-selection--single .select2-selection__rendered) {
+    line-height: calc(1.5em + 1.65rem) !important;
+    padding-left: 0 !important;
+    color: #181c32 !important;
+}
+
+:deep(.select2-container--default .select2-selection--single .select2-selection__placeholder) {
+    color: #a1a5b7 !important;
+    opacity: 1 !important;
+}
+
+/* Untuk teks yang sudah dipilih */
+:deep(.select2-selection__rendered) {
+    color: #181c32 !important;
+}
+
+/* Khusus untuk placeholder saat belum dipilih */
+:deep(.select2-container .select2-selection--single .select2-selection__rendered) {
+    color: #a1a5b7 !important;
+}
+
+:deep(.select2-container--default .select2-selection--single .select2-selection__arrow) {
+    height: calc(1.5em + 1.65rem + 2px) !important;
+    top: 0 !important;
+    right: 10px !important;
+}
+
+:deep(.select2-container--default.select2-container--focus .select2-selection--single) {
+    border-color: #b5b5c3 !important;
+}
+
+:deep(.select2-container--default .select2-selection--single .select2-selection__arrow b) {
+    border-color: #a1a5b7 transparent transparent transparent !important;
+}
+
+/* Dropdown styling */
+:deep(.select2-container--default .select2-results__option--highlighted[aria-selected]) {
+    background-color: #009ef7 !important;
+}
+
+:deep(.select2-dropdown) {
+    border: 1px solid #e4e6ef !important;
+    border-radius: 0.475rem !important;
+}
+
+:deep(.select2-results__option) {
+    padding: 0.5rem 1rem !important;
+    font-size: 1.075rem !important;
+}
+</style>
