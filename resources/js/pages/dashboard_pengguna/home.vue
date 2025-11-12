@@ -198,7 +198,7 @@
             </p>
             <div class="warning-hotline">
               <span class="hotline-label">Hotline Darurat (24 Jam):</span>
-              <span class="hotline-number">(031) 1234-5678</span>
+              <span class="hotline-number">(031) 1234 5678 / (081) 3456 7890</span>
             </div>
           </div>
         </div>
