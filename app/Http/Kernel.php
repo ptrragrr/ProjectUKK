@@ -45,6 +45,11 @@ class Kernel extends HttpKernel
         ],
     ];
 
+    protected function schedule(Schedule $schedule)
+{
+    $schedule->command('tickets:unlock')->everyMinute();
+}
+
     /**
      * The application's middleware aliases.
      *

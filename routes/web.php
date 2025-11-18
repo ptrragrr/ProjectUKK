@@ -8,7 +8,12 @@ use App\Http\Controllers\pengguna\CheckoutController;
 Route::get('/checkout/callback', [CheckoutController::class, 'callback'])->name('checkout.callback');
 Route::get('/checkout/success', [CheckoutController::class, 'success']);
 Route::get('/checkout/failed', [CheckoutController::class, 'failed'])->name('checkout.failed');
-
+// Route untuk halaman pending
+Route::get('/checkout/pending', function () {
+    $orderId = request()->query('order_id');
+    return view('checkout.pending', compact('orderId'));
+})->name('checkout.pending');
+// Route::get('/checkout/pending', [CheckoutController::class, 'pending'])->name('checkout.pending');
 
 /*
 |--------------------------------------------------------------------------

@@ -49,6 +49,7 @@ class TicketController extends Controller
             'harga_tiket' => 'required|numeric|min:0',
             'jenis_tiket' => 'required|string',
             'deskripsi' => 'nullable|string',
+            'stok_reserved' => 0,
             'stok_tiket' => 'required|integer',
         ]);
 
@@ -70,6 +71,30 @@ class TicketController extends Controller
         // ], 201);
     }
 
+//     public function store(Request $request)
+// {
+//     $validated = $request->validate([
+//         'nama_event' => 'required|string|max:255',
+//         'tanggal' => 'required|date',
+//         'harga_tiket' => 'required|numeric|min:0',
+//         'jenis_tiket' => 'required|string',
+//         'deskripsi' => 'nullable|string',
+//         'stok_tiket' => 'required|integer',
+//     ]);
+
+//     // Default value stok_reserved
+//     $validated['stok_reserved'] = 0;
+
+//     $ticket = Ticket::create($validated);
+
+//     broadcast(new TicketAdded($ticket))->toOthers();
+
+//     return response()->json([
+//         'success' => true,
+//         'data' => $ticket,
+//     ]);
+// }
+
     public function show($id)
     {
         $ticket = Ticket::findOrFail($id);
@@ -80,16 +105,30 @@ class TicketController extends Controller
     {
         $ticket = Ticket::findOrFail($id);
 
-        $validated = $request->validate([
-            'nama_event' => 'required|string|max:255',
-            'tanggal' => 'required|date',
-            'harga_tiket' => 'required|numeric|min:0',
-            'jenis_tiket' => 'required|string',
-            'stok_tiket' => 'required|integer',
-            'deskripsi' => 'nullable|string',
-        ]);
+        // $validated = $request->validate([
+        //     'nama_event' => 'required|string|max:255',
+        //     'tanggal' => 'required|date',
+        //     'harga_tiket' => 'required|numeric|min:0',
+        //     'jenis_tiket' => 'required|string',
+        //     'stok_tiket' => 'required|integer',
+        //     'stok_reserved' => 0,
+        //     'deskripsi' => 'nullable|string',
+        // ]);
 
-        $ticket->update($validated);
+        // $ticket->update($validated);
+
+        $validated = $request->validate([
+    'nama_event' => 'required|string|max:255',
+    'tanggal' => 'required|date',
+    'harga_tiket' => 'required|numeric|min:0',
+    'jenis_tiket' => 'required|string',
+    'stok_tiket' => 'required|integer',
+    'deskripsi' => 'nullable|string',
+]);
+
+$validated['stok_reserved'] = $ticket->stok_reserved ?? 0;
+
+$ticket->update($validated);
 
         return response()->json([
             'message' => 'Tiket berhasil diupdate',

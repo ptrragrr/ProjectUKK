@@ -6,7 +6,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\TicketController;
-use App\Http\Controllers\RegisterController;
+// use App\Http\Controllers\RegisterController;
 // use App\Http\Controllers\KonserController;
 use App\Http\Controllers\InputKodeController;
 use App\Http\Controllers\JenisTiketController;
@@ -34,7 +34,7 @@ Route::middleware(['auth', 'json'])->prefix('auth')->group(function () {
     Route::get('me', [AuthController::class, 'me']);
 });
 
-Route::post('auth/register', [RegisterController::class, 'register'])->withoutMiddleware('auth');
+// Route::post('auth/register', [RegisterController::class, 'register'])->withoutMiddleware('auth');
 
 Route::prefix('setting')->group(function () {
     Route::get('', [SettingController::class, 'index']);
@@ -87,6 +87,8 @@ Route::get('/tickets/{ticket}', [TicketController::class, 'show']);
 Route::put('/tickets/{id}', [TicketController::class, 'update']);
 Route::patch('/tickets/{id}', [TicketController::class, 'update']);
 Route::delete('/tickets/{id}', [TicketController::class, 'destroy']);
+Route::post('/events/{id}/checkout', [TicketController::class, 'checkout']);
+Route::post('/tickets/{id}/pay', [TicketController::class, 'pay']);
 
 Route::get('/transaksi', [TransaksiController::class, 'index']);          // 🔍 List semua konser
 Route::post('/transaksi/store', [TransaksiController::class, 'store']);         // ➕ Tambah konser baru
@@ -95,13 +97,22 @@ Route::put('/transaksi/{id}', [TransaksiController::class, 'update']);    // ✏
 Route::patch('/transaksi/{id}', [TransaksiController::class, 'update']);  // ✏️ Update parsial konser
 Route::delete('/transaksi/{id}', [TransaksiController::class, 'destroy']); // 🗑 Hapus konser
 
-// Route::post('/checkout', [CheckoutController::class, 'index'])->name('checkout.page');
 Route::post('/checkout', [CheckoutController::class, 'store']);
 Route::post('/checkout/pay', [CheckoutController::class, 'pay'])->name('checkout.pay');
 Route::post('/checkout/callback', [CheckoutController::class, 'callback'])->name('checkout.callback');
 Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
 Route::get('/checkout/failed', [CheckoutController::class, 'failed'])->name('checkout.failed');
+Route::post('/checkout/release', [CheckoutController::class, 'releaseReservation']);
+// Route::post('/checkout/release-reservation', [CheckoutController::class, 'releaseReservation'])->name('checkout.release');
 Route::get('/checkout/check-status/{orderId}', [CheckoutController::class, 'checkStatus'])->name('checkout.checkStatus');
+
+// Route::post('/checkout', [CheckoutController::class, 'index'])->name('checkout.page');
+// Route::post('/checkout', [CheckoutController::class, 'store']);
+// Route::post('/checkout/pay', [CheckoutController::class, 'pay'])->name('checkout.pay');
+// Route::post('/checkout/callback', [CheckoutController::class, 'callback'])->name('checkout.callback');
+// Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
+// Route::get('/checkout/failed', [CheckoutController::class, 'failed'])->name('checkout.failed');
+// Route::get('/checkout/check-status/{orderId}', [CheckoutController::class, 'checkStatus'])->name('checkout.checkStatus');
 
 Route::prefix('jenis-tiket')->controller(JenisTiketController::class)->group(function () {
     Route::get('/', 'index');          // 🔹 List semua jenis tiket (bisa tambah pagination nanti)

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('jenis_tiket'); // VIP, Reguler, dll
             $table->decimal('harga_tiket', 15, 2);
             $table->integer('stok_tiket')->default(0);
+            $table->integer('stok_reserved')->default(0);
 
             // Tambahan deskripsi atau line-up event
             $table->text('deskripsi')->nullable();

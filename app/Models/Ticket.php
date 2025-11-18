@@ -12,6 +12,7 @@ class Ticket extends Model
         'jenis_tiket',
         'harga_tiket',
         'stok_tiket',
+        'stok_reserved',
         'deskripsi',
     ];
 

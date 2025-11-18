@@ -18,7 +18,7 @@ return new class extends Migration
         $table->integer('jumlah');
         $table->decimal('harga_satuan', 10, 2);
         $table->decimal('total_harga', 10, 2);
-         $table->enum('status', ['available', 'expired'])->default('tersedia'); 
+         $table->enum('status', ['available', 'expired', 'cancelled'])->default('tersedia'); 
         $table->timestamps();
     });
 }
