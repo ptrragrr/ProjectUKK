@@ -145,17 +145,25 @@ onMounted(() => {
             <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center gap-3">
                     <div class="symbol symbol-45px bg-white bg-opacity-20 rounded">
-                        <i class="la la-tag fs-2x text-white"></i>
+                        <i class="la la-tag fs-2x text-black"></i>
                     </div>
                     <div>
-                        <h3 class="text-white mb-0 fw-bold">
+                        <h3 class="text-black mb-0 fw-bold">
                             {{ isEdit ? "Edit" : "Tambah" }} Jenis Tiket
                         </h3>
-                        <p class="text-white text-opacity-75 mb-0 fs-7">
+                        <p class="text-black text-opacity-75 mb-0 fs-7">
                             Isi form di bawah untuk
                             {{ isEdit ? "mengubah" : "menambahkan" }} jenis tiket
                         </p>
                     </div>
+                      <!-- <button
+                        type="button"
+                        class="btn btn-light"
+                        @click="emit('close')"
+                        :disabled="processing"
+                    >
+                        Batal
+                    </button> -->
                 </div>
             </div>
         </div>
@@ -252,9 +260,9 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.bg-gradient-primary {
+/* .bg-gradient-primary {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
+} */
 .card {
     border-radius: 12px;
     animation: slideDown 0.3s ease-out;

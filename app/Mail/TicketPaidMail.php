@@ -12,13 +12,11 @@ class TicketPaidMail extends Mailable
 
     public $transaksi;
     public $codes;
-    public $eventName;  // ✅ Tambahkan ini
 
-    public function __construct($transaksi, $codes, $eventName)
+    public function __construct($transaksi, $codes)
     {
         $this->transaksi = $transaksi;
         $this->codes = $codes;
-        $this->eventName = $eventName; // ✅ Simpan nama event
     }
 
     public function build()

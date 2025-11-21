@@ -535,12 +535,13 @@ private function updateTransactionStatus($orderId, $status, $amount = null)
             ]);
         }
 
-        try {
-            $codes = $transaksi->details->pluck('kode_tiket');
-            Mail::to($transaksi->email)->send(new TicketPaidMail($transaksi, $codes));
-        } catch (\Exception $e) {
-            Log::error("Gagal kirim email: " . $e->getMessage());
-        }
+        
+            try {
+                $codes = $transaksi->details->pluck('kode_tiket');
+                Mail::to($transaksi->email)->send(new TicketPaidMail($transaksi, $codes));
+            } catch (\Exception $e) {
+                Log::error("Gagal kirim email: " . $e->getMessage());
+            }
         
         Log::info("Transaksi {$orderId} PAID - Stok dikurangi & reservasi dilepas");
     }
@@ -664,53 +665,53 @@ public function releaseReservation(Request $request)
     ]);
 }
 
-    // public function callback(Request $request)
-    // {
-    //     $orderId = $request->input('order_id');
-    //     if (!$orderId) {
-    //         return redirect()->route('home')->with('error', 'Order ID tidak ditemukan.');
-    //     }
-
-    //     try {
-    //         $status = Transaction::status($orderId);
-    //         $this->updateTransactionStatus($orderId, $status->transaction_status, $status->gross_amount);
-
-    //         if (in_array($status->transaction_status, ['capture', 'settlement'])) {
-    //             return redirect()->route('checkout.success', ['order_id' => $orderId]);
-    //         } else {
-    //             return redirect()->route('checkout.failed', ['order_id' => $orderId]);
-    //         }
-    //     } catch (\Exception $e) {
-    //         Log::error('Callback error: ' . $e->getMessage());
-    //         return redirect()->route('home')->with('error', 'Terjadi kesalahan saat memproses pembayaran.');
-    //     }
-    // }
-
     public function callback(Request $request)
     {
-        Log::info('Callback data:', $request->all());
-
         $orderId = $request->input('order_id');
-
         if (!$orderId) {
-            Log::warning('Callback tanpa order_id!');
-            return response()->json(['error' => 'order_id kosong'], 400);
+            return redirect()->route('home')->with('error', 'Order ID tidak ditemukan.');
         }
 
         try {
-            // Ambil status transaksi dari Midtrans
             $status = Transaction::status($orderId);
-            Log::info('Midtrans status:', (array)$status);
-
-            // Update status transaksi di database
             $this->updateTransactionStatus($orderId, $status->transaction_status, $status->gross_amount);
 
-            return response()->json(['success' => true]);
+            if (in_array($status->transaction_status, ['capture', 'settlement'])) {
+                return redirect()->route('checkout.success', ['order_id' => $orderId]);
+            } else {
+                return redirect()->route('checkout.failed', ['order_id' => $orderId]);
+            }
         } catch (\Exception $e) {
-            Log::error('Midtrans API Error: ' . $e->getMessage());
-            return response()->json(['error' => $e->getMessage()], 400);
+            Log::error('Callback error: ' . $e->getMessage());
+            return redirect()->route('home')->with('error', 'Terjadi kesalahan saat memproses pembayaran.');
         }
     }
+
+    // public function callback(Request $request)
+    // {
+    //     Log::info('Callback data:', $request->all());
+
+    //     $orderId = $request->input('order_id');
+
+    //     if (!$orderId) {
+    //         Log::warning('Callback tanpa order_id!');
+    //         return response()->json(['error' => 'order_id kosong'], 400);
+    //     }
+
+    //     try {
+    //         // Ambil status transaksi dari Midtrans
+    //         $status = Transaction::status($orderId);
+    //         Log::info('Midtrans status:', (array)$status);
+
+    //         // Update status transaksi di database
+    //         $this->updateTransactionStatus($orderId, $status->transaction_status, $status->gross_amount);
+
+    //         return response()->json(['success' => true]);
+    //     } catch (\Exception $e) {
+    //         Log::error('Midtrans API Error: ' . $e->getMessage());
+    //         return response()->json(['error' => $e->getMessage()], 400);
+    //     }
+    // }
 
     public function success(Request $request)
     {
