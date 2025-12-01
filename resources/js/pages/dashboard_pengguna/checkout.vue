@@ -58,7 +58,7 @@ watch(
             tickets: newValue,
             subtotal: subtotal.value,
             tax: tax.value,
-            fee: platformFee.value,
+            // fee: platformFee.value,
             total: total.value,
         };
         localStorage.setItem("keranjang", JSON.stringify(dataToSave));
@@ -74,9 +74,9 @@ const subtotal = computed(() =>
 
 const tax = computed(() => Math.round(subtotal.value * 0.1));
 
-const platformFee = ref(5000);
+// const platformFee = ref(17500);
 
-const total = computed(() => subtotal.value + tax.value + platformFee.value);
+const total = computed(() => subtotal.value + tax.value);
 
 // 🧾 Form data
 const form = ref({
@@ -174,7 +174,7 @@ async function startPayment() {
             total: total.value,
             subtotal: subtotal.value,
             tax: tax.value,
-            fee: platformFee.value,
+            // fee: platformFee.value,
         };
 
         console.log("Payload yang dikirim:", payload);
@@ -406,10 +406,10 @@ async function startPayment() {
                         <span>Pajak (10%)</span>
                         <span>Rp {{ formatHarga(tax) }}</span>
                     </div>
-                    <div class="calc-row">
-                        <span>Biaya Platform</span>
+                    <!-- <div class="calc-row">
+                        <span>Platform Fee (5%)</span>
                         <span>Rp {{ formatHarga(platformFee) }}</span>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="summary-total" v-if="keranjang.length > 0">

@@ -220,7 +220,39 @@ const formatRupiah = (value: number) => {
               </div>
 
               <!-- Status -->
-              <div class="col-md-6">
+               <div class="col-md-6">
+  <div class="d-flex flex-column">
+    <label class="fs-6 fw-semibold text-gray-600 mb-2">Status Pembayaran</label>
+    <div>
+      <span 
+        :class="transaksi.status_payment === 'paid'
+          ? 'badge badge-light-success fs-7 fw-bold'
+          : transaksi.status_payment === 'cancelled'
+            ? 'badge badge-light-danger fs-7 fw-bold'
+            : 'badge badge-light-warning fs-7 fw-bold'"
+      >
+        <i 
+          :class="transaksi.status_payment === 'paid'
+            ? 'ki-duotone ki-check-circle fs-5 me-1'
+            : transaksi.status_payment === 'cancelled'
+              ? 'ki-duotone ki-cross-circle fs-5 me-1'
+              : 'ki-duotone ki-time fs-5 me-1'"
+        >
+          <span class="path1"></span>
+          <span class="path2"></span>
+        </i>
+
+        {{ transaksi.status_payment === 'paid'
+            ? 'Paid'
+            : transaksi.status_payment === 'cancelled'
+              ? 'Cancelled'
+              : 'Pending'
+        }}
+      </span>
+    </div>
+  </div>
+</div>
+              <!-- <div class="col-md-6">
                 <div class="d-flex flex-column">
                   <label class="fs-6 fw-semibold text-gray-600 mb-2">Status Pembayaran</label>
                   <div>
@@ -237,11 +269,11 @@ const formatRupiah = (value: number) => {
                         <span class="path1"></span>
                         <span class="path2"></span>
                       </i>
-                      {{ transaksi.status_payment === 'paid' ? 'Paid' : 'Menunggu' }}
+                      {{ transaksi.status_payment === 'paid' ? 'Paid' : 'Pending' }}
                     </span>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <!-- Total Amount -->
               <div class="col-md-6">

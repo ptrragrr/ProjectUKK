@@ -192,10 +192,16 @@ const resetPage = () => {
 
 onMounted(fetchTransaksis);
 
+// const getStatusClass = (status: string) => {
+//     return status === "paid"
+//         ? "badge-light-success"
+//         : "badge-light-warning";
+// };
 const getStatusClass = (status: string) => {
-    return status === "paid"
-        ? "badge-light-success"
-        : "badge-light-warning";
+    if (status === "paid") return "badge-light-success";
+    if (status === "pending") return "badge-light-warning";
+    if (status === "cancelled") return "badge-light-danger";
+    return "badge-light-warning"; // default
 };
 </script>
 
@@ -275,6 +281,17 @@ const getStatusClass = (status: string) => {
                                     <i class="la la-clock fs-2x text-warning"></i>
                                 </div>
                             </div>
+
+                             <!-- <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <p class="text-muted mb-1 fs-7">Cancelled</p>
+                                    <h3 class="mb-0 fw-bold text-warning">{{ stats.pendingTransactions }}</h3>
+                                </div>
+                                <div class="symbol symbol-50px" style="background: #fff3cd; border-radius: 10px;">
+                                    <i class="la la-clock fs-2x text-warning"></i>
+                                </div>
+                            </div> -->
+
                         </div>
                     </div>
                 </div>

@@ -107,8 +107,8 @@ const subtotal = computed(() =>
 );
 
 const tax = computed(() => Math.round(subtotal.value * 0.1));
-const fee = computed(() => Math.round(subtotal.value * 0.05));
-const total = computed(() => subtotal.value + tax.value + fee.value);
+// const fee = computed(() => Math.round(subtotal.value * 0.05));
+const total = computed(() => subtotal.value + tax.value);
 
 const totalQty = computed(() =>
   selectedTickets.value.reduce((sum, t) => sum + (t.qty ?? 0), 0)
@@ -140,7 +140,7 @@ const checkout = async () => {
       })),
       subtotal: subtotal.value,
       tax: tax.value, 
-      fee: fee.value, 
+      // fee: fee.value, 
       total: total.value,
     };
 
@@ -318,10 +318,10 @@ const checkout = async () => {
                   <span class="calc-label">Pajak (10%)</span>
                   <span class="calc-value">{{ formatRupiah(tax) }}</span>
                 </div>
-                <div class="calc-row">
+                <!-- <div class="calc-row">
                   <span class="calc-label">Platform Fee (5%)</span>
                   <span class="calc-value">{{ formatRupiah(fee) }}</span>
-                </div>
+                </div> -->
               </div>
 
               <div class="summary-divider bold"></div>

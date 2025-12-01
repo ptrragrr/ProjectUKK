@@ -392,7 +392,7 @@ const batalCari = () => {
                                         </div>
                                     </div>
 
-                                    <div class="mb-0">
+                                    <!-- <div class="mb-0">
                                         <label
                                             class="text-muted fs-7 fw-semibold text-uppercase mb-1"
                                             >Status Tiket</label
@@ -421,6 +421,46 @@ const batalCari = () => {
                                                     v-else-if="
                                                         transaksi.status ===
                                                         'Expired'
+                                                    "
+                                                    class="la la-times-circle me-1"
+                                                ></i>
+                                                <i
+                                                    v-else
+                                                    class="la la-exclamation-circle me-1"
+                                                ></i>
+                                                {{ transaksi.status }}
+                                            </span>
+                                        </div>
+                                    </div> -->
+                                    <div class="mb-4">
+                                        <label
+                                            class="text-muted fs-7 fw-semibold text-uppercase mb-1"
+                                            >Status Tiket</label
+                                        >
+                                        <div>
+                                            <span
+                                                :class="{
+                                                    'badge badge-light-success':
+                                                        transaksi.status ===
+                                                        'Available',
+                                                    'badge badge-light-danger':
+                                                        transaksi.status ===
+                                                        'Expired' || transaksi.status === 'Cancelled',
+                                                    // 'badge badge-light-warning': transaksi.status === 'Used'
+                                                }"
+                                                style="font-size: 0.9rem"
+                                            >
+                                                <i
+                                                    v-if="
+                                                        transaksi.status ===
+                                                        'Available'
+                                                    "
+                                                    class="la la-check-circle me-1"
+                                                ></i>
+                                                <i
+                                                    v-else-if="
+                                                        transaksi.status ===
+                                                        'Expired' || transaksi.status === 'Cancelled'
                                                     "
                                                     class="la la-times-circle me-1"
                                                 ></i>
@@ -507,7 +547,7 @@ const batalCari = () => {
                                     disabled
                                 >
                                     <i class="la la-lock me-2"></i>
-                                    Cetak Tidak Tersedia
+                                    Tiket Tidak Tersedia
                                 </button>
                             </div>
                         </div>
