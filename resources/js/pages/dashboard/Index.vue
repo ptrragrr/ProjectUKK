@@ -114,6 +114,9 @@ const stats = computed(() => {
     const pendingTransactions = filtered.filter(
         (t) => t.status_payment === "pending"
     ).length;
+    const cancelledTransactions = filtered.filter(
+        (t) => t.status_payment === "cancelled"
+    ).length;
     const totalRevenue = filtered
         .filter((t) => t.status_payment === "paid")
         .reduce((sum, t) => sum + t.total_harga, 0);
@@ -122,6 +125,7 @@ const stats = computed(() => {
         totalTransactions,
         paidTransactions,
         pendingTransactions,
+        cancelledTransactions,
         totalRevenue,
     };
 });
@@ -278,7 +282,7 @@ const getStatusClass = (status: string) => {
                                     <h3 class="mb-0 fw-bold text-warning">{{ stats.pendingTransactions }}</h3>
                                 </div>
                                 <div class="symbol symbol-50px" style="background: #fff3cd; border-radius: 10px;">
-                                    <i class="la la-clock fs-2x text-warning"></i>
+                                    <i class="bi bi-clock fs-2x text-warning"></i>
                                 </div>
                             </div>
 
@@ -295,6 +299,34 @@ const getStatusClass = (status: string) => {
                         </div>
                     </div>
                 </div>
+
+                <div class="col-md-3">
+                    <div class="card h-100" style="border: none; box-shadow: 0 0 15px rgba(0, 0, 0, 0.05); border-radius: 12px;">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <p class="text-muted mb-1 fs-7">Cancelled</p>
+                                    <h3 class="mb-0 fw-bold text-danger">{{ stats.cancelledTransactions }}</h3>
+                                </div>
+                                <div class="symbol symbol-50px" style="background: #fff3cd; border-radius: 10px;">
+                                    <i class="bi bi-x-circle fs-2x text-danger"></i>
+                                </div>
+                            </div>
+
+                             <!-- <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <p class="text-muted mb-1 fs-7">Cancelled</p>
+                                    <h3 class="mb-0 fw-bold text-warning">{{ stats.pendingTransactions }}</h3>
+                                </div>
+                                <div class="symbol symbol-50px" style="background: #fff3cd; border-radius: 10px;">
+                                    <i class="la la-clock fs-2x text-warning"></i>
+                                </div>
+                            </div> -->
+
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-md-3">
                     <div class="card h-100" style="border: none; box-shadow: 0 0 15px rgba(0, 0, 0, 0.05); border-radius: 12px;">
                         <div class="card-body">

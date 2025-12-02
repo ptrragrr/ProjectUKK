@@ -238,7 +238,7 @@ const batalCari = () => {
                                             class="la la-ticket-alt fs-2x text-white"
                                         ></i>
                                     </div>
-                                    <div>
+                                    <!-- <div>
                                         <h3
                                             class="text-white fw-bold fs-2 mb-1"
                                         >
@@ -249,10 +249,21 @@ const batalCari = () => {
                                         >
                                             Kode: {{ transaksi.kode_tiket }}
                                         </p>
+                                    </div> -->
+                                    
+                                    <div>
+                                        <h3
+                                            class="text-white fw-bold fs-2 mb-0 d-flex flex-wrap align-items-center gap-3"
+                                        >
+                                            <span>{{ transaksi?.ticket?.jenis_tiket }}</span>
+                                            <span class="text-white text-opacity-75 fs-6 fw-normal">
+                                                Kode: <span class="fw-semibold">{{ transaksi.kode_tiket }}</span>
+                                            </span>
+                                        </h3>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                            <!-- <div class="col-md-4 text-md-end mt-3 mt-md-0">
                                 <span
                                     :class="
                                         transaksi.transaksi.status_payment ===
@@ -277,7 +288,7 @@ const batalCari = () => {
                                             : "Pending"
                                     }}
                                 </span>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 

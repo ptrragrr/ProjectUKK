@@ -13,6 +13,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('reservation:expired')->everyMinute();
+        $schedule->command('transactions:cancel-expired')->everyMinute();
+
     }
 
     /**
