@@ -164,151 +164,58 @@ const handleImageUpload = (event: Event) => {
 </script>
 
 <template>
-    <!-- Hero Header Section -->
-    <div class="card mb-5 mb-xl-10 border-0 shadow-sm">
-        <div class="card-body pt-9 pb-0">
-            <div class="d-flex flex-wrap flex-sm-nowrap">
-                <!-- Avatar -->
-                <div class="me-7 mb-4">
-                    <div class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                        <img :src="profileDetails.photo" alt="Profile" class="rounded-3 shadow" />
-                        <div class="position-absolute translate-middle bottom-0 start-100 mb-6 bg-success rounded-circle border border-4 border-body h-20px w-20px"></div>
-                    </div>
-                </div>
-
-                <!-- User Info -->
-                <div class="flex-grow-1">
-                    <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
-                        <div class="d-flex flex-column">
-                            <div class="d-flex align-items-center mb-2">
-                                <a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bold me-1">
-                                    {{ profileDetails.name || "Nama belum diisi" }}
-                                </a>
-                                <i class="bi bi-patch-check-fill text-primary fs-3"></i>
-                            </div>
-
-                            <div class="d-flex flex-wrap fw-semibold fs-6 mb-4 pe-2">
-                                <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary me-5 mb-2">
-                                    <i class="bi bi-shield-check fs-4 me-1"></i>
-                                    {{ profileDetails.role || "Role belum dipilih" }}
-                                </a>
-                                <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary mb-2" v-if="profileDetails.phone">
-                                    <i class="bi bi-telephone fs-4 me-1"></i>
-                                    {{ profileDetails.phone }}
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Stats Cards -->
-                    <div class="d-flex flex-wrap flex-stack">
-                        <div class="d-flex flex-column flex-grow-1 pe-8">
-                            <div class="d-flex flex-wrap gap-3">
-                                <!-- Status Badge -->
-                                <!-- <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 bg-light-success">
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-check-circle-fill text-success fs-2 me-2"></i>
-                                        <div class="fs-2 fw-bold text-success counted">Active</div>
-                                    </div>
-                                    <div class="fw-semibold fs-6 text-gray-400">Status</div>
-                                </div> -->
-
-                                <!-- Account Type -->
-                                <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 bg-light-primary">
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-person-badge-fill text-primary fs-2 me-2"></i>
-                                        <div class="fs-2 fw-bold text-primary counted">Verified</div>
-                                    </div>
-                                    <div class="fw-semibold fs-6 text-gray-400">Account</div>
+    <div class="container-fluid px-4 py-6">
+        <!-- Modern Hero Header -->
+        <div class="card border-0 shadow-sm mb-6 overflow-hidden profile-hero">
+            <div class="position-relative">
+                <!-- Background Gradient -->
+                <div class="profile-hero-bg"></div>
+                
+                <div class="card-body p-8 position-relative">
+                    <div class="row align-items-center">
+                        <!-- Avatar Section -->
+                        <div class="col-lg-auto text-center text-lg-start mb-6 mb-lg-0">
+                            <div class="position-relative d-inline-block">
+                                <div class="avatar-wrapper">
+                                    <img :src="profileDetails.photo" alt="Profile" class="profile-avatar" />
+                                </div>
+                                <div class="status-badge">
+                                    <i class="bi bi-check-circle-fill"></i>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Navigation Tabs -->
-            <ul class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold mt-8">
-                <li class="nav-item mt-2">
-                    <a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="#">
-                        <i class="bi bi-person-circle me-2"></i>Overview
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
+                        <!-- User Info Section -->
+                        <div class="col-lg">
+                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-4">
+                                <div>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <h1 class="text-white fw-bold mb-0 me-3 display-6">
+                                            {{ profileDetails.name || "Nama belum diisi" }}
+                                        </h1>
+                                        <span class="badge-verified">
+                                            <i class="bi bi-patch-check-fill"></i>
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="d-flex flex-wrap gap-4 mb-3">
+                                        <div class="info-chip">
+                                            <i class="bi bi-shield-check me-2"></i>
+                                            <span>{{ profileDetails.role || "Role belum dipilih" }}</span>
+                                        </div>
+                                        <div class="info-chip" v-if="profileDetails.phone">
+                                            <i class="bi bi-telephone me-2"></i>
+                                            <span>{{ profileDetails.phone }}</span>
+                                        </div>
+                                    </div>
+                                </div>
 
-    <!-- Content Row -->
-    <div class="row g-5 g-xl-8">
-        <!-- Left Sidebar - Quick Info -->
-        <div class="col-xl-4">
-            <!-- Profile Details Card -->
-            <div class="card shadow-sm mb-5 mb-xl-8">
-                <div class="card-header border-0 pt-5">
-                    <h3 class="card-title align-items-start flex-column">
-                        <span class="card-label fw-bold fs-3 mb-1">Detail Profil</span>
-                        <span class="text-muted mt-1 fw-semibold fs-7">Informasi akun Anda</span>
-                    </h3>
-                </div>
-
-                <div class="card-body pt-5">
-                    <!-- Full Name -->
-                    <div class="d-flex align-items-center mb-7">
-                        <div class="symbol symbol-50px me-5">
-                            <span class="symbol-label bg-light-primary">
-                                <i class="bi bi-person-fill text-primary fs-2x"></i>
-                            </span>
-                        </div>
-                        <div class="flex-grow-1">
-                            <span class="text-gray-500 fw-semibold d-block fs-7">Nama Lengkap</span>
-                            <span class="text-gray-800 fw-bold d-block fs-6">
-                                {{ profileDetails.name || "Belum diisi" }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Role -->
-                    <div class="d-flex align-items-center mb-7">
-                        <div class="symbol symbol-50px me-5">
-                            <span class="symbol-label bg-light-success">
-                                <i class="bi bi-shield-fill-check text-success fs-2x"></i>
-                            </span>
-                        </div>
-                        <div class="flex-grow-1">
-                            <span class="text-gray-500 fw-semibold d-block fs-7">Role</span>
-                            <span class="text-gray-800 fw-bold d-block fs-6">
-                                {{ profileDetails.role || "Belum diisi" }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Phone -->
-                    <div class="d-flex align-items-center mb-7" v-if="profileDetails.phone">
-                        <div class="symbol symbol-50px me-5">
-                            <span class="symbol-label bg-light-info">
-                                <i class="bi bi-telephone-fill text-info fs-2x"></i>
-                            </span>
-                        </div>
-                        <div class="flex-grow-1">
-                            <span class="text-gray-500 fw-semibold d-block fs-7">Nomor Telepon</span>
-                            <span class="text-gray-800 fw-bold d-block fs-6">
-                                {{ profileDetails.phone }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Notice Card -->
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <div class="notice d-flex bg-light-warning rounded border-warning border border-dashed p-6">
-                        <i class="bi bi-info-circle-fill fs-2tx text-warning me-4"></i>
-                        <div class="d-flex flex-stack flex-grow-1">
-                            <div class="fw-semibold">
-                                <h4 class="text-gray-900 fw-bold">Mode Read-Only</h4>
-                                <div class="fs-6 text-gray-700">
-                                    Data profil ditampilkan dalam mode view-only. Untuk melakukan perubahan, hubungi administrator.
+                                <!-- Stats Card -->
+                                <div class="stats-container">
+                                    <div class="stat-item">
+                                        <i class="bi bi-person-badge"></i>
+                                        <span class="stat-label">Verified Account</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -317,116 +224,167 @@ const handleImageUpload = (event: Event) => {
             </div>
         </div>
 
-        <!-- Right Content - Profile Form -->
-        <div class="col-xl-8">
-            <div class="card shadow-sm">
-                <div class="card-header border-0 cursor-pointer">
-                    <div class="card-title m-0">
-                        <h3 class="fw-bold m-0">
-                            <i class="bi bi-gear-fill text-primary fs-3 me-2"></i>
-                            Pengaturan Profil
+        <!-- Content Grid -->
+        <div class="row g-6">
+            <!-- Left Sidebar -->
+            <div class="col-xl-4">
+                <!-- Profile Info Card -->
+                <div class="card border-0 shadow-sm mb-6 info-card">
+                    <div class="card-header border-0 bg-transparent pt-6 pb-0">
+                        <h3 class="card-title">
+                            <i class="bi bi-person-circle text-primary fs-2 me-2"></i>
+                            <span class="fw-bold">Detail Profil</span>
                         </h3>
                     </div>
+
+                    <div class="card-body pt-5">
+                        <div class="info-item">
+                            <div class="info-icon bg-gradient-primary">
+                                <i class="bi bi-person-fill text-white"></i>
+                            </div>
+                            <div class="info-content">
+                                <span class="info-label">Nama Lengkap</span>
+                                <span class="info-value">{{ profileDetails.name || "Belum diisi" }}</span>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-icon bg-gradient-success">
+                                <i class="bi bi-shield-fill-check text-white"></i>
+                            </div>
+                            <div class="info-content">
+                                <span class="info-label">Role</span>
+                                <span class="info-value">{{ profileDetails.role || "Belum diisi" }}</span>
+                            </div>
+                        </div>
+
+                        <div class="info-item" v-if="profileDetails.phone">
+                            <div class="info-icon bg-gradient-info">
+                                <i class="bi bi-telephone-fill text-white"></i>
+                            </div>
+                            <div class="info-content">
+                                <span class="info-label">Nomor Telepon</span>
+                                <span class="info-value">{{ profileDetails.phone }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="card-body border-top p-9">
-                    <VForm
-                        class="form"
-                        novalidate
-                        v-slot="{ handleSubmit }"
-                    >
-                        <form @submit.prevent="handleSubmit(saveChanges)">
-                            <!-- Profile Picture Section -->
-                            <div class="row mb-10">
-                                <label class="col-lg-4 col-form-label fw-semibold fs-6">
-                                    <span class="required">Foto Profil</span>
-                                    <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Foto profil dalam mode read-only"></i>
-                                </label>
+                <!-- Notice Card -->
+                <div class="card border-0 shadow-sm notice-card">
+                    <div class="card-body p-6">
+                        <div class="d-flex align-items-start gap-4">
+                            <div class="notice-icon">
+                                <i class="bi bi-info-circle-fill"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-2">Mode Read-Only</h5>
+                                <p class="text-muted mb-0 fs-7">
+                                    Data profil ditampilkan dalam mode view-only. Untuk melakukan perubahan, hubungi administrator.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                                <div class="col-lg-8">
-                                    <div class="image-input image-input-outline" data-kt-image-input="true"
-                                        :style="{
-                                            backgroundImage: `url(${getAssetPath('/media/avatars/blank.png')})`,
-                                        }">
-                                        <div class="image-input-wrapper w-125px h-125px rounded-circle"
-                                            :style="`background-image: url(${profileDetails.photo})`"></div>
-                                    </div>
-                                    <div class="form-text mt-3">
-                                        <i class="bi bi-lock-fill me-1"></i>
-                                        Foto profil tidak dapat diubah pada halaman ini
+            <!-- Right Content -->
+            <div class="col-xl-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header border-0 bg-light pt-6">
+                        <h3 class="card-title">
+                            <i class="bi bi-gear-fill text-primary fs-2 me-2"></i>
+                            <span class="fw-bold">Pengaturan Profil</span>
+                        </h3>
+                    </div>
+
+                    <div class="card-body p-8">
+                        <VForm class="form" novalidate v-slot="{ handleSubmit }">
+                            <form @submit.prevent="handleSubmit(saveChanges)">
+                                <!-- Profile Picture -->
+                                <div class="form-section">
+                                    <label class="form-section-label">
+                                        <i class="bi bi-image me-2"></i>
+                                        Foto Profil
+                                    </label>
+                                    
+                                    <div class="d-flex align-items-center gap-4">
+                                        <div class="profile-preview">
+                                            <img :src="profileDetails.photo" alt="Profile Preview" />
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="alert alert-light border mb-0">
+                                                <i class="bi bi-lock-fill text-muted me-2"></i>
+                                                <span class="text-muted">Foto profil tidak dapat diubah pada halaman ini</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="separator separator-dashed mb-8"></div>
+                                <div class="form-divider"></div>
 
-                            <!-- Name Field -->
-                            <div class="row mb-6">
-                                <label class="col-lg-4 col-form-label required fw-semibold fs-6">
-                                    <i class="bi bi-person-fill text-primary me-2"></i>
-                                    Nama Lengkap
-                                </label>
-                                <div class="col-lg-8 fv-row">
+                                <!-- Name Field -->
+                                <div class="form-section">
+                                    <label class="form-section-label required">
+                                        <i class="bi bi-person-fill me-2"></i>
+                                        Nama Lengkap
+                                    </label>
                                     <Field
                                         type="text"
                                         name="name"
-                                        class="form-control form-control-lg form-control-solid bg-light"
+                                        class="form-control form-control-lg form-input-readonly"
                                         placeholder="Nama lengkap"
                                         v-model="profileDetails.name"
                                         disabled
                                     />
                                 </div>
-                            </div>
 
-                            <!-- Role Field -->
-                            <div class="row mb-6">
-                                <label class="col-lg-4 col-form-label fw-semibold fs-6">
-                                    <i class="bi bi-shield-check text-primary me-2"></i>
-                                    Role
-                                </label>
-                                <div class="col-lg-8 fv-row">
+                                <!-- Role Field -->
+                                <div class="form-section">
+                                    <label class="form-section-label">
+                                        <i class="bi bi-shield-check me-2"></i>
+                                        Role
+                                    </label>
                                     <Field
                                         type="text"
                                         name="role"
-                                        class="form-control form-control-lg form-control-solid bg-light"
+                                        class="form-control form-control-lg form-input-readonly"
                                         placeholder="Role pengguna"
                                         v-model="profileDetails.role"
                                         disabled
                                     />
                                 </div>
-                            </div>
 
-                            <!-- Phone Field -->
-                            <div class="row mb-6">
-                                <label class="col-lg-4 col-form-label fw-semibold fs-6">
-                                    <i class="bi bi-telephone-fill text-primary me-2"></i>
-                                    Nomor Telepon
-                                </label>
-                                <div class="col-lg-8 fv-row">
+                                <!-- Phone Field -->
+                                <div class="form-section">
+                                    <label class="form-section-label">
+                                        <i class="bi bi-telephone-fill me-2"></i>
+                                        Nomor Telepon
+                                    </label>
                                     <Field
                                         type="tel"
                                         name="phone"
-                                        class="form-control form-control-lg form-control-solid bg-light"
+                                        class="form-control form-control-lg form-input-readonly"
                                         placeholder="Nomor telepon"
                                         v-model="profileDetails.phone"
                                         disabled
                                     />
                                 </div>
-                            </div>
 
-                            <!-- Action Buttons -->
-                            <div class="card-footer d-flex justify-content-end py-6 px-9 mt-8 border-top">
-                                <button
-                                    type="button"
-                                    class="btn btn-light btn-active-light-primary me-2"
-                                    @click="router.go(-1)"
-                                >
-                                    <i class="bi bi-arrow-left me-2"></i>
-                                    Kembali
-                                </button>
-                            </div>
-                        </form>
-                    </VForm>
+                                <!-- Action Buttons -->
+                                <div class="d-flex justify-content-end gap-3 mt-8 pt-6 border-top">
+                                    <button
+                                        type="button"
+                                        class="btn btn-light btn-lg px-6"
+                                        @click="router.go(-1)"
+                                    >
+                                        <i class="bi bi-arrow-left me-2"></i>
+                                        Kembali
+                                    </button>
+                                </div>
+                            </form>
+                        </VForm>
+                    </div>
                 </div>
             </div>
         </div>
@@ -434,17 +392,342 @@ const handleImageUpload = (event: Event) => {
 </template>
 
 <style scoped>
-.symbol-label {
+/* Hero Section */
+.profile-hero {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.profile-hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.profile-hero-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-opacity="0.05" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.5;
+}
+
+/* Avatar */
+.avatar-wrapper {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    border-radius: 24px;
+    padding: 4px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.profile-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+    border: 3px solid rgba(255,255,255,0.8);
+}
+
+.status-badge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 3px solid white;
+    box-shadow: 0 2px 12px rgba(16, 185, 129, 0.4);
 }
 
-.nav-line-tabs .nav-link.active {
-    border-bottom: 2px solid;
+.status-badge i {
+    color: white;
+    font-size: 14px;
 }
 
-.notice {
-    align-items: flex-start;
+/* Badge */
+.badge-verified {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    color: white;
+    font-size: 18px;
+}
+
+/* Info Chips */
+.info-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    color: white;
+    font-weight: 500;
+    font-size: 14px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.info-chip i {
+    font-size: 16px;
+}
+
+/* Stats */
+.stats-container {
+    display: flex;
+    gap: 16px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 24px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.2);
+    min-width: 160px;
+}
+
+.stat-item i {
+    font-size: 24px;
+    color: white;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    text-align: center;
+}
+
+/* Info Card */
+.info-card {
+    border-radius: 16px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+}
+
+.info-item:hover {
+    background: #e9ecef;
+    transform: translateX(4px);
+}
+
+.info-item:last-child {
+    margin-bottom: 0;
+}
+
+.info-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.bg-gradient-info {
+    background: linear-gradient(135deg, #06b6d4, #0891b2);
+}
+
+.info-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.info-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Notice Card */
+.notice-card {
+    border-radius: 16px;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border: 2px solid #fbbf24;
+}
+
+.notice-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(251, 191, 36, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.notice-icon i {
+    font-size: 24px;
+    color: #d97706;
+}
+
+/* Form Sections */
+.form-section {
+    margin-bottom: 32px;
+}
+
+.form-section-label {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-section-label.required::after {
+    content: '*';
+    color: #ef4444;
+    margin-left: 4px;
+}
+
+.form-section-label i {
+    color: #667eea;
+    font-size: 16px;
+}
+
+.form-input-readonly {
+    background: #f8f9fa;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+.form-input-readonly:disabled {
+    opacity: 1;
+}
+
+.form-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, #e5e7eb, transparent);
+    margin: 32px 0;
+}
+
+/* Profile Preview */
+.profile-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 3px solid #e5e7eb;
+    flex-shrink: 0;
+}
+
+.profile-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Cards */
+.card {
+    border-radius: 16px;
+}
+
+.card-header {
+    border-radius: 16px 16px 0 0;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-light:hover {
+    background: #e5e7eb;
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .avatar-wrapper {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .stat-item {
+        min-width: 140px;
+        padding: 12px 16px;
+    }
+    
+    .profile-hero .card-body {
+        padding: 24px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .stats-container {
+        width: 100%;
+    }
+    
+    .stat-item {
+        flex: 1;
+        min-width: auto;
+    }
+    
+    .info-chip {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
 }
 </style>

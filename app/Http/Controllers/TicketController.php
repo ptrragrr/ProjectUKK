@@ -49,7 +49,8 @@ class TicketController extends Controller
             'harga_tiket' => 'required|numeric|min:0',
             'jenis_tiket' => 'required|string',
             'deskripsi' => 'nullable|string',
-            'stok_reserved' => 0,
+            // 'stok_reserved' => 0,
+            'stok_reserved' => 'nullable|integer',
             'stok_tiket' => 'required|integer',
         ]);
 
@@ -122,6 +123,7 @@ class TicketController extends Controller
     'tanggal' => 'required|date',
     'harga_tiket' => 'required|numeric|min:0',
     'jenis_tiket' => 'required|string',
+    'stok_reserved' => 'nullable|integer',
     'stok_tiket' => 'required|integer',
     'deskripsi' => 'nullable|string',
 ]);
