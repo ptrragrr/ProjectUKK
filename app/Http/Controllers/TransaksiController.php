@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TransaksiCreated;
+use App\Events\TransaksiDeleted;
+use App\Events\TransaksiUpdated;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
 
@@ -19,21 +22,43 @@ class TransaksiController extends Controller
     }
 
     // ➕ Menyimpan transaksi baru
+    // public function store(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'user_id' => 'required|exists:users,id',
+    //         'kode_transaksi' => 'required|string|unique:transaksis,kode_transaksi',
+    //         'metode_pembayaran' => 'required|string',
+    //         'total_harga' => 'required|numeric|min:0',
+    //         'bayar' => 'required|numeric|min:0',
+    //         'status' => 'required|string',
+    //     ]);
+
+    //     $transaksi = Transaksi::create($validated);
+
+    //     return response()->json(['success' => true, 'data' => $transaksi], 201);
+    // }
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'kode_transaksi' => 'required|string|unique:transaksis,kode_transaksi',
-            'metode_pembayaran' => 'required|string',
-            'total_harga' => 'required|numeric|min:0',
-            'bayar' => 'required|numeric|min:0',
-            'status' => 'required|string',
-        ]);
+{
+    $validated = $request->validate([
+        'user_id' => 'required|exists:users,id',
+        'kode_transaksi' => 'required|string|unique:transaksis,kode_transaksi',
+        'metode_pembayaran' => 'required|string',
+        'total_harga' => 'required|numeric|min:0',
+        'bayar' => 'required|numeric|min:0',
+        'status' => 'required|string',
+    ]);
 
-        $transaksi = Transaksi::create($validated);
+    $transaksi = Transaksi::create($validated);
 
-        return response()->json(['success' => true, 'data' => $transaksi], 201);
-    }
+    // 🔥 Broadcast ke semua client lain
+    // broadcast(new TransaksiCreated($transaksi))->toOthers();
+     broadcast(new TransaksiCreated($transaksi));
+
+    return response()->json([
+        'success' => true,
+        'data' => $transaksi
+    ], 201);
+}
 
     // 👁 Tampilkan 1 transaksi lengkap dengan tiket
     public function show($id)
@@ -47,33 +72,63 @@ class TransaksiController extends Controller
     }
 
     // ✏️ Update transaksi
-    public function update(Request $request, $id)
-    {
-        $transaksi = Transaksi::findOrFail($id);
+public function update(Request $request, $id)
+{
+    $transaksi = Transaksi::findOrFail($id);
 
-        $validated = $request->validate([
-            'metode_pembayaran' => 'sometimes|string',
-            'total_harga' => 'sometimes|numeric|min:0',
-            'bayar' => 'sometimes|numeric|min:0',
-            'status' => 'sometimes|string',
-        ]);
+    $transaksi->update([
+        'status' => $request->status, // gunakan kolom yang benar
+    ]);
 
-        $transaksi->update($validated);
+    broadcast(new TransaksiUpdated($transaksi))->toOthers();
 
-        return response()->json(['success' => true, 'data' => $transaksi]);
-    }
+    return response()->json([
+        'message' => 'Updated',
+        'data' => $transaksi
+    ]);
+}
+
+    // public function update(Request $request, $id)
+    // {
+    //     $transaksi = Transaksi::findOrFail($id);
+
+    //     $validated = $request->validate([
+    //         'metode_pembayaran' => 'sometimes|string',
+    //         'total_harga' => 'sometimes|numeric|min:0',
+    //         'bayar' => 'sometimes|numeric|min:0',
+    //         'status' => 'sometimes|string',
+    //     ]);
+
+    //     $transaksi->update($validated);
+
+    //     return response()->json(['success' => true, 'data' => $transaksi]);
+    // }
 
     // 🗑 Hapus transaksi
-    public function destroy($id)
-    {
-        $transaksi = Transaksi::findOrFail($id);
-        $transaksi->delete();
+    // public function destroy($id)
+    // {
+    //     $transaksi = Transaksi::findOrFail($id);
+    //     $transaksi->delete();
 
-        return response()->json(['success' => true, 'message' => 'Transaksi berhasil dihapus.']);
-    }
+    //     return response()->json(['success' => true, 'message' => 'Transaksi berhasil dihapus.']);
+    // }
+    public function destroy($id)
+{
+    $transaksi = Transaksi::findOrFail($id);
+
+    $transaksi->delete();
+
+    // 🔥 Kirim event realtime
+    broadcast(new TransaksiDeleted($id))->toOthers();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Transaksi berhasil dihapus.'
+    ]);
+}
 
     // 💾 Simpan kode tiket
-    public function simpanKodeTiket(Request $request, $id)
+    public function simpanKodeTiket(Request $request, $id)  
     {
         $request->validate([
             'kode_tiket' => 'required|string|max:50'

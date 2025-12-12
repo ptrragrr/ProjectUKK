@@ -46,15 +46,38 @@ const filteredTickets = computed(() => {
   return tickets.value.filter(t => t.stok_tiket > 0);
 });
 
+// onMounted(() => {
+//   loadTickets();
+
+//   window.Echo.channel("tickets")
+//     .listen(".ticket.added", (e: any) => {
+//       console.log("Event tiket baru:", e);
+//       loadTickets(); // Muat ulang tiket dari server
+//       toast.info(`🎫 Tiket baru ditambahkan: ${e.ticket.nama_event}`);
+//     });
+// });
 onMounted(() => {
   loadTickets();
 
-  window.Echo.channel("tickets")
-    .listen("ticket.added", (e: any) => {
-      console.log("Event tiket baru:", e);
-      tickets.value.push(e.ticket);
-      toast.info(`🎫 Tiket baru ditambahkan: ${e.ticket.nama_event}`);
-    });
+  const channel = window.Echo.channel("tickets");
+
+  // CREATE
+  channel.listen(".ticket.added", (e) => {
+    tickets.value.push(e.ticket);
+  });
+
+  // UPDATE
+  channel.listen(".ticket.updated", (e) => {
+    const index = tickets.value.findIndex(t => t.id === e.ticket.id);
+    if (index !== -1) {
+      tickets.value[index] = e.ticket;
+    }
+  });
+
+  // DELETE
+  channel.listen(".ticket.deleted", (e) => {
+    tickets.value = tickets.value.filter(t => t.id !== e.id);
+  });
 });
 
 const vvipTickets = computed(() =>

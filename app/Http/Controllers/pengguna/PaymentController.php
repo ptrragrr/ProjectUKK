@@ -82,6 +82,8 @@ class PaymentController extends Controller
 
         $transaksi->save();
 
+        event(new \App\Events\TransaksiUpdated($transaksi));
+        
         return response()->json(['message' => 'Notifikasi berhasil diproses']);
     }
 }

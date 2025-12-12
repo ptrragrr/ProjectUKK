@@ -194,13 +194,36 @@ const resetPage = () => {
     currentPage.value = 1;
 };
 
-onMounted(fetchTransaksis);
+// onMounted(fetchTransaksis);
+const refreshData = () => {
+    // fetchTransaksi(); // atau apa pun fungsi ambil datanya
+};
 
-// const getStatusClass = (status: string) => {
-//     return status === "paid"
-//         ? "badge-light-success"
-//         : "badge-light-warning";
-// };
+onMounted(() => {
+    fetchTransaksis();
+
+    window.Echo.channel("transaksis")
+        // CREATE
+        .listen(".transaksi.created", (e) => {
+            console.log("Created:", e);
+            fetchTransaksis() // tambah ke atas
+
+        })
+
+        // UPDATE
+        .listen(".transaksi.updated", (e) => {
+            console.log("Updated:", e);
+            fetchTransaksis() // tambah ke atas
+
+        })
+
+        // DELETE
+        .listen(".transaksi.deleted", (e) => {
+            console.log("Deleted:", e);
+            transaksis.value = transaksis.value.filter(t => t.id !== e.id);
+        });
+});
+
 const getStatusClass = (status: string) => {
     if (status === "paid") return "badge-light-success";
     if (status === "pending") return "badge-light-warning";

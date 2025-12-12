@@ -154,13 +154,13 @@
           </div>
         </div>
 
-        <div class="payment-security">
+        <!-- <div class="payment-security">
           <div class="security-icon">🔒</div>
           <div class="security-text">
             <strong>Pembayaran 100% Aman</strong>
             <span>Transaksi Anda dilindungi dengan enkripsi SSL dan teknologi keamanan tingkat bank</span>
           </div>
-        </div>
+        </div> -->
       </div>
     </section>
 
@@ -283,10 +283,11 @@ const tickets = [
     price: "Rp 150.000",
     features: [
       "Akses area festival",
-      "Semua panggung",
-      "Food court area",
-      "Free merchandise",
-      "Certificate kehadiran",
+      "Area berdiri (festival)",
+      "Food court & merchandise booth",
+      "Akses semua panggung",
+      "Toilet umum",
+      "Parkir umum",
     ],
     premium: false,
   },
@@ -296,11 +297,13 @@ const tickets = [
     price: "Rp 350.000",
     features: [
       "Semua fasilitas Reguler",
-      "Akses area VIP",
-      "Tempat duduk eksklusif",
-      "Welcome drink",
-      "VIP merchandise",
-      "Priority entrance",
+      "Akses area VIP (lebih dekat panggung)",
+      "Priority entrance (gate khusus VIP)",
+      "Goodie bag (sticker / lanyard)",
+      "Tempat menonton lebih nyaman",
+      "Toilet VIP",
+      "Wristband VIP eksklusif",
+      "Parkir umum",
     ],
     premium: false,
   },
@@ -310,16 +313,18 @@ const tickets = [
     price: "Rp 750.000",
     features: [
       "Semua fasilitas VIP",
+      "Akses area terdepan panggung (VVIP zone)",
       "Meet & greet artis",
-      "Photo session",
-      "Signed poster",
-      "Backstage access",
-      "Catering premium",
-      "Parkir gratis",
+      "Group photo session",
+      "Exclusive merchandise (kaos/totebag)",
+      "Catering premium / snack & drink",
+      "Parkir khusus VVIP",
+      "Early entry (masuk lebih cepat)",
     ],
     premium: true,
   },
 ];
+
 
 const payments = [
   { icon: "🏦", title: "Transfer Bank", desc: "BCA, Mandiri, BNI, BRI, dan bank lainnya" },

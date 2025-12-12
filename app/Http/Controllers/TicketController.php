@@ -3,134 +3,97 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
-use App\Events\TicketAdded;
 use Illuminate\Http\Request;
+
+// Event realtime
+use App\Events\TicketAdded;
+use App\Events\TicketUpdated;
+use App\Events\TicketDeleted;
 
 class TicketController extends Controller
 {
-
-    public function get(){
-        $tickets = Ticket::orderBy('id', 'desc')->get();
-
-        return response()->json($tickets);
+    public function get()
+    {
+        return response()->json(
+            Ticket::orderBy('id', 'desc')->get()
+        );
     }
 
     public function index(Request $request)
     {
         $query = Ticket::query();
 
-        // PENTING: Handle parameter search
-        if ($request->has('search') && !empty($request->search)) {
-            $search = $request->search;
-            
-            $query->where(function($q) use ($search) {
-                $q->where('nama_event', 'like', "%{$search}%")
-                  ->orWhere('jenis_tiket', 'like', "%{$search}%")
-                //   ->orWhere('stok_tiket', 'like', "%{$search}%")
-                  ->orWhere('deskripsi', 'like', "%{$search}%");
+        // Search
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('nama_event', 'like', "%{$request->search}%")
+                  ->orWhere('jenis_tiket', 'like', "%{$request->search}%")
+                  ->orWhere('deskripsi', 'like', "%{$request->search}%");
             });
         }
 
-        // Sorting (opsional)
+        // Sorting
         $query->orderBy('created_at', 'asc');
 
         // Pagination
         $perPage = $request->per ?? 10;
-        $tickets = $query->paginate($perPage);
-
-        return response()->json($tickets);
+        return response()->json($query->paginate($perPage));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_event' => 'required|string|max:255',
-            'tanggal' => 'required|date',
-            'harga_tiket' => 'required|numeric|min:0',
-            'jenis_tiket' => 'required|string',
-            'deskripsi' => 'nullable|string',
-            // 'stok_reserved' => 0,
+            'nama_event'    => 'required|string|max:255',
+            'tanggal'       => 'required|date',
+            'harga_tiket'   => 'required|numeric|min:0',
+            'jenis_tiket'   => 'required|string',
+            'deskripsi'     => 'nullable|string',
+            'stok_tiket'    => 'required|integer',
             'stok_reserved' => 'nullable|integer',
-            'stok_tiket' => 'required|integer',
         ]);
 
-        $ticket = Ticket::create($request->all());
+        // fallback default
+        $validated['stok_reserved'] = $validated['stok_reserved'] ?? 0;
 
-    // Kirim event ke semua client
-    broadcast(new TicketAdded($ticket))->toOthers();
+        $ticket = Ticket::create($validated);
 
-    return response()->json([
-        'success' => true,
-        'data' => $ticket,
-    ]);
+        // 🔥 Broadcast ke semua client yang lain
+        broadcast(new TicketAdded($ticket))->toOthers();
 
-        // $ticket = Ticket::create($validated);
-
-        // return response()->json([
-        //     'message' => 'Tiket berhasil ditambahkan',
-        //     'data' => $ticket
-        // ], 201);
+        return response()->json([
+            'success' => true,
+            'data' => $ticket
+        ]);
     }
-
-//     public function store(Request $request)
-// {
-//     $validated = $request->validate([
-//         'nama_event' => 'required|string|max:255',
-//         'tanggal' => 'required|date',
-//         'harga_tiket' => 'required|numeric|min:0',
-//         'jenis_tiket' => 'required|string',
-//         'deskripsi' => 'nullable|string',
-//         'stok_tiket' => 'required|integer',
-//     ]);
-
-//     // Default value stok_reserved
-//     $validated['stok_reserved'] = 0;
-
-//     $ticket = Ticket::create($validated);
-
-//     broadcast(new TicketAdded($ticket))->toOthers();
-
-//     return response()->json([
-//         'success' => true,
-//         'data' => $ticket,
-//     ]);
-// }
 
     public function show($id)
     {
-        $ticket = Ticket::findOrFail($id);
-        return response()->json($ticket);
+        return response()->json(
+            Ticket::findOrFail($id)
+        );
     }
 
     public function update(Request $request, $id)
     {
         $ticket = Ticket::findOrFail($id);
 
-        // $validated = $request->validate([
-        //     'nama_event' => 'required|string|max:255',
-        //     'tanggal' => 'required|date',
-        //     'harga_tiket' => 'required|numeric|min:0',
-        //     'jenis_tiket' => 'required|string',
-        //     'stok_tiket' => 'required|integer',
-        //     'stok_reserved' => 0,
-        //     'deskripsi' => 'nullable|string',
-        // ]);
-
-        // $ticket->update($validated);
-
         $validated = $request->validate([
-    'nama_event' => 'required|string|max:255',
-    'tanggal' => 'required|date',
-    'harga_tiket' => 'required|numeric|min:0',
-    'jenis_tiket' => 'required|string',
-    'stok_reserved' => 'nullable|integer',
-    'stok_tiket' => 'required|integer',
-    'deskripsi' => 'nullable|string',
-]);
+            'nama_event'    => 'required|string|max:255',
+            'tanggal'       => 'required|date',
+            'harga_tiket'   => 'required|numeric|min:0',
+            'jenis_tiket'   => 'required|string',
+            'stok_tiket'    => 'required|integer',
+            'stok_reserved' => 'nullable|integer',
+            'deskripsi'     => 'nullable|string',
+        ]);
 
-$validated['stok_reserved'] = $ticket->stok_reserved ?? 0;
+        $validated['stok_reserved'] = $validated['stok_reserved'] ?? $ticket->stok_reserved;
 
-$ticket->update($validated);
+        $ticket->update($validated);
+
+        // 🔥 Broadcast ticket diupdate
+        // broadcast(new TicketUpdated($ticket))->toOthers();
+         broadcast(new TicketUpdated($ticket));
 
         return response()->json([
             'message' => 'Tiket berhasil diupdate',
@@ -141,10 +104,13 @@ $ticket->update($validated);
     public function destroy($id)
     {
         $ticket = Ticket::findOrFail($id);
+        $ticketId = $ticket->id;
+
         $ticket->delete();
 
-        return response()->json([
-            'message' => 'Tiket berhasil dihapus'
-        ]);
+        // 🔥 Broadcast ticket dihapus
+        broadcast(new TicketDeleted($ticketId))->toOthers();
+
+        return response()->json(['message' => 'Tiket berhasil dihapus']);
     }
 }

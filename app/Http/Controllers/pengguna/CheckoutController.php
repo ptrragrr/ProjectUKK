@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\pengguna;
 
+use App\Events\TransaksiCreated;
+use App\Events\TransaksiUpdated;
 use App\Http\Controllers\Controller;
 use App\Mail\TicketPaidMail;
 use Illuminate\Http\Request;
@@ -16,6 +18,7 @@ use Midtrans\Snap;
 use Midtrans\Transaction;
 use App\Models\pengguna\TiketKode;
 use App\Models\TransaksiDetail;
+use Illuminate\Support\Facades\Broadcast;
 
 class CheckoutController extends Controller
 {
@@ -268,153 +271,155 @@ class CheckoutController extends Controller
     //     }
     // }
 
-public function pay(Request $request)
-{
-    $payload = $request->validate([
-        'nama_pembeli' => 'required|string|max:150',
-        'email' => 'required|email',
-        'telepon' => 'required|string',
-        'tickets' => 'required|array|min:1',
-        'tickets.*.id' => 'required|integer|exists:tickets,id',
-        'tickets.*.qty' => 'required|integer|min:1',
-    ]);
+    public function pay(Request $request)
+    {
+        $payload = $request->validate([
+            'nama_pembeli' => 'required|string|max:150',
+            'email' => 'required|email',
+            'telepon' => 'required|string',
+            'tickets' => 'required|array|min:1',
+            'tickets.*.id' => 'required|integer|exists:tickets,id',
+            'tickets.*.qty' => 'required|integer|min:1',
+        ]);
 
-    $ticketIds = array_unique(array_map(fn($t) => (int)$t['id'], $payload['tickets']));
-    $tickets = Ticket::whereIn('id', $ticketIds)->get()->keyBy('id');
+        $ticketIds = array_unique(array_map(fn($t) => (int)$t['id'], $payload['tickets']));
+        $tickets = Ticket::whereIn('id', $ticketIds)->get()->keyBy('id');
 
-    $itemDetails = [];
-    $subtotal = 0;
+        $itemDetails = [];
+        $subtotal = 0;
 
-    DB::beginTransaction();
-    try {
-        // ✅ Cek dan reservasi stok
-        foreach ($payload['tickets'] as $t) {
-            $id = (int) $t['id'];
-            $qty = (int) $t['qty'];
-            
-            if (!$tickets->has($id)) continue;
+        DB::beginTransaction();
+        try {
+            // ✅ Cek dan reservasi stok
+            foreach ($payload['tickets'] as $t) {
+                $id = (int) $t['id'];
+                $qty = (int) $t['qty'];
 
-            $ticket = $tickets[$id];
-            
-            // Cek stok yang tersedia (stok asli - yang sedang direservasi)
-            $availableStock = $ticket->stok_tiket - $ticket->stok_reserved;
-            
-            if ($availableStock < $qty) {
+                if (!$tickets->has($id)) continue;
+
+                $ticket = $tickets[$id];
+
+                // Cek stok yang tersedia (stok asli - yang sedang direservasi)
+                $availableStock = $ticket->stok_tiket - $ticket->stok_reserved;
+
+                if ($availableStock < $qty) {
+                    DB::rollBack();
+                    return response()->json([
+                        'error' => true,
+                        'message' => "Stok untuk {$ticket->jenis_tiket} tidak mencukupi. Tersedia: {$availableStock}"
+                    ], 422);
+                }
+
+                // ✅ RESERVASI stok (jangan kurangi stok asli dulu)
+                $ticket->increment('stok_reserved', $qty);
+
+                $price = (int) $ticket->harga_tiket;
+                $lineTotal = $price * $qty;
+                $subtotal += $lineTotal;
+
+                $itemDetails[] = [
+                    'id' => (string)$ticket->id,
+                    'price' => $price,
+                    'quantity' => $qty,
+                    'name' => "{$ticket->nama_event} - {$ticket->jenis_tiket}"
+                ];
+            }
+
+            if (empty($itemDetails)) {
                 DB::rollBack();
-                return response()->json([
-                    'error' => true, 
-                    'message' => "Stok untuk {$ticket->jenis_tiket} tidak mencukupi. Tersedia: {$availableStock}"
-                ], 422);
+                return response()->json(['error' => true, 'message' => 'Tidak ada tiket valid.'], 422);
             }
 
-            // ✅ RESERVASI stok (jangan kurangi stok asli dulu)
-            $ticket->increment('stok_reserved', $qty);
-            
-            $price = (int) $ticket->harga_tiket;
-            $lineTotal = $price * $qty;
-            $subtotal += $lineTotal;
+            $tax = (int) round($subtotal * 0.10);
+            $platformFee = (int) round($subtotal * 0.05);
+            $grandTotal = $subtotal + $tax + $platformFee;
 
-            $itemDetails[] = [
-                'id' => (string)$ticket->id,
-                'price' => $price,
-                'quantity' => $qty,
-                'name' => "{$ticket->nama_event} - {$ticket->jenis_tiket}"
-            ];
-        }
-
-        if (empty($itemDetails)) {
-            DB::rollBack();
-            return response()->json(['error' => true, 'message' => 'Tidak ada tiket valid.'], 422);
-        }
-
-        $tax = (int) round($subtotal * 0.10);
-        $platformFee = (int) round($subtotal * 0.05);
-        $grandTotal = $subtotal + $tax + $platformFee;
-
-        if ($tax > 0) {
-            $itemDetails[] = [
-                'id' => 'tax',
-                'price' => $tax,
-                'quantity' => 1,
-                'name' => 'Tax 10%'
-            ];
-        }
-        if ($platformFee > 0) {
-            $itemDetails[] = [
-                'id' => 'platform_fee',
-                'price' => $platformFee,
-                'quantity' => 1,
-                'name' => 'Platform Fee'
-            ];
-        }
-
-        $orderId = 'ORDER-' . strtoupper(Str::random(10));
-
-        $transaksi = Transaksi::create([
-            'nama_pembeli' => $request->nama_pembeli,
-            'email' => $request->email,
-            'nomer_telpon' => $request->telepon,
-            'kode_transaksi' => $orderId,
-            'total_harga' => $grandTotal,
-            'status_payment' => 'pending',
-            'expired_at' => now()->addMinutes(5), // ✅ Set expiry 5 menit
-        ]);
-
-        foreach ($payload['tickets'] as $t) {
-            $ticket = $tickets[$t['id']];
-            $price = (int) $ticket->harga_tiket;
-
-            for ($u = 0; $u < $t['qty']; $u++) {
-                $kode = 'PTR-' . $transaksi->id . '-' . strtoupper(Str::random(6));
-
-                TransaksiDetail::create([
-                    'transaksi_id'   => $transaksi->id,
-                    'ticket_id'      => $ticket->id,
-                    'jumlah'         => 1,
-                    'harga_satuan'   => $price,
-                    'total_harga'    => $price,
-                    'kode_tiket'     => $kode,
-                    'status'         => 'Reserved', // ✅ Status awal Reserved
-                ]);
+            if ($tax > 0) {
+                $itemDetails[] = [
+                    'id' => 'tax',
+                    'price' => $tax,
+                    'quantity' => 1,
+                    'name' => 'Tax 10%'
+                ];
             }
-        }
+            if ($platformFee > 0) {
+                $itemDetails[] = [
+                    'id' => 'platform_fee',
+                    'price' => $platformFee,
+                    'quantity' => 1,
+                    'name' => 'Platform Fee'
+                ];
+            }
 
-        $params = [
-            'transaction_details' => [
+            $orderId = 'ORDER-' . strtoupper(Str::random(10));
+
+            $transaksi = Transaksi::create([
+                'nama_pembeli' => $request->nama_pembeli,
+                'email' => $request->email,
+                'nomer_telpon' => $request->telepon,
+                'kode_transaksi' => $orderId,
+                'total_harga' => $grandTotal,
+                'status_payment' => 'pending',
+                'expired_at' => now()->addMinutes(5), // ✅ Set expiry 5 menit
+            ]);
+
+
+            foreach ($payload['tickets'] as $t) {
+                $ticket = $tickets[$t['id']];
+                $price = (int) $ticket->harga_tiket;
+
+                for ($u = 0; $u < $t['qty']; $u++) {
+                    $kode = 'PTR-' . $transaksi->id . '-' . strtoupper(Str::random(6));
+
+                    TransaksiDetail::create([
+                        'transaksi_id'   => $transaksi->id,
+                        'ticket_id'      => $ticket->id,
+                        'jumlah'         => 1,
+                        'harga_satuan'   => $price,
+                        'total_harga'    => $price,
+                        'kode_tiket'     => $kode,
+                        'status'         => 'Reserved', // ✅ Status awal Reserved
+                    ]);
+                }
+            }
+
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $orderId,
+                    'gross_amount' => $grandTotal,
+                ],
+                'item_details' => $itemDetails,
+                'customer_details' => [
+                    'first_name' => $payload['nama_pembeli'],
+                    'email' => $payload['email'],
+                    'phone' => $payload['telepon'],
+                ],
+                'callbacks' => [
+                    'finish' => route('checkout.callback')
+                ],
+                'expiry' => [
+                    'start_time' => now()->format('Y-m-d H:i:s O'),
+                    'unit' => 'minutes',
+                    'duration' => 5
+                ]
+            ];
+
+            $snapToken = Snap::getSnapToken($params);
+            broadcast(new TransaksiCreated($transaksi))->toOthers();
+
+            DB::commit();
+
+            return response()->json([
+                'token' => $snapToken,
                 'order_id' => $orderId,
-                'gross_amount' => $grandTotal,
-            ],
-            'item_details' => $itemDetails,
-            'customer_details' => [
-                'first_name' => $payload['nama_pembeli'],
-                'email' => $payload['email'],
-                'phone' => $payload['telepon'],
-            ],
-            'callbacks' => [
-                'finish' => route('checkout.callback')
-            ],
-            'expiry' => [
-                'start_time' => now()->format('Y-m-d H:i:s O'),
-                'unit' => 'minutes',
-                'duration' => 5
-            ]
-        ];
-
-        $snapToken = Snap::getSnapToken($params);
-
-        DB::commit();
-
-        return response()->json([
-            'token' => $snapToken,
-            'order_id' => $orderId,
-            'amount' => $grandTotal
-        ]);
-    } catch (\Throwable $e) {
-        DB::rollBack();
-        Log::error('pay error: ' . $e->getMessage());
-        return response()->json(['error' => true, 'message' => 'Gagal membuat transaksi.'], 500);
+                'amount' => $grandTotal
+            ]);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('pay error: ' . $e->getMessage());
+            return response()->json(['error' => true, 'message' => 'Gagal membuat transaksi.'], 500);
+        }
     }
-}
     /**
      * Update status transaksi
      */
@@ -481,189 +486,189 @@ public function pay(Request $request)
     // }
 
     // ==========================================
-// GANTI METHOD updateTransactionStatus()
-// ==========================================
+    // GANTI METHOD updateTransactionStatus()
+    // ==========================================
 
-private function updateTransactionStatus($orderId, $status, $amount = null)
-{
-    $transaksi = Transaksi::where('kode_transaksi', $orderId)->first();
+    private function updateTransactionStatus($orderId, $status, $amount = null)
+    {
+        $transaksi = Transaksi::where('kode_transaksi', $orderId)->first();
 
-    if (!$transaksi) {
-        Log::warning("Transaksi tidak ditemukan: {$orderId}");
-        return;
-    }
+        if (!$transaksi) {
+            Log::warning("Transaksi tidak ditemukan: {$orderId}");
+            return;
+        }
 
-    $statusMap = [
-        'pending' => 'pending',
-        'settlement' => 'paid',
-        'capture' => 'paid',
-        'cancel' => 'cancelled',
-        'deny' => 'cancelled',
-        'failure' => 'cancelled',
-        'expire' => 'cancelled',
-    ];
+        $statusMap = [
+            'pending' => 'pending',
+            'settlement' => 'paid',
+            'capture' => 'paid',
+            'cancel' => 'cancelled',
+            'deny' => 'cancelled',
+            'failure' => 'cancelled',
+            'expire' => 'cancelled',
+        ];
 
-    $newStatus = $statusMap[strtolower($status)] ?? $status;
-    $previousStatus = $transaksi->status_payment;
-    
-    $transaksi->update(['status_payment' => $newStatus]);
-    $transaksi->load('details');
+        $newStatus = $statusMap[strtolower($status)] ?? $status;
+        $previousStatus = $transaksi->status_payment;
 
-    // ✅ PAID: Konfirmasi reservasi → kurangi stok asli, lepas reserved
-    if ($newStatus === 'paid' && $previousStatus !== 'paid') {
-        $qtyPerTicket = $transaksi->details->groupBy('ticket_id')->map(function($group) {
-            return $group->count();
-        });
+        $transaksi->update(['status_payment' => $newStatus]);
+        $transaksi->load('details');
 
-        foreach ($qtyPerTicket as $ticketId => $qty) {
-            $ticket = Ticket::find($ticketId);
-            if ($ticket) {
-                // Kurangi stok asli
-                $ticket->decrement('stok_tiket', $qty);
-                // Lepas reservasi
-                $ticket->decrement('stok_reserved', $qty);
+        // ✅ PAID: Konfirmasi reservasi → kurangi stok asli, lepas reserved
+        if ($newStatus === 'paid' && $previousStatus !== 'paid') {
+            $qtyPerTicket = $transaksi->details->groupBy('ticket_id')->map(function ($group) {
+                return $group->count();
+            });
+
+            foreach ($qtyPerTicket as $ticketId => $qty) {
+                $ticket = Ticket::find($ticketId);
+                if ($ticket) {
+                    // Kurangi stok asli
+                    $ticket->decrement('stok_tiket', $qty);
+                    // Lepas reservasi
+                    $ticket->decrement('stok_reserved', $qty);
+                }
             }
-        }
 
-        // Update status detail & buat tiket kode
-        foreach ($transaksi->details as $detail) {
-            $detail->update(['status' => 'Available']);
-            
-            TiketKode::create([
-                'transaksi_detail_id' => $detail->id,
-                'kode_tiket' => $detail->kode_tiket,
-            ]);
-        }
+            // Update status detail & buat tiket kode
+            foreach ($transaksi->details as $detail) {
+                $detail->update(['status' => 'Available']);
 
-        
+                TiketKode::create([
+                    'transaksi_detail_id' => $detail->id,
+                    'kode_tiket' => $detail->kode_tiket,
+                ]);
+            }
+
+
             try {
                 $codes = $transaksi->details->pluck('kode_tiket');
                 Mail::to($transaksi->email)->send(new TicketPaidMail($transaksi, $codes));
             } catch (\Exception $e) {
                 Log::error("Gagal kirim email: " . $e->getMessage());
             }
-        
-        Log::info("Transaksi {$orderId} PAID - Stok dikurangi & reservasi dilepas");
-    }
 
-    // ✅ CANCELLED/EXPIRED: Kembalikan stok reserved ke available
-    if (in_array($newStatus, ['cancelled']) && $previousStatus !== 'cancelled') {
-        $qtyPerTicket = $transaksi->details->groupBy('ticket_id')->map(function($group) {
-            return $group->count();
-        });
+            Log::info("Transaksi {$orderId} PAID - Stok dikurangi & reservasi dilepas");
+        }
 
-        foreach ($qtyPerTicket as $ticketId => $qty) {
-            $ticket = Ticket::find($ticketId);
-            if ($ticket && $ticket->stok_reserved >= $qty) {
-                // Lepas reservasi (stok asli tidak berubah karena belum pernah dikurangi)
-                $ticket->decrement('stok_reserved', $qty);
+        // ✅ CANCELLED/EXPIRED: Kembalikan stok reserved ke available
+        if (in_array($newStatus, ['cancelled']) && $previousStatus !== 'cancelled') {
+            $qtyPerTicket = $transaksi->details->groupBy('ticket_id')->map(function ($group) {
+                return $group->count();
+            });
+
+            foreach ($qtyPerTicket as $ticketId => $qty) {
+                $ticket = Ticket::find($ticketId);
+                if ($ticket && $ticket->stok_reserved >= $qty) {
+                    // Lepas reservasi (stok asli tidak berubah karena belum pernah dikurangi)
+                    $ticket->decrement('stok_reserved', $qty);
+                }
             }
-        }
-        
-        // Update status detail
-        foreach ($transaksi->details as $detail) {
-            $detail->update(['status' => 'Cancelled']);
-        }
-        
-        Log::info("Transaksi {$orderId} CANCELLED - Reservasi dilepas, stok kembali tersedia");
-    }
 
-    Log::info("Status transaksi {$orderId} diperbarui ke {$newStatus}");
-}
-
-// ==========================================
-// TAMBAHKAN METHOD BARU untuk Release Manual
-// ==========================================
-
-// public function releaseReservation(Request $request)
-// {
-//     $orderId = $request->input('order_id');
-    
-//     if (!$orderId) {
-//         return response()->json(['error' => 'Order ID required'], 400);
-//     }
-
-//     $transaksi = Transaksi::where('kode_transaksi', $orderId)->first();
-    
-//     if (!$transaksi) {
-//         return response()->json(['error' => 'Transaction not found'], 404);
-//     }
-
-//     // Hanya release jika masih pending
-//     if ($transaksi->status_payment === 'pending') {
-//         $transaksi->load('details');
-        
-//         $qtyPerTicket = $transaksi->details->groupBy('ticket_id')->map(function($group) {
-//             return $group->count();
-//         });
-
-//         foreach ($qtyPerTicket as $ticketId => $qty) {
-//             $ticket = Ticket::find($ticketId);
-//             if ($ticket && $ticket->stok_reserved >= $qty) {
-//                 $ticket->decrement('stok_reserved', $qty);
-//             }
-//         }
-
-//         $transaksi->update(['status_payment' => 'cancelled']);
-        
-//         foreach ($transaksi->details as $detail) {
-//             $detail->update(['status' => 'Cancelled']);
-//         }
-
-//         Log::info("Reservasi dilepas manual untuk transaksi {$orderId}");
-        
-//         return response()->json(['success' => true, 'message' => 'Reservation released']);
-//     }
-
-//     return response()->json(['success' => false, 'message' => 'Transaction already processed']);
-// }
-
-public function releaseReservation(Request $request)
-{
-    $orderId = $request->input('order_id');
-    
-    if (!$orderId) {
-        return response()->json(['error' => 'Order ID required'], 400);
-    }
-
-    $transaksi = Transaksi::where('kode_transaksi', $orderId)->first();
-    
-    if (!$transaksi) {
-        return response()->json(['error' => 'Transaction not found'], 404);
-    }
-
-    // Hanya release jika masih pending
-    if ($transaksi->status_payment === 'pending') {
-        $transaksi->load('details');
-        
-        $qtyPerTicket = $transaksi->details->groupBy('ticket_id')->map(fn($g) => $g->count());
-
-        foreach ($qtyPerTicket as $ticketId => $qty) {
-            $ticket = Ticket::find($ticketId);
-
-            if ($ticket && $ticket->stok_reserved >= $qty) {
-                $ticket->decrement('stok_reserved', $qty);
+            // Update status detail
+            foreach ($transaksi->details as $detail) {
+                $detail->update(['status' => 'Cancelled']);
             }
+
+            Log::info("Transaksi {$orderId} CANCELLED - Reservasi dilepas, stok kembali tersedia");
+        }
+        broadcast(new TransaksiUpdated($transaksi))->toOthers();
+        Log::info("Status transaksi {$orderId} diperbarui ke {$newStatus}");
+    }
+
+    // ==========================================
+    // TAMBAHKAN METHOD BARU untuk Release Manual
+    // ==========================================
+
+    // public function releaseReservation(Request $request)
+    // {
+    //     $orderId = $request->input('order_id');
+
+    //     if (!$orderId) {
+    //         return response()->json(['error' => 'Order ID required'], 400);
+    //     }
+
+    //     $transaksi = Transaksi::where('kode_transaksi', $orderId)->first();
+
+    //     if (!$transaksi) {
+    //         return response()->json(['error' => 'Transaction not found'], 404);
+    //     }
+
+    //     // Hanya release jika masih pending
+    //     if ($transaksi->status_payment === 'pending') {
+    //         $transaksi->load('details');
+
+    //         $qtyPerTicket = $transaksi->details->groupBy('ticket_id')->map(function($group) {
+    //             return $group->count();
+    //         });
+
+    //         foreach ($qtyPerTicket as $ticketId => $qty) {
+    //             $ticket = Ticket::find($ticketId);
+    //             if ($ticket && $ticket->stok_reserved >= $qty) {
+    //                 $ticket->decrement('stok_reserved', $qty);
+    //             }
+    //         }
+
+    //         $transaksi->update(['status_payment' => 'cancelled']);
+
+    //         foreach ($transaksi->details as $detail) {
+    //             $detail->update(['status' => 'Cancelled']);
+    //         }
+
+    //         Log::info("Reservasi dilepas manual untuk transaksi {$orderId}");
+
+    //         return response()->json(['success' => true, 'message' => 'Reservation released']);
+    //     }
+
+    //     return response()->json(['success' => false, 'message' => 'Transaction already processed']);
+    // }
+
+    public function releaseReservation(Request $request)
+    {
+        $orderId = $request->input('order_id');
+
+        if (!$orderId) {
+            return response()->json(['error' => 'Order ID required'], 400);
         }
 
-        // Tandai detail cancelled
-        $transaksi->details()->update(['status' => 'Cancelled']);
+        $transaksi = Transaksi::where('kode_transaksi', $orderId)->first();
 
-        $transaksi->update([
-            'status_payment' => 'cancelled'
-        ]);
+        if (!$transaksi) {
+            return response()->json(['error' => 'Transaction not found'], 404);
+        }
+
+        // Hanya release jika masih pending
+        if ($transaksi->status_payment === 'pending') {
+            $transaksi->load('details');
+
+            $qtyPerTicket = $transaksi->details->groupBy('ticket_id')->map(fn($g) => $g->count());
+
+            foreach ($qtyPerTicket as $ticketId => $qty) {
+                $ticket = Ticket::find($ticketId);
+
+                if ($ticket && $ticket->stok_reserved >= $qty) {
+                    $ticket->decrement('stok_reserved', $qty);
+                }
+            }
+
+            // Tandai detail cancelled
+            $transaksi->details()->update(['status' => 'Cancelled']);
+
+            $transaksi->update([
+                'status_payment' => 'cancelled'
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => "Reservasi untuk {$orderId} berhasil dilepas"
+            ]);
+        }
 
         return response()->json([
-            'success' => true,
-            'message' => "Reservasi untuk {$orderId} berhasil dilepas"
+            'success' => false,
+            'message' => "Tidak bisa release, status saat ini: {$transaksi->status_payment}"
         ]);
     }
-
-    return response()->json([
-        'success' => false,
-        'message' => "Tidak bisa release, status saat ini: {$transaksi->status_payment}"
-    ]);
-}
 
     public function callback(Request $request)
     {
@@ -673,6 +678,7 @@ public function releaseReservation(Request $request)
         }
 
         try {
+            Log::info("ini Callback");
             $status = Transaction::status($orderId);
             $this->updateTransactionStatus($orderId, $status->transaction_status, $status->gross_amount);
 
@@ -715,10 +721,11 @@ public function releaseReservation(Request $request)
 
     public function success(Request $request)
     {
-        Log::info('Success Request Received');
-        Log::info('Success Request Data: ', $request->all());
+        Log::info('Success page accessed', $request->all());
         $orderId = $request->query('order_id');
         $transaksi = Transaksi::where('kode_transaksi', $orderId)->first();
+
+        broadcast(new TransaksiUpdated($transaksi))->toOthers();
 
         if (!$transaksi) {
             return redirect()->route('home')->with('error', 'Transaksi tidak ditemukan.');
@@ -729,25 +736,29 @@ public function releaseReservation(Request $request)
 
     public function failed(Request $request)
     {
+        Log::info('Failed page accessed', $request->all());
         $orderId = $request->get('order_id');
         $transaksi = Transaksi::where('kode_transaksi', $orderId)->first();
+
+        broadcast(new TransaksiUpdated($transaksi))->toOthers();
+
 
         return view('checkout.failed', compact('transaksi', 'orderId'));
     }
 
-public function pending(Request $request)
-{
-    $order_id = $request->query('order_id');
-    
-    // Debug log
-    \Log::info('Pending page accessed', ['order_id' => $order_id]);
-    
-    // Ambil data transaksi jika diperlukan
-    $transaksi = Transaksi::where('kode_transaksi', $order_id)->first();
-    
-    return view('checkout.pending', [
-        'order_id' => $order_id,
-        'transaksi' => $transaksi
-    ]);
-}
+    public function pending(Request $request)
+    {
+        $order_id = $request->query('order_id');
+
+        // Debug log
+        Log::info('Pending page accessed', ['order_id' => $order_id]);
+
+        // Ambil data transaksi jika diperlukan
+        $transaksi = Transaksi::where('kode_transaksi', $order_id)->first();
+
+        return view('checkout.pending', [
+            'order_id' => $order_id,
+            'transaksi' => $transaksi
+        ]);
+    }
 }

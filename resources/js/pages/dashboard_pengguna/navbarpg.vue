@@ -19,22 +19,22 @@
         <ul class="navbar-nav ms-auto">
           <li class="nav-item px-3">
             <router-link :to="{ name: 'home' }" class="nav-link fw-bold" style="color: #FEFAE0 !important;">
-              Home
+              Beranda
             </router-link>
           </li>
           <li class="nav-item px-3">
             <router-link :to="{ name: 'ticket' }" class="nav-link fw-bold" style="color: #FEFAE0 !important;">
-              Ticket
+              Tiket
             </router-link>
           </li>
           <li class="nav-item px-3">
             <router-link :to="{ name: 'contact' }" class="nav-link fw-bold" style="color: #FEFAE0 !important;">
-              Contact
+              Kontak
             </router-link>
           </li>
           <li class="nav-item px-3">
             <router-link :to="{ name: 'about' }" class="nav-link fw-bold" style="color: #FEFAE0 !important;">
-              About Us
+              Tentang
             </router-link>
           </li>
         </ul>
