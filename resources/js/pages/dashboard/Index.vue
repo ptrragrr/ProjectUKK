@@ -2,6 +2,8 @@
 import { ref, onMounted, computed } from "vue";
 import axios from "@/libs/axios";
 import router from "@/router";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface Transaksi {
     id: number;
@@ -137,17 +139,6 @@ const lihatDetail = (id: number) => {
     });
 };
 
-// const fetchTransaksis = async () => {
-//     try {
-//         const res = await axios.get("/transaksi");
-//         transaksis.value = res.data;
-//     } catch (err) {
-//         console.error(err);
-//     } finally {
-//         loading.value = false;
-//     }
-// };
-
 const fetchTransaksis = async () => {
     try {
         const res = await axios.get("/transaksi");
@@ -194,11 +185,6 @@ const resetPage = () => {
     currentPage.value = 1;
 };
 
-// onMounted(fetchTransaksis);
-const refreshData = () => {
-    // fetchTransaksi(); // atau apa pun fungsi ambil datanya
-};
-
 onMounted(() => {
     fetchTransaksis();
 
@@ -206,15 +192,13 @@ onMounted(() => {
         // CREATE
         .listen(".transaksi.created", (e) => {
             console.log("Created:", e);
-            fetchTransaksis() // tambah ke atas
-
+            fetchTransaksis()
         })
 
         // UPDATE
         .listen(".transaksi.updated", (e) => {
             console.log("Updated:", e);
-            fetchTransaksis() // tambah ke atas
-
+            fetchTransaksis()
         })
 
         // DELETE
@@ -228,7 +212,120 @@ const getStatusClass = (status: string) => {
     if (status === "paid") return "badge-light-success";
     if (status === "pending") return "badge-light-warning";
     if (status === "cancelled") return "badge-light-danger";
-    return "badge-light-warning"; // default
+    return "badge-light-warning";
+};
+
+// Fungsi untuk generate PDF
+const generatePDF = () => {
+    const doc = new jsPDF({
+    orientation: "landscape",
+    unit: "mm",
+    format: "a4"
+});
+    
+    // Header
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("LAPORAN TRANSAKSI", 105, 20, { align: "center" });
+    
+    // Info Filter
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    let filterText = "Filter: ";
+    if (selectedYear.value) filterText += `Tahun ${selectedYear.value} `;
+    if (selectedMonth.value) {
+        const monthName = months.find(m => m.value === selectedMonth.value)?.label;
+        filterText += `Bulan ${monthName} `;
+    }
+    if (!selectedYear.value && !selectedMonth.value) filterText += "Semua Periode";
+    doc.text(filterText, 14, 30);
+    
+    // Tanggal Cetak
+    const now = new Date().toLocaleString("id-ID", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+    doc.text(`Dicetak: ${now}`, 14, 36);
+    
+    // Statistik
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.text("RINGKASAN", 14, 46);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(`Total Transaksi: ${stats.value.totalTransactions}`, 14, 52);
+    doc.text(`Paid: ${stats.value.paidTransactions}`, 14, 57);
+    doc.text(`Pending: ${stats.value.pendingTransactions}`, 60, 57);
+    doc.text(`Cancelled: ${stats.value.cancelledTransactions}`, 100, 57);
+    doc.text(`Total Pendapatan: Rp ${stats.value.totalRevenue.toLocaleString("id-ID")}`, 14, 62);
+    
+    // Tabel Data
+    const tableData = filteredTransaksis.value.map((trx, index) => [
+        index + 1,
+        trx.kode_transaksi,
+        trx.nama_pembeli,
+        trx.email,
+        trx.nomer_telpon,
+        trx.status_payment.toUpperCase(),
+        `Rp ${trx.total_harga.toLocaleString("id-ID")}`,
+        new Date(trx.created_at).toLocaleDateString("id-ID", {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+        })
+    ]);
+    
+    autoTable(doc, {
+        startY: 68,
+        head: [["No", "Kode", "Pembeli", "Email", "Telepon", "Status", "Total", "Tanggal"]],
+        body: tableData,
+        styles: { fontSize: 8, cellPadding: 2 },
+        headStyles: { fillColor: [102, 126, 234], textColor: 255, fontStyle: "bold" },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        columnStyles: {
+    0: { cellWidth: 10, halign: "center" },
+    1: { cellWidth: 25 },
+    2: { cellWidth: 30 },
+    3: { cellWidth: 40 },
+    4: { cellWidth: 25 },
+    5: { cellWidth: 20, halign: "center" },
+    6: { cellWidth: 30, halign: "right" },
+    7: { cellWidth: 35 } // ⬅️ DARI 25 → 35
+}
+        // columnStyles: {
+        //     0: { cellWidth: 10, halign: "center" },
+        //     1: { cellWidth: 25 },
+        //     2: { cellWidth: 30 },
+        //     3: { cellWidth: 40 },
+        //     4: { cellWidth: 25 },
+        //     5: { cellWidth: 20, halign: "center" },
+        //     6: { cellWidth: 30, halign: "right" },
+        //     7: { cellWidth: 25 }
+        // }
+    });
+    
+    // Footer
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(128);
+        doc.text(
+            `Halaman ${i} dari ${pageCount}`,
+            doc.internal.pageSize.width / 2,
+            doc.internal.pageSize.height - 10,
+            { align: "center" }
+        );
+    }
+    
+    // Generate filename
+    const filename = `Laporan_Transaksi_${selectedYear.value || "Semua"}_${selectedMonth.value || "Semua"}_${new Date().getTime()}.pdf`;
+    
+    // Save PDF
+    doc.save(filename);
 };
 </script>
 
@@ -308,17 +405,6 @@ const getStatusClass = (status: string) => {
                                     <i class="bi bi-clock fs-2x text-warning"></i>
                                 </div>
                             </div>
-
-                             <!-- <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="text-muted mb-1 fs-7">Cancelled</p>
-                                    <h3 class="mb-0 fw-bold text-warning">{{ stats.pendingTransactions }}</h3>
-                                </div>
-                                <div class="symbol symbol-50px" style="background: #fff3cd; border-radius: 10px;">
-                                    <i class="la la-clock fs-2x text-warning"></i>
-                                </div>
-                            </div> -->
-
                         </div>
                     </div>
                 </div>
@@ -331,21 +417,10 @@ const getStatusClass = (status: string) => {
                                     <p class="text-muted mb-1 fs-7">Cancelled</p>
                                     <h3 class="mb-0 fw-bold text-danger">{{ stats.cancelledTransactions }}</h3>
                                 </div>
-                                <div class="symbol symbol-50px" style="background: #fff3cd; border-radius: 10px;">
+                                <div class="symbol symbol-50px" style="background: #ffe2e5; border-radius: 10px;">
                                     <i class="bi bi-x-circle fs-2x text-danger"></i>
                                 </div>
                             </div>
-
-                             <!-- <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <p class="text-muted mb-1 fs-7">Cancelled</p>
-                                    <h3 class="mb-0 fw-bold text-warning">{{ stats.pendingTransactions }}</h3>
-                                </div>
-                                <div class="symbol symbol-50px" style="background: #fff3cd; border-radius: 10px;">
-                                    <i class="la la-clock fs-2x text-warning"></i>
-                                </div>
-                            </div> -->
-
                         </div>
                     </div>
                 </div>
@@ -394,7 +469,18 @@ const getStatusClass = (status: string) => {
                                 <option :value="50">50 per halaman</option>
                             </select>
                         </div>
-                        <div class="col-md ms-auto">
+                        <div class="col-md-auto ms-auto">
+                            <button
+                                @click="generatePDF"
+                                class="btn btn-success"
+                                style="border-radius: 8px; font-weight: 600;"
+                                :disabled="filteredTransaksis.length === 0"
+                            >
+                                <i class="la la-file-pdf fs-4 me-2"></i>
+                                Cetak PDF
+                            </button>
+                        </div>
+                        <div class="col-md">
                             <div class="position-relative">
                                 <input
                                     v-model="searchQuery"
@@ -576,6 +662,11 @@ const getStatusClass = (status: string) => {
     color: #856404;
 }
 
+.badge-light-danger {
+    background-color: #ffe2e5;
+    color: #f1416c;
+}
+
 .btn-light-primary {
     background-color: #e1e8ff;
     color: #3f51b5;
@@ -601,6 +692,17 @@ const getStatusClass = (status: string) => {
 .btn-primary:hover {
     background-color: #5568d3;
     border-color: #5568d3;
+}
+
+.btn-success {
+    background-color: #1bc5bd;
+    border-color: #1bc5bd;
+    color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+    background-color: #14a59d;
+    border-color: #14a59d;
 }
 
 .btn:disabled {

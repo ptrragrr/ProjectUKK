@@ -92,6 +92,18 @@ const kembali = () => {
   router.push({ name: "dashboard" });
 };
 
+const formatTanggal = (dateString: string) => {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Asia/Jakarta",
+  }).format(date);
+};
+
 const formatRupiah = (value: number) => {
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -292,7 +304,9 @@ const formatRupiah = (value: number) => {
               <div class="col-md-6">
                 <div class="d-flex flex-column">
                   <label class="fs-6 fw-semibold text-gray-600 mb-2">Tanggal Dibuat</label>
-                  <span class="fw-bold fs-6 text-gray-800">{{ transaksi.created_at }}</span>
+                 <span class="fw-bold fs-6 text-gray-800">
+  {{ formatTanggal(transaksi.created_at) }}
+</span>
                 </div>
               </div>
             </div>

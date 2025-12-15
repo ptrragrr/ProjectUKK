@@ -43,7 +43,7 @@ const loadTickets = async () => {
 
 const filteredTickets = computed(() => {
   if (!Array.isArray(tickets.value)) return [];
-  return tickets.value.filter(t => t.stok_tiket > 0);
+  return tickets.valuez.filter(t => t.stok_tiket > 0);
 });
 
 // onMounted(() => {
