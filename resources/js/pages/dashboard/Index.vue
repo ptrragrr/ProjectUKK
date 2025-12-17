@@ -471,6 +471,14 @@ const generatePDF = () => {
                         </div>
                         <div class="col-md-auto ms-auto">
                             <button
+    @click="generatePDF"
+    class="btn btn-gradient"
+    :disabled="filteredTransaksis.length === 0"
+>
+    <i class="la la-file-pdf fs-4 me-2"></i>
+    Cetak PDF
+</button>
+                            <!-- <button
                                 @click="generatePDF"
                                 class="btn btn-success"
                                 style="border-radius: 8px; font-weight: 600;"
@@ -478,7 +486,7 @@ const generatePDF = () => {
                             >
                                 <i class="la la-file-pdf fs-4 me-2"></i>
                                 Cetak PDF
-                            </button>
+                            </button> -->
                         </div>
                         <div class="col-md">
                             <div class="position-relative">
@@ -639,7 +647,7 @@ const generatePDF = () => {
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </div> 
                 </div>
             </div>
         </div>
@@ -647,14 +655,57 @@ const generatePDF = () => {
 </template>
 
 <style scoped>
-.hover-bg-light:hover {
+.btn-success {
+    background-color: #598af5;
+    border-color: #1bc5bd;
+    color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+    background-color: #14a59d;
+    border-color: #14a59d;
+}                                                                                                                                                                            
+
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active {
+    background-color: inherit;                   
+    border-color: inherit;
+    box-shadow: none;
+}
+
+.btn-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.55rem 1.25rem;
+    transition: all 0.2s ease;
+}
+
+.btn-gradient:hover:not(:disabled),      
+.btn-gradient:focus:not(:disabled),
+.btn-gradient:active:not(:disabled) {
+    background: linear-gradient(135deg, #5a6ee0 0%, #6b3fa0 100%);
+    color: white;
+    box-shadow: 0 6px 15px rgba(102, 126, 234, 0.35);
+}
+
+.btn-gradient:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* .hover-bg-light:hover {
     background-color: #f8f9fa;
     transition: background-color 0.2s ease;
-}
+} */
 
 .badge-light-success {
     background-color: #d4f4dd;
-    color: #0a7b2e;
+    color: #2792cf;
 }
 
 .badge-light-warning {
@@ -674,7 +725,7 @@ const generatePDF = () => {
 }
 
 .btn-light-primary:hover {
-    background-color: #667eea;
+    background-color: #000000;
     color: white;
 }
 
@@ -688,17 +739,11 @@ const generatePDF = () => {
     background-color: #667eea;
     border-color: #667eea;
 }
-
+/* 
 .btn-primary:hover {
     background-color: #5568d3;
     border-color: #5568d3;
-}
-
-.btn-success {
-    background-color: #1bc5bd;
-    border-color: #1bc5bd;
-    color: white;
-}
+} */
 
 .btn-success:hover:not(:disabled) {
     background-color: #14a59d;

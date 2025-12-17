@@ -54,9 +54,9 @@ for (let i = new Date().getFullYear(); i >= new Date().getFullYear() - 2; i--) {
                 <!-- <img :src="getAssetPath(user.photo ?? 'media/avatars/300-3.jpg')" class="rounded-3" alt="user" /> -->
                  <KTIcon icon-name="user" icon-class="fs-2 text-gray-700" />
             </div>
-            <!-- <KTUserMenu /> -->
+            <KTUserMenu />
             <!--end::Menu wrapper-->
-        </div>
+        </div>]
         <!--end::User menu-->
 
         <!--begin::Header menu toggle-->

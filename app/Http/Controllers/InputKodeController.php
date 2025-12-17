@@ -55,9 +55,13 @@ public function cetak($kode)
         ->where('kode_tiket', $kode)
         ->firstOrFail();
 
-    if ($detail->transaksi->status !== 'paid') {
-        return response('Tiket belum dibayar, tidak bisa dicetak.', 403);
-    }
+    if (in_array($detail->transaksi->status_payment, ['pending', 'cancelled'])) {
+    return response('Tiket belum dibayar, tidak bisa dicetak.', 403);
+}
+
+    // if ($detail->transaksi->status !== 'pending') {
+    //     return response('Tiket belum dibayar, tidak bisa dicetak.', 403);
+    // }
 
     if (strtolower($detail->status) === 'expired') {
         return response('Tiket ini sudah expired.', 403);
