@@ -4,6 +4,7 @@ use AmrShawky\LaravelCurrency\Facade\Currency;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InputKodeController;
 use App\Http\Controllers\pengguna\CheckoutController;
+use Illuminate\Http\Request;
 
 Route::get('/checkout/callback', [CheckoutController::class, 'callback'])->name('checkout.callback');
 Route::get('/checkout/success', [CheckoutController::class, 'success']);
@@ -49,3 +50,19 @@ Route::get('/checkout/success', function () {
 Route::get('/checkout/failed', function () {
     return view('checkout.failed');
 })->name('checkout.failed');
+
+// Route::get('/reset-password', function (Request $request) {
+//     return redirect(
+//         config('app.frontend_url') .
+//         '/reset-password?token=' . $request->token .
+//         '&email=' . $request->email
+//     );
+// })->name('password.reset');
+
+Route::get('/reset-password', function (Request $request) {
+    return redirect(
+        config('app.frontend_url') .
+        '/reset-password?token=' . $request->token .
+        '&email=' . $request->email
+    );
+})->name('password.reset');

@@ -56,7 +56,7 @@ for (let i = new Date().getFullYear(); i >= new Date().getFullYear() - 2; i--) {
             </div>
             <KTUserMenu />
             <!--end::Menu wrapper-->
-        </div>]
+        </div>
         <!--end::User menu-->
 
         <!--begin::Header menu toggle-->

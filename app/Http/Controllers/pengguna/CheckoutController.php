@@ -378,7 +378,7 @@ class CheckoutController extends Controller
                         'harga_satuan'   => $price,
                         'total_harga'    => $price,
                         'kode_tiket'     => $kode,
-                        'status'         => 'Reserved', // ✅ Status awal Reserved
+                        'status'         => 'Available', // ✅ Status awal Reserved
                     ]);
                 }
             }
@@ -417,7 +417,7 @@ class CheckoutController extends Controller
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('pay error: ' . $e->getMessage());
-            return response()->json(['error' => true, 'message' => 'Gagal membuat transaksi.'], 500);
+            return response()->json(['error' => true, 'message' => $e->getMessage()], 500);
         }
     }
     /**

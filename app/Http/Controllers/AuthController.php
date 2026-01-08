@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -42,6 +44,48 @@ class AuthController extends Controller
             'token' => $token
         ]);
     }
+
+public function forgotPassword(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email|exists:users,email'
+    ]);
+
+    Password::sendResetLink(
+        $request->only('email')
+    );
+
+    return response()->json([
+        'message' => 'Link reset password telah dikirim ke email'
+    ]);
+}
+
+public function resetPassword(Request $request)
+{
+    $request->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|min:8|confirmed',
+    ]);
+
+    $status = Password::reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user, $password) {
+            $user->password = Hash::make($password);
+            $user->save();
+        }
+    );
+
+    if ($status !== Password::PASSWORD_RESET) {
+        return response()->json([
+            'message' => __($status)
+        ], 400);
+    }
+
+    return response()->json([
+        'message' => 'Password berhasil direset'
+    ]);
+}
 
     public function logout()
     {

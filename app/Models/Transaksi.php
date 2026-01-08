@@ -7,9 +7,22 @@ class Transaksi extends Model
 {
     protected $table = 'transaksis';
 
-    protected $fillable = [
-        'nama_pembeli', 'email', 'nomer_telpon',
-        'kode_transaksi', 'status_payment', 'total_harga'
+    // protected $fillable = [
+    //     'nama_pembeli', 'email', 'nomer_telpon',
+    //     'kode_transaksi', 'status_payment', 'total_harga'
+    // ];
+
+     protected $fillable = [
+        'nama_pembeli',
+        'email',
+        'nomer_telpon',
+        'kode_transaksi',
+        'total_harga',
+        'status_payment',
+    ];
+
+     protected $casts = [
+        'expired_at' => 'datetime',
     ];
 
     public function user()

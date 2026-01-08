@@ -12,6 +12,8 @@ use App\Http\Controllers\InputKodeController;
 use App\Http\Controllers\JenisTiketController;
 use App\Http\Controllers\pengguna\CheckoutController;
 use App\Http\Controllers\pengguna\PaymentController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 // use App\Http\Controllers\TicketTransaksiController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +28,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
+
+
+Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
+
+// Route::post('/auth/forgot-password', [ForgotPasswordController::class, 'sendLink']);
+// Route::post('/auth/reset-password-direct', [AuthController::class, 'resetPasswordDirect'])
+//     ->middleware('auth:sanctum');
+// Route::post('/auth/reset-password-direct', [AuthController::class, 'resetPasswordDirect']);
+// Route::post('/auth/reset-password', [ResetPasswordController::class, 'reset']);
 
 // Authentication Route
 Route::middleware(['auth', 'json'])->prefix('auth')->group(function () {

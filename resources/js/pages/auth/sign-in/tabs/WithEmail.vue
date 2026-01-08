@@ -53,6 +53,11 @@
                     <ErrorMessage name="password" />
                 </div>
             </div>
+
+              <router-link to="/forgot-password" class="link-primary fs-6 fw-bold">
+              Forgot Password ?
+            </router-link>
+            
         </div>
         <!--end::Input group-->
 

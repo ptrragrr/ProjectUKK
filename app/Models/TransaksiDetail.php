@@ -15,15 +15,25 @@ class TransaksiDetail extends Model
     protected $table = 'transaksi_details';
 
     // Kolom yang boleh diisi secara mass-assignment
-    protected $fillable = [
+    // protected $fillable = [
+    //     'transaksi_id',
+    //     'ticket_id',
+    //     'jumlah',
+    //     'harga_satuan',
+    //     'total_harga',
+    //     'kode_tiket',
+    // ];
+
+      protected $fillable = [
         'transaksi_id',
         'ticket_id',
         'jumlah',
         'harga_satuan',
         'total_harga',
         'kode_tiket',
+        'status',
     ];
-
+    
     /**
      * Relasi ke tabel transaksi
      * Satu detail transaksi milik satu transaksi utama
