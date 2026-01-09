@@ -186,9 +186,15 @@ const routes: Array<RouteRecordRaw> = [
     path: "/forgot-password",
     component: () => import("@/pages/forgot/ForgotPassword.vue"),
 },
+
 {
     path: "/reset-password",
     component: () => import("@/pages/forgot/ResetPassword.vue"),
+},
+
+{
+    path: "/reset-succes",
+    component: () => import("@/pages/forgot/ResetPasswordSucces.vue"),
 },
 
     {

@@ -1,41 +1,3 @@
-<!-- <script>
-import axios from "@/libs/axios";
-import { toast } from "vue3-toastify";
-
-export default {
-    data() {
-        return {
-            password: "",
-            password_confirmation: ""
-        };
-    },
-    methods: {
-        async submit() {
-            if (this.password !== this.password_confirmation) {
-                toast.error("Konfirmasi password tidak sama");
-                return;
-            }
-
-            try {
-                // await axios.post("/auth/reset-password-direct", {
-                //     password: this.password,
-                //     password_confirmation: this.password_confirmation,
-                // });
-
-                await axios.post("/auth/forgot-password", {
-    email: this.email
-});
-
-                toast.success("Password berhasil direset");
-                this.$router.push("/sign-in");
-            } catch (error) {
-                toast.error(error.response?.data?.message || "Gagal reset password");
-            }
-        }
-    }
-};
-</script> -->
-
 <script>
 import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
@@ -66,17 +28,17 @@ export default {
     <div class="forgot-password-container">
         <div class="forgot-password-card">
             <!-- Icon -->
-            <div class="icon-wrapper">
+            <!-- <div class="icon-wrapper">
                 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
-            </div>
+            </div> -->
 
             <h2 class="title">Reset Password</h2>
             <p class="subtitle">
-                Masukkan password baru Anda untuk melanjutkan.
+                Masukkan email Anda untuk melanjutkan.
             </p>
 
            <form @submit.prevent="submit">
@@ -112,7 +74,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
     padding: 20px;
 }
 
@@ -141,7 +103,7 @@ export default {
     width: 80px;
     height: 80px;
     margin: 0 auto 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1B84FF;
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -206,7 +168,7 @@ export default {
 }
 
 .form-input:focus {
-    border-color: #667eea;
+    border-color: #1B84FF;
     background: white;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
@@ -218,7 +180,7 @@ export default {
 .btn-submit {
     width: 100%;
     padding: 14px 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1B84FF;
     color: white;
     border: none;
     border-radius: 12px;
