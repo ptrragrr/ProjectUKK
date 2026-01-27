@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { ref, watch, computed, onMounted } from "vue";
 import axios from "@/libs/axios";
+import { useAuthStore } from "@/stores/auth";
 
 // 🛒 Interface untuk Ticket
+
+const authStore = useAuthStore();
+
 interface Ticket {
     id: number;
     nama_event: string;
@@ -79,10 +83,12 @@ const tax = computed(() => Math.round(subtotal.value * 0.1));
 const total = computed(() => subtotal.value + tax.value);
 
 // 🧾 Form data
+
+
 const form = ref({
-    nama_pembeli: "",
-    email: "",
-    telepon: "",
+    nama_pembeli: authStore.user.name ?? "",
+    email: authStore.user.email ?? "",
+    telepon: authStore.user.phone ?? "",
     metode_pembayaran: "snap",
 });
 

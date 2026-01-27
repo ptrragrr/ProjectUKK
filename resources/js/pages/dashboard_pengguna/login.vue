@@ -26,9 +26,10 @@ const login = async () => {
     await axios.post("/auth/login", {
       email: email.value,
       password: password.value,
+    }).then((res) => {
+      authStore.setAuth(res.data.user, res.data.token);
+      router.push("/dashboard_pengguna"); // 🔥 REDIRECT SETELAH LOGIN
     });
-
-    router.push("/dashboard_pengguna"); // 🔥 REDIRECT SETELAH LOGIN
   } catch (err: any) {
     error.value =
       err.response?.data?.message ||

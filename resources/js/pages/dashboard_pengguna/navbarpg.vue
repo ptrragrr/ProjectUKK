@@ -37,10 +37,15 @@
               Tentang
             </router-link>
           </li>
-          <li class="nav-item px-3">
+          <li v-if="!authStore.isAuthenticated" class="nav-item px-3">
             <router-link :to="{ name: 'login' }" class="nav-link fw-bold" style="color: #FEFAE0 !important;">
               Login / Register
             </router-link>
+          </li>
+          <li v-else class="nav-item px-3">
+            <div @click="signOut()" class="nav-link fw-bold" style="color: #FEFAE0 !important;">
+              Logout
+            </div>
           </li>
         </ul>
       </div>
@@ -50,14 +55,44 @@
 </template>
 
 <script setup lang="ts">
+import router from "@/router";
+import { useAuthStore } from "@/stores/auth";
+import Swal from "sweetalert2";
 import { ref } from "vue";
 import { RouterView } from "vue-router";
+
+const authStore = useAuthStore();
 
 const isExpanded = ref(false);
 
 function toggleNavbar() {
   isExpanded.value = !isExpanded.value;
 }
+
+const signOut = async () => {
+    const result = await Swal.fire({
+        icon: "warning",
+        text: "Apakah Anda yakin ingin keluar?",
+        showCancelButton: true,
+        confirmButtonText: "Ya, Keluar",
+        cancelButtonText: "Batal",
+        reverseButtons: true,
+        buttonsStyling: false,
+        customClass: {
+            confirmButton: "btn fw-semibold btn-light-primary",
+            cancelButton: "btn fw-semibold btn-light-danger",
+        },
+    });
+
+    if (result.isConfirmed) {
+        await authStore.logout(); // 🔥 INI PENTING
+
+        Swal.fire({
+            icon: "success",
+            text: "Berhasil keluar",
+        });
+    }
+};
 
 // Hapus semua event listener scroll yang menyebabkan masalah
 </script>

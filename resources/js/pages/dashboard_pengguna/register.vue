@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import axios from "@/libs/axios";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
 
 const router = useRouter();
 
@@ -9,6 +10,7 @@ const name = ref("");
 const email = ref("");
 const password = ref("");
 const password_confirmation = ref("");
+const authStore = useAuthStore();
 
 const loading = ref(false);
 const error = ref("");
