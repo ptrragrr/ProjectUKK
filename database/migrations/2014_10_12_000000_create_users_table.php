@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('role')->default('admin'); // nilai: 'admin' atau 'user'
-            $table->string('phone')->unique();
+            $table->string('phone')->nullable()->change();
+            // $table->string('phone')->unique();
             $table->string('photo')->nullable();
             $table->string('password');
             $table->rememberToken();

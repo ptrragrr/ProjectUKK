@@ -1,38 +1,77 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function showLoginForm()
-    {
-        return view('auth.login');
-    }
-
     public function login(Request $request)
-{
-    $credentials = $request->only('email', 'password');
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
-        return redirect()->intended('/tickets'); // 👈 redirect ke halaman sebelumnya atau /tickets
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        if (! $token = auth()->attempt($validator->validated())) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Email / Password salah'
+            ], 401);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Login berhasil',
+            'user' => auth()->user(),
+            'token' => $token
+        ]);
     }
 
-    return back()->withErrors([
-        'email' => 'Email atau password salah.',
+    public function register(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|min:6|confirmed',
     ]);
+
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'role_id' => 2, // role pengguna
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Register berhasil',
+        'user' => $user,
+    ], 201);
 }
 
-    public function logout(Request $request)
+    public function logout()
     {
-        Auth::logout();
+        auth()->logout();
+        return response()->json([
+            'status' => true,
+            'message' => 'Logout berhasil'
+        ]);
+    }
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect('/login');
+    public function me()
+    {
+        return response()->json(auth()->user());
     }
 }

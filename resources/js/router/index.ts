@@ -60,7 +60,7 @@ const routes: Array<RouteRecordRaw> = [
                 //     breadcrumbs: ["Website", "Setting"],
                 // },
             },
-              {
+            {
                 path: "/dashboard/jenis",
                 name: "dashboard.jenis",
                 component: () => import("@/pages/dashboard/jenis/index.vue"),
@@ -69,7 +69,7 @@ const routes: Array<RouteRecordRaw> = [
                 //     breadcrumbs: ["Website", "Setting"],
                 // },
             },
-            
+
             // MASTER
             {
                 path: "/dashboard/master/users/roles",
@@ -129,43 +129,44 @@ const routes: Array<RouteRecordRaw> = [
                 },
             },
             {
-                path: '/dashboard/transaksi/detail/:id',
-                name: 'dashboard.transaksi.detail',
-                component: () => import('@/pages/dashboard/transaksi/detail.vue'),
+                path: "/dashboard/transaksi/detail/:id",
+                name: "dashboard.transaksi.detail",
+                component: () =>
+                    import("@/pages/dashboard/transaksi/detail.vue"),
                 meta: {
                     pageTitle: "Detail Transaksi",
                 },
-            }
+            },
         ],
     },
-//     {
-//     path: "/",
-//     // component: () => import("@/layouts/default-layout/UserLayout.vue"),
-//     meta: {
-//         middleware: "auth",
-//     },
-//     children: [
-        
-//     ],
-// },
-// {
-//     path: "/contact",
-//     name: "contact",
-//     component: () => import("@/pages/dashboard/users/contact/index.vue"),
-//     meta: {
-//         pageTitle: "Kontak",
-//         breadcrumbs: ["Contact"],
-//     },
-// },
-// {
-//         path: "/home",
-//         name: "home",
-//         component: () => import("@/pages/dashboard/users/home/index.vue"),
-//         meta: {
-//             pageTitle: "Beranda Pengguna",
-//             breadcrumbs: ["Home"],
-//         },
-//     },
+    //     {
+    //     path: "/",
+    //     // component: () => import("@/layouts/default-layout/UserLayout.vue"),
+    //     meta: {
+    //         middleware: "auth",
+    //     },
+    //     children: [
+
+    //     ],
+    // },
+    // {
+    //     path: "/contact",
+    //     name: "contact",
+    //     component: () => import("@/pages/dashboard/users/contact/index.vue"),
+    //     meta: {
+    //         pageTitle: "Kontak",
+    //         breadcrumbs: ["Contact"],
+    //     },
+    // },
+    // {
+    //         path: "/home",
+    //         name: "home",
+    //         component: () => import("@/pages/dashboard/users/home/index.vue"),
+    //         meta: {
+    //             pageTitle: "Beranda Pengguna",
+    //             breadcrumbs: ["Home"],
+    //         },
+    //     },
     {
         path: "/sign-in",
         component: () => import("@/layouts/AuthLayout.vue"),
@@ -176,26 +177,26 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import("@/pages/auth/sign-in/Index.vue"),
                 meta: {
                     pageTitle: "Sign In",
-                    middleware: "guest",
+                    // middleware: "guest",
                 },
             },
         ],
     },
 
     {
-    path: "/forgot-password",
-    component: () => import("@/pages/forgot/ForgotPassword.vue"),
-},
+        path: "/forgot-password",
+        component: () => import("@/pages/forgot/ForgotPassword.vue"),
+    },
 
-{
-    path: "/reset-password",
-    component: () => import("@/pages/forgot/ResetPassword.vue"),
-},
+    {
+        path: "/reset-password",
+        component: () => import("@/pages/forgot/ResetPassword.vue"),
+    },
 
-{
-    path: "/reset-succes",
-    component: () => import("@/pages/forgot/ResetPasswordSucces.vue"),
-},
+    {
+        path: "/reset-succes",
+        component: () => import("@/pages/forgot/ResetPasswordSucces.vue"),
+    },
 
     {
         path: "/",
@@ -225,77 +226,61 @@ const routes: Array<RouteRecordRaw> = [
         redirect: "/404",
     },
 
+   {
+  path: "/dashboard_pengguna",
+  component: () => import("@/pages/dashboard_pengguna/navbarpg.vue"), // ganti nama layout biar jelas
+  children: [
     {
-        path: "/dashboard_pengguna",
-        name: "dashboard_pengguna",
-        component: () => import("@/pages/dashboard_pengguna/navbarpg.vue"),
-        // meta: {
-        //     middleware: "auth",
-        // },
-        children: [
-            // {
-            //     path: "/dashboard",
-            //     name: "dashboard",
-            //     component: () => import("@/pages/dashboard/Index.vue"),
-            //     meta: {
-            //         pageTitle: "Dashboard",
-            //         breadcrumbs: ["Dashboard"],
-            //     },
-            // },
-            {
-                path: "",
-                name: "home",
-                component: () => import("@/pages/dashboard_pengguna/home.vue"),
-                meta: {
-                    pageTitle: "Home",
-                    breadcrumbs: ["Home"],
-                },
-            },
-            {
-                path: "ticket",
-                name: "ticket",
-                component: () => import("@/pages/dashboard_pengguna/tiket.vue"),
-                meta: {
-                    pageTitle: "Ticket",
-                    breadcrumbs: ["Ticket"],
-                },
-            },
-             {
-                path: "about",
-                name: "about",
-                component: () => import("@/pages/dashboard_pengguna/about.vue"),
-                meta: {
-                    pageTitle: "About",
-                    breadcrumbs: ["About"],
-                },
-            },
-            
-             {
-                path: "contact",
-                name: "contact",
-                component: () => import("@/pages/dashboard_pengguna/contact.vue"),
-                meta: {
-                    pageTitle: "Contact",
-                    breadcrumbs: ["Contact"],
-                },
-            },
-            {
-                path: "checkout",
-                name: "checkout",
-                component: () => import("@/pages/dashboard_pengguna/checkout.vue"),
-                meta: {
-                    pageTitle: "Checkout",
-                    breadcrumbs: ["Checkout"],
-                },
-            },
-            
-            
-            
-        ],
+      path: "",
+      name: "home",
+      component: () => import("@/pages/dashboard_pengguna/home.vue"),
     },
+    {
+      path: "ticket",
+      name: "ticket",
+      component: () => import("@/pages/dashboard_pengguna/tiket.vue"),
+    },
+    {
+      path: "about",
+      name: "about",
+      component: () => import("@/pages/dashboard_pengguna/about.vue"),
+    },
+    {
+      path: "contact",
+      name: "contact",
+      component: () => import("@/pages/dashboard_pengguna/contact.vue"),
+    },
+    {
+      path: "checkout",
+      name: "checkout",
+      component: () => import("@/pages/dashboard_pengguna/checkout.vue"),
+    },
+    {
+      path: "akun",
+      name: "akun",
+      component: () => import("@/pages/dashboard_pengguna/akun.vue"),
+    },
+  ],
+},
+
+{
+  path: "/login",
+  name: "login",
+  component: () => import("@/pages/dashboard_pengguna/login.vue"),
+  meta: {
+    // middleware: "guest",
+  },
+},
+{
+  path: "/register",
+  name: "register",
+  component: () => import("@/pages/dashboard_pengguna/register.vue"),
+  meta: {
+    middleware: "guest",
+  },
+},
+
 ];
-
-
 
 const router = createRouter({
     history: createWebHistory(),
@@ -319,53 +304,59 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  if (to.name) {
-    NProgress.start();
-  }
-
-  const authStore = useAuthStore();
-  const configStore = useConfigStore();
-
-  if (to.meta.pageTitle) {
-    document.title = `${to.meta.pageTitle} - ${import.meta.env.VITE_APP_NAME}`;
-  } else {
-    document.title = import.meta.env.VITE_APP_NAME;
-  }
-
-  configStore.resetLayoutConfig();
-
-  if (!authStore.isAuthenticated) await authStore.verifyAuth();
-
-  if (to.meta.middleware === "auth") {
-    if (authStore.isAuthenticated) {
-      if (to.meta.permission && !authStore.user.permission.includes(to.meta.permission)) {
-        return next({ name: "404" });
-      } 
-    //   else if (to.name === "dashboard" && authStore.user.role?.name === "pengguna") {
-    //     return next({ name: "home" });
-    //   } 
-    else if (
-  to.name === "dashboard" &&
-  authStore.user &&
-  authStore.user.role &&
-  authStore.user.role.name === "pengguna"
-) {
-  return next({ name: "home" });
-}
-      else {
-        return next();
-      }
-    } else {
-      return next({ name: "dashboard_pengguna" });
+    if (to.name) {
+        NProgress.start();
     }
-  }
 
-  if (to.meta.middleware === "guest" && authStore.isAuthenticated) {
-    return next({ name: "dashboard" });
-  }
+    const authStore = useAuthStore();
+    const configStore = useConfigStore();
 
-  // fallback, biar next() selalu terpanggil
-  return next();
+    console.log("Auth Store - isAuthenticated:", authStore.isAuthenticated);
+
+    if (to.meta.pageTitle) {
+        document.title = `${to.meta.pageTitle} - ${
+            import.meta.env.VITE_APP_NAME
+        }`;
+    } else {
+        document.title = import.meta.env.VITE_APP_NAME;
+    }
+
+    configStore.resetLayoutConfig();
+
+    if (!authStore.isAuthenticated) await authStore.verifyAuth();
+
+    if (to.meta.middleware === "auth") {
+        if (authStore.isAuthenticated) {
+            if (
+                to.meta.permission &&
+                !authStore.user.permission.includes(to.meta.permission)
+            ) {
+                return next({ name: "404" });
+            }
+            //   else if (to.name === "dashboard" && authStore.user.role?.name === "pengguna") {
+            //     return next({ name: "home" });
+            //   }
+            else if (
+                to.name === "dashboard" &&
+                authStore.user &&
+                authStore.user.role &&
+                authStore.user.role.name === "pengguna"
+            ) {
+                return next({ name: "home" });
+            } else {
+                return next();
+            }
+        } else {
+            return next({ name: "dashboard_pengguna" });
+        }
+    }
+
+    if (to.meta.middleware === "guest" && authStore.isAuthenticated) {
+        return next({ name: "dashboard" });
+    }
+
+    // fallback, biar next() selalu terpanggil
+    return next();
 });
 
 // router.beforeEach(async (to, from, next) => {
@@ -392,7 +383,7 @@ router.beforeEach(async (to, from, next) => {
 //     if (!authStore.isAuthenticated) await authStore.verifyAuth();
 
 //     // before page access check if page requires authentication
-    
+
 //         if (authStore.isAuthenticated) {
 //             if (to.meta.middleware == "auth") {
 //                 if (authStore.isAuthenticated) {

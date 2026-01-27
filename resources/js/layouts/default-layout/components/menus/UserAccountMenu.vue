@@ -37,8 +37,8 @@ const countries = {
     },
 };
 
-const signOut = () => {
-    Swal.fire({
+const signOut = async () => {
+    const result = await Swal.fire({
         icon: "warning",
         text: "Apakah Anda yakin ingin keluar?",
         showCancelButton: true,
@@ -50,17 +50,18 @@ const signOut = () => {
             confirmButton: "btn fw-semibold btn-light-primary",
             cancelButton: "btn fw-semibold btn-light-danger",
         },
-    }).then((result) => {
-        if (result.isConfirmed) {
-            store.logout();
-            Swal.fire({
-                icon: "success",
-                text: "Berhasil keluar",
-            }).then(() => {
-                router.push({ name: "sign-in" });
-            });
-        }
     });
+
+    if (result.isConfirmed) {
+        await store.logout(); // 🔥 INI PENTING
+
+        Swal.fire({
+            icon: "success",
+            text: "Berhasil keluar",
+        });
+
+        router.push({ name: "sign-in" });
+    }
 };
 
 const setLang = (lang: string) => {

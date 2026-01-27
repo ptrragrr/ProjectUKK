@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InputKodeController;
 use App\Http\Controllers\pengguna\CheckoutController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\AuthController;
 
 Route::get('/checkout/callback', [CheckoutController::class, 'callback'])->name('checkout.callback');
 Route::get('/checkout/success', [CheckoutController::class, 'success']);
@@ -66,3 +67,7 @@ Route::get('/reset-password', function (Request $request) {
         '&email=' . $request->email
     );
 })->name('password.reset');
+
+// Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+// Route::post('/login', [AuthController::class, 'login']);
+// Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');

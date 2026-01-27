@@ -37,6 +37,11 @@
               Tentang
             </router-link>
           </li>
+          <li class="nav-item px-3">
+            <router-link :to="{ name: 'login' }" class="nav-link fw-bold" style="color: #FEFAE0 !important;">
+              Login / Register
+            </router-link>
+          </li>
         </ul>
       </div>
     </div>
