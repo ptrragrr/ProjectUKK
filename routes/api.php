@@ -26,11 +26,12 @@ use App\Http\Controllers\pengguna\PaymentController;
 
 Route::get('/tickets-transaksi', [TransaksiController::class, 'index']);
 
-Route::get('/tickets', [TicketController::class, 'get']);
-// Route::get('/tickets', [TicketController::class, 'index']);
+Route::get('/tickets/
+', [TicketController::class, 'get']);
+Route::get('/tickets', [TicketController::class, 'index']);
 Route::post('/tickets', [TicketController::class, 'store']);
 // Route::get('/tickets/{id}', [TicketController::class, 'show']);
-// Route::get('/tickets/{ticket}', [TicketController::class, 'show']);
+Route::get('/tickets/{ticket}', [TicketController::class, 'show']);
 Route::put('/tickets/{id}', [TicketController::class, 'update']);
 Route::patch('/tickets/{id}', [TicketController::class, 'update']);
 Route::delete('/tickets/{id}', [TicketController::class, 'destroy']);
