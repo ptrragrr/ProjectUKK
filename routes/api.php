@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 | CONTROLLERS
 |--------------------------------------------------------------------------
 */
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
@@ -24,6 +24,18 @@ use App\Http\Controllers\pengguna\PaymentController;
 |--------------------------------------------------------------------------
 */
 
+Route::get('/tickets-transaksi', [TransaksiController::class, 'index']);
+
+Route::get('/tickets', [TicketController::class, 'get']);
+// Route::get('/tickets', [TicketController::class, 'index']);
+Route::post('/tickets', [TicketController::class, 'store']);
+// Route::get('/tickets/{id}', [TicketController::class, 'show']);
+// Route::get('/tickets/{ticket}', [TicketController::class, 'show']);
+Route::put('/tickets/{id}', [TicketController::class, 'update']);
+Route::patch('/tickets/{id}', [TicketController::class, 'update']);
+Route::delete('/tickets/{id}', [TicketController::class, 'destroy']);
+Route::post('/events/{id}/checkout', [TicketController::class, 'checkout']);
+Route::post('/tickets/{id}/pay', [TicketController::class, 'pay']);
 Route::post('/register', [AuthController::class, 'register']); // ✅ FIX
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword']);
@@ -107,18 +119,6 @@ Route::middleware(['auth', 'json'])->group(function () {
     | TICKETS
     |--------------------------------------------------------------------------
     */
-    Route::get('/tickets-transaksi', [TransaksiController::class, 'index']);
-
-    Route::get('/tickets/get', [TicketController::class, 'get']);
-    Route::get('/tickets', [TicketController::class, 'index']);
-    Route::post('/tickets', [TicketController::class, 'store']);
-    // Route::get('/tickets/{id}', [TicketController::class, 'show']);
-    Route::get('/tickets/{ticket}', [TicketController::class, 'show']);
-    Route::put('/tickets/{id}', [TicketController::class, 'update']);
-    Route::patch('/tickets/{id}', [TicketController::class, 'update']);
-    Route::delete('/tickets/{id}', [TicketController::class, 'destroy']);
-    Route::post('/events/{id}/checkout', [TicketController::class, 'checkout']);
-    Route::post('/tickets/{id}/pay', [TicketController::class, 'pay']);
 
     /*
     |--------------------------------------------------------------------------

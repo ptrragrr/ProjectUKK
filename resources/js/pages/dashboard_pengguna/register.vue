@@ -49,7 +49,7 @@ const submit = async () => {
   await authStore.login(form.value);
 
   if (!authStore.error) {
-    router.push("/dashboard_pengguna"); // 🔥 REDIRECT SETELAH LOGIN
+    router.push("/dashboard_pengguna");
   }
 };
 
@@ -225,6 +225,16 @@ const goToLogin = () => {
 </template>
 
 <style scoped>
+:root {
+  --primary-green: #1c290d;
+  --sage-green: #676f53;
+  --warm-beige: #b3b49a;
+  --cream: #fefae0;
+  --taupe: #a19379;
+  --brown: #736046;
+  --dark-brown: #381d03;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -236,17 +246,18 @@ const goToLogin = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* background: linear-gradient(135deg, #8B7355 0%, #A0826D 50%, #C9B8A8 100%); */
+  background: linear-gradient(135deg, var(--cream) 0%, var(--warm-beige) 100%);
   padding: 30px 20px;
 }
 
 .register-container {
   width: 100%;
   max-width: 800px;
-  background: #FAF8F5;
+  background: white;
   padding: 40px 50px;
   border-radius: 24px;
-  box-shadow: 0 20px 60px rgba(72, 52, 37, 0.3);
+  box-shadow: 0 20px 60px rgba(28, 41, 13, 0.3);
+  border: 3px solid var(--brown);
 }
 
 .register-header {
@@ -257,26 +268,34 @@ const goToLogin = () => {
 .logo-circle {
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, #8B7355 0%, #A0826D 100%);
+  background: linear-gradient(135deg, var(--primary-green), var(--sage-green));
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 20px;
-  color: #FAF8F5;
-  box-shadow: 0 8px 16px rgba(139, 115, 85, 0.3);
+  color: var(--cream);
+  box-shadow: 0 8px 16px rgba(28, 41, 13, 0.3);
+  transition: all 0.3s ease;
+}
+
+.logo-circle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(28, 41, 13, 0.4);
 }
 
 h1 {
   font-size: 28px;
-  font-weight: 700;
-  color: #3E2723;
+  font-weight: 800;
+  color: var(--primary-green);
   margin-bottom: 8px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .register-header p {
-  color: #6D5D52;
+  color: var(--sage-green);
   font-size: 15px;
+  font-weight: 500;
 }
 
 .register-form {
@@ -297,8 +316,8 @@ h1 {
 label {
   display: block;
   font-size: 14px;
-  font-weight: 600;
-  color: #4E3B31;
+  font-weight: 700;
+  color: var(--primary-green);
   margin-bottom: 8px;
 }
 
@@ -311,7 +330,7 @@ label {
 .input-icon {
   position: absolute;
   left: 14px;
-  color: #9B8778;
+  color: var(--sage-green);
   pointer-events: none;
 }
 
@@ -319,22 +338,24 @@ input {
   width: 100%;
   padding: 12px 14px 12px 44px;
   font-size: 15px;
-  border: 2px solid #D7CCC8;
+  border: 2px solid var(--brown);
   border-radius: 12px;
-  background: #FFFFFF;
+  background: var(--cream);
   transition: all 0.3s ease;
   outline: none;
-  color: #3E2723;
+  color: var(--primary-green);
+  font-weight: 500;
 }
 
 input::placeholder {
-  color: #A1887F;
+  color: var(--sage-green);
+  opacity: 0.7;
 }
 
 input:focus {
-  border-color: #8B7355;
-  box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.15);
-  background: #FFF;
+  border-color: var(--sage-green);
+  box-shadow: 0 0 0 3px rgba(103, 111, 83, 0.2);
+  background: white;
 }
 
 .toggle-password {
@@ -342,16 +363,18 @@ input:focus {
   right: 14px;
   background: none;
   border: none;
-  color: #9B8778;
+  color: var(--sage-green);
   cursor: pointer;
   padding: 4px;
   display: flex;
   align-items: center;
-  transition: color 0.2s;
+  transition: all 0.3s ease;
+  border-radius: 6px;
 }
 
 .toggle-password:hover {
-  color: #8B7355;
+  color: var(--primary-green);
+  background: var(--cream);
 }
 
 .error-message {
@@ -359,12 +382,14 @@ input:focus {
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
-  background: #FFEBEE;
-  border: 1px solid #EF9A9A;
-  border-radius: 10px;
+  background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
+  border: 2px solid #EF5350;
+  border-radius: 12px;
   color: #C62828;
   font-size: 14px;
+  font-weight: 600;
   margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(198, 40, 40, 0.15);
 }
 
 .action-row {
@@ -377,21 +402,23 @@ input:focus {
 
 .btn-register {
   padding: 14px;
-  background: linear-gradient(135deg, #8B7355 0%, #A0826D 100%);
-  color: #FAF8F5;
+  background: linear-gradient(135deg, var(--primary-green), var(--sage-green));
+  color: var(--cream);
   border: none;
   border-radius: 12px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(139, 115, 85, 0.4);
+  box-shadow: 0 6px 20px rgba(28, 41, 13, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .btn-register:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(139, 115, 85, 0.5);
-  background: linear-gradient(135deg, #7A6449 0%, #8F7560 100%);
+  box-shadow: 0 8px 25px rgba(28, 41, 13, 0.4);
+  background: linear-gradient(135deg, var(--sage-green), var(--primary-green));
 }
 
 .btn-register:disabled {
@@ -425,11 +452,11 @@ input:focus {
 }
 
 .login-divider span {
-  background: #FAF8F5;
+  background: white;
   padding: 0 12px;
-  color: #6D5D52;
+  color: var(--sage-green);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   position: relative;
   z-index: 1;
 }
@@ -437,41 +464,47 @@ input:focus {
 .btn-login {
   padding: 14px;
   background: transparent;
-  color: #8B7355;
-  border: 2px solid #8B7355;
+  color: var(--sage-green);
+  border: 2px solid var(--sage-green);
   border-radius: 12px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .btn-login:hover {
-  background: #8B7355;
-  color: #FAF8F5;
+  background: linear-gradient(135deg, var(--taupe), var(--brown));
+  color: var(--cream);
+  border-color: var(--brown);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(139, 115, 85, 0.3);
+  box-shadow: 0 6px 20px rgba(115, 96, 70, 0.3);
 }
 
 .footer-text {
   text-align: center;
   font-size: 13px;
-  color: #6D5D52;
+  color: var(--sage-green);
   margin-top: 20px;
   line-height: 1.6;
+  font-weight: 500;
 }
 
 .footer-text a {
-  color: #8B7355;
+  color: var(--brown);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
+  transition: all 0.3s ease;
 }
 
 .footer-text a:hover {
+  color: var(--primary-green);
   text-decoration: underline;
 }
 

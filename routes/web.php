@@ -38,7 +38,7 @@ Route::post('/selesai/{kode}', [InputKodeController::class, 'selesai']);
 
 Route::get('/{any}', function () {
    return view('layouts.app');
-})->where('any', '.*');
+})->where('any', '^(?!api\/)[\/\w\.-]*');
 
 Route::get('/dashboard_pengguna/{any}', function () {
     return view('dashboard_pengguna'); // atau view utama Vue kamu

@@ -23,7 +23,7 @@ const tickets = ref<any[]>([]);
 
 const loadTickets = async () => {
   try {
-    const res = await axios.get("/tickets/get");
+    const res = await axios.get("/tickets");
     console.log("Response dari API:", res.data);
 
     if (Array.isArray(res.data)) {

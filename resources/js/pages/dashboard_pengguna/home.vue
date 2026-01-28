@@ -10,7 +10,7 @@
       <div class="hero-container">
         <div class="hero-badge">
           <span class="sparkle">✨</span>
-          <span class="badge-text">Festival Musik 2025</span>
+          <span class="badge-text">Festival Musik 2026</span>
         </div>
         
         <h1 class="hero-title">
@@ -19,7 +19,7 @@
         </h1>
         
         <p class="hero-description">
-          Ikuti panduan lengkap di bawah ini untuk mendapatkan tiket OURSKY.FEST 2025 dengan mudah dan aman
+          Ikuti panduan lengkap di bawah ini untuk mendapatkan tiket OURSKY.FEST 2026 dengan mudah dan aman
         </p>
 
         <!-- <div class="hero-stats">
@@ -229,7 +229,7 @@
         </div>
         
         <div class="footer-copyright">
-          <p>© 2025 OURSKY.FEST. All rights reserved.</p>
+          <p>© 2026 OURSKY.FEST. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -39,23 +39,37 @@ const profileDetails = ref<ProfileDetails>({
 
 onMounted(async () => {
     try {
-        const rolesResponse = await axios.get("/roles");
+        const rolesResponse = await axios.get("/master/roles");
         if (rolesResponse.data.success && rolesResponse.data.data) {
             roles.value = rolesResponse.data.data;
         }
 
+        // const profileResponse = await axios.get("/me");
+        // if (profileResponse.data.success && profileResponse.data.data) {
+        //     const userData = profileResponse.data.data;
+        //     profileDetails.value = {
+        //         photo: userData.photo_url || getAssetPath("media/avatars/blank.png"),
+        //         photo_url: userData.photo_url,
+        //         name: userData.name || "",
+        //         role: userData.role || "",
+        //         role_id: userData.role_id || null,
+        //         phone: userData.phone || "",
+        //     };
+        // }
+
         const profileResponse = await axios.get("/me");
-        if (profileResponse.data.success && profileResponse.data.data) {
-            const userData = profileResponse.data.data;
-            profileDetails.value = {
-                photo: userData.photo_url || getAssetPath("media/avatars/blank.png"),
-                photo_url: userData.photo_url,
-                name: userData.name || "",
-                role: userData.role || "",
-                role_id: userData.role_id || null,
-                phone: userData.phone || "",
-            };
-        }
+        const userData = profileResponse.data.user;
+
+        profileDetails.value = {
+            photo: userData.photo
+                ? `${import.meta.env.VITE_APP_URL}/${userData.photo}`
+                : getAssetPath("media/avatars/blank.png"),
+            photo_url: userData.photo,
+            name: userData.name || "",
+            role: userData.role?.name || "",
+            role_id: userData.role?.id || null,
+            phone: userData.phone || "",
+        };
     } catch (error) {
         console.error("Error loading data:", error);
         Swal.fire("Error", `Gagal memuat data: ${error.message}`, "error");
@@ -77,13 +91,17 @@ const saveChanges = async (values: any) => {
             formData.append("phone", values.phone || "");
 
             if (values.role && values.role !== "") {
-                const selectedRole = roles.value.find((r) => r.name === values.role);
+                const selectedRole = roles.value.find(
+                    (r) => r.name === values.role
+                );
                 if (selectedRole) {
                     formData.append("role_id", selectedRole.id.toString());
                 }
             }
 
-            const photoInput = document.querySelector('input[name="avatar"]') as HTMLInputElement;
+            const photoInput = document.querySelector(
+                'input[name="avatar"]'
+            ) as HTMLInputElement;
             if (photoInput?.files?.[0]) {
                 formData.append("photo", photoInput.files[0]);
             }
@@ -109,7 +127,7 @@ const saveChanges = async (values: any) => {
             await loadProfile();
         } catch (error) {
             console.error("Save error:", error);
-            let errorMessage = "Terjadi kesalahan saat menyimpan";  
+            let errorMessage = "Terjadi kesalahan saat menyimpan";
 
             if (error.message) {
                 errorMessage = error.message;
@@ -135,7 +153,9 @@ const loadProfile = async () => {
         if (profileResponse.data.success && profileResponse.data.data) {
             const userData = profileResponse.data.data;
             profileDetails.value = {
-                photo: userData.photo_url || getAssetPath("media/avatars/blank.png"),
+                photo:
+                    userData.photo_url ||
+                    getAssetPath("media/avatars/blank.png"),
                 photo_url: userData.photo_url,
                 name: userData.name || "",
                 role: userData.role || "",
@@ -170,14 +190,20 @@ const handleImageUpload = (event: Event) => {
             <div class="position-relative">
                 <!-- Background Gradient -->
                 <div class="profile-hero-bg"></div>
-                
+
                 <div class="card-body p-8 position-relative">
                     <div class="row align-items-center">
                         <!-- Avatar Section -->
-                        <div class="col-lg-auto text-center text-lg-start mb-6 mb-lg-0">
+                        <div
+                            class="col-lg-auto text-center text-lg-start mb-6 mb-lg-0"
+                        >
                             <div class="position-relative d-inline-block">
                                 <div class="avatar-wrapper">
-                                    <img :src="profileDetails.photo" alt="Profile" class="profile-avatar" />
+                                    <img
+                                        :src="profileDetails.photo"
+                                        alt="Profile"
+                                        class="profile-avatar"
+                                    />
                                 </div>
                                 <div class="status-badge">
                                     <i class="bi bi-check-circle-fill"></i>
@@ -187,25 +213,44 @@ const handleImageUpload = (event: Event) => {
 
                         <!-- User Info Section -->
                         <div class="col-lg">
-                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-4">
+                            <div
+                                class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-4"
+                            >
                                 <div>
                                     <div class="d-flex align-items-center mb-3">
-                                        <h1 class="text-white fw-bold mb-0 me-3 display-6">
-                                            {{ profileDetails.name || "Nama belum diisi" }}
+                                        <h1
+                                            class="text-white fw-bold mb-0 me-3 display-6"
+                                        >
+                                            {{
+                                                profileDetails.name ||
+                                                "Nama belum diisi"
+                                            }}
                                         </h1>
                                         <span class="badge-verified">
-                                            <i class="bi bi-patch-check-fill"></i>
+                                            <i
+                                                class="bi bi-patch-check-fill"
+                                            ></i>
                                         </span>
                                     </div>
-                                    
+
                                     <div class="d-flex flex-wrap gap-4 mb-3">
                                         <div class="info-chip">
-                                            <i class="bi bi-shield-check me-2"></i>
-                                            <span>{{ profileDetails.role || "Role belum dipilih" }}</span>
+                                            <i
+                                                class="bi bi-shield-check me-2"
+                                            ></i>
+                                            <span>{{
+                                                profileDetails.role ||
+                                                "Role belum dipilih"
+                                            }}</span>
                                         </div>
-                                        <div class="info-chip" v-if="profileDetails.phone">
+                                        <div
+                                            class="info-chip"
+                                            v-if="profileDetails.phone"
+                                        >
                                             <i class="bi bi-telephone me-2"></i>
-                                            <span>{{ profileDetails.phone }}</span>
+                                            <span>{{
+                                                profileDetails.phone
+                                            }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -214,7 +259,9 @@ const handleImageUpload = (event: Event) => {
                                 <div class="stats-container">
                                     <div class="stat-item">
                                         <i class="bi bi-person-badge"></i>
-                                        <span class="stat-label">Verified Account</span>
+                                        <span class="stat-label"
+                                            >Verified Account</span
+                                        >
                                     </div>
                                 </div>
                             </div>
@@ -232,7 +279,9 @@ const handleImageUpload = (event: Event) => {
                 <div class="card border-0 shadow-sm mb-6 info-card">
                     <div class="card-header border-0 bg-transparent pt-6 pb-0">
                         <h3 class="card-title">
-                            <i class="bi bi-person-circle text-primary fs-2 me-2"></i>
+                            <i
+                                class="bi bi-person-circle text-primary fs-2 me-2"
+                            ></i>
                             <span class="fw-bold">Detail Profil</span>
                         </h3>
                     </div>
@@ -244,17 +293,23 @@ const handleImageUpload = (event: Event) => {
                             </div>
                             <div class="info-content">
                                 <span class="info-label">Nama Lengkap</span>
-                                <span class="info-value">{{ profileDetails.name || "Belum diisi" }}</span>
+                                <span class="info-value">{{
+                                    profileDetails.name || "Belum diisi"
+                                }}</span>
                             </div>
                         </div>
 
                         <div class="info-item">
                             <div class="info-icon bg-gradient-success">
-                                <i class="bi bi-shield-fill-check text-white"></i>
+                                <i
+                                    class="bi bi-shield-fill-check text-white"
+                                ></i>
                             </div>
                             <div class="info-content">
                                 <span class="info-label">Role</span>
-                                <span class="info-value">{{ profileDetails.role || "Belum diisi" }}</span>
+                                <span class="info-value">{{
+                                    profileDetails.role || "Belum diisi"
+                                }}</span>
                             </div>
                         </div>
 
@@ -264,7 +319,9 @@ const handleImageUpload = (event: Event) => {
                             </div>
                             <div class="info-content">
                                 <span class="info-label">Nomor Telepon</span>
-                                <span class="info-value">{{ profileDetails.phone }}</span>
+                                <span class="info-value">{{
+                                    profileDetails.phone
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -280,7 +337,9 @@ const handleImageUpload = (event: Event) => {
                             <div>
                                 <h5 class="fw-bold mb-2">Mode Read-Only</h5>
                                 <p class="text-muted mb-0 fs-7">
-                                    Data profil ditampilkan dalam mode view-only. Untuk melakukan perubahan, hubungi administrator.
+                                    Data profil ditampilkan dalam mode
+                                    view-only. Untuk melakukan perubahan,
+                                    hubungi administrator.
                                 </p>
                             </div>
                         </div>
@@ -293,13 +352,19 @@ const handleImageUpload = (event: Event) => {
                 <div class="card border-0 shadow-sm">
                     <div class="card-header border-0 bg-light pt-6">
                         <h3 class="card-title">
-                            <i class="bi bi-gear-fill text-primary fs-2 me-2"></i>
+                            <i
+                                class="bi bi-gear-fill text-primary fs-2 me-2"
+                            ></i>
                             <span class="fw-bold">Pengaturan Profil</span>
                         </h3>
                     </div>
 
                     <div class="card-body p-8">
-                        <VForm class="form" novalidate v-slot="{ handleSubmit }">
+                        <VForm
+                            class="form"
+                            novalidate
+                            v-slot="{ handleSubmit }"
+                        >
                             <form @submit.prevent="handleSubmit(saveChanges)">
                                 <!-- Profile Picture -->
                                 <div class="form-section">
@@ -307,15 +372,28 @@ const handleImageUpload = (event: Event) => {
                                         <i class="bi bi-image me-2"></i>
                                         Foto Profil
                                     </label>
-                                    
-                                    <div class="d-flex align-items-center gap-4">
+
+                                    <div
+                                        class="d-flex align-items-center gap-4"
+                                    >
                                         <div class="profile-preview">
-                                            <img :src="profileDetails.photo" alt="Profile Preview" />
+                                            <img
+                                                :src="profileDetails.photo"
+                                                alt="Profile Preview"
+                                            />
                                         </div>
                                         <div class="flex-grow-1">
-                                            <div class="alert alert-light border mb-0">
-                                                <i class="bi bi-lock-fill text-muted me-2"></i>
-                                                <span class="text-muted">Foto profil tidak dapat diubah pada halaman ini</span>
+                                            <div
+                                                class="alert alert-light border mb-0"
+                                            >
+                                                <i
+                                                    class="bi bi-lock-fill text-muted me-2"
+                                                ></i>
+                                                <span class="text-muted"
+                                                    >Foto profil tidak dapat
+                                                    diubah pada halaman
+                                                    ini</span
+                                                >
                                             </div>
                                         </div>
                                     </div>
@@ -358,7 +436,9 @@ const handleImageUpload = (event: Event) => {
                                 <!-- Phone Field -->
                                 <div class="form-section">
                                     <label class="form-section-label">
-                                        <i class="bi bi-telephone-fill me-2"></i>
+                                        <i
+                                            class="bi bi-telephone-fill me-2"
+                                        ></i>
                                         Nomor Telepon
                                     </label>
                                     <Field
@@ -372,7 +452,9 @@ const handleImageUpload = (event: Event) => {
                                 </div>
 
                                 <!-- Action Buttons -->
-                                <div class="d-flex justify-content-end gap-3 mt-8 pt-6 border-top">
+                                <div
+                                    class="d-flex justify-content-end gap-3 mt-8 pt-6 border-top"
+                                >
                                     <button
                                         type="button"
                                         class="btn btn-light btn-lg px-6"
@@ -408,7 +490,7 @@ const handleImageUpload = (event: Event) => {
 }
 
 .profile-hero-bg::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -425,9 +507,13 @@ const handleImageUpload = (event: Event) => {
     height: 140px;
     border-radius: 24px;
     padding: 4px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.3),
+        rgba(255, 255, 255, 0.1)
+    );
     backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 .profile-avatar {
@@ -435,7 +521,7 @@ const handleImageUpload = (event: Event) => {
     height: 100%;
     object-fit: cover;
     border-radius: 20px;
-    border: 3px solid rgba(255,255,255,0.8);
+    border: 3px solid rgba(255, 255, 255, 0.8);
 }
 
 .status-badge {
@@ -465,7 +551,7 @@ const handleImageUpload = (event: Event) => {
     justify-content: center;
     width: 32px;
     height: 32px;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     border-radius: 50%;
     color: white;
@@ -477,13 +563,13 @@ const handleImageUpload = (event: Event) => {
     display: inline-flex;
     align-items: center;
     padding: 8px 16px;
-    background: rgba(255,255,255,0.15);
+    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
     border-radius: 12px;
     color: white;
     font-weight: 500;
     font-size: 14px;
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .info-chip i {
@@ -501,10 +587,10 @@ const handleImageUpload = (event: Event) => {
     flex-direction: column;
     align-items: center;
     padding: 16px 24px;
-    background: rgba(255,255,255,0.15);
+    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
     border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     min-width: 160px;
 }
 
@@ -630,7 +716,7 @@ const handleImageUpload = (event: Event) => {
 }
 
 .form-section-label.required::after {
-    content: '*';
+    content: "*";
     color: #ef4444;
     margin-left: 4px;
 }
@@ -704,12 +790,12 @@ const handleImageUpload = (event: Event) => {
         width: 120px;
         height: 120px;
     }
-    
+
     .stat-item {
         min-width: 140px;
         padding: 12px 16px;
     }
-    
+
     .profile-hero .card-body {
         padding: 24px !important;
     }
@@ -719,12 +805,12 @@ const handleImageUpload = (event: Event) => {
     .stats-container {
         width: 100%;
     }
-    
+
     .stat-item {
         flex: 1;
         min-width: auto;
     }
-    
+
     .info-chip {
         font-size: 13px;
         padding: 6px 12px;
