@@ -10,12 +10,34 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
+    // public function me()
+    // {
+    //     return response()->json([
+    //         'user' => auth()->user()
+    //     ]);
+    // }
+
     public function me()
-    {
-        return response()->json([
-            'user' => auth()->user()
-        ]);
-    }
+{
+    $user = auth()->user()->load('roles');
+
+    return response()->json([
+        'success' => true,
+        'data' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'phone' => $user->phone,
+            'photo' => $user->photo,
+            'photo_url' => $user->photo
+                ? asset('storage/' . $user->photo)
+                : asset('media/avatars/blank.png'),
+            'role' => [
+                'id' => $user->role?->id,
+                'name' => $user->role?->name,
+            ],
+        ]
+    ]);
+}
 
     public function login(Request $request)
     {

@@ -8,7 +8,7 @@ import axios from "@/libs/axios";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 
-const authStore = useAuthStore();
+
 
 interface Role {
     id: number;
@@ -58,12 +58,10 @@ onMounted(async () => {
         // }
 
         const profileResponse = await axios.get("/me");
-        const userData = profileResponse.data.user;
+        const userData = profileResponse.data.data;
 
         profileDetails.value = {
-            photo: userData.photo
-                ? `${import.meta.env.VITE_APP_URL}/${userData.photo}`
-                : getAssetPath("media/avatars/blank.png"),
+            photo: userData.photo_url || getAssetPath("media/avatars/blank.png"),
             photo_url: userData.photo,
             name: userData.name || "",
             role: userData.role?.name || "",

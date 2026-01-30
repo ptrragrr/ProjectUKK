@@ -101,7 +101,8 @@ function submit() {
         method: "post",
         url: props.selected
             ? `/master/users/${props.selected}`
-            : "/master/users/store",
+            : "/master/users",
+            // : "/master/users/store",
         data: formData,
         headers: {
             "Content-Type": "multipart/form-data",

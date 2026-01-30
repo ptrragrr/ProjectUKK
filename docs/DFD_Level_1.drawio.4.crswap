@@ -1,0 +1,375 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36" version="29.3.6">
+  <diagram name="DFD Level 1 - Main Processes" id="level-1-diagram">
+    <mxGraphModel dx="890" dy="473" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1" value="DFD Level 1 - Main Processes&#xa;Sistem Pemesanan Tiket Event" vertex="1">
+          <mxGeometry height="50" width="430" x="485" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="customer" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1" value="Pengguna" vertex="1">
+          <mxGeometry height="100" width="150" x="30" y="105" as="geometry" />
+        </mxCell>
+        <mxCell id="admin" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1" value="Admin" vertex="1">
+          <mxGeometry height="50" width="100" x="40" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="payment-gateway" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1" value="Payment&#xa;Gateway" vertex="1">
+          <mxGeometry height="50" width="100" x="1250" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="email-service" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1" value="Email&#xa;Service" vertex="1">
+          <mxGeometry height="50" width="100" x="1250" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="validator" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1" value="Petugas&#xa;Validasi" vertex="1">
+          <mxGeometry height="50" width="100" x="30" y="890" as="geometry" />
+        </mxCell>
+        <mxCell id="process1" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1" value="1&#xa;&#xa;MANAJEMEN&#xa;AUTENTIKASI" vertex="1">
+          <mxGeometry height="150" width="150" x="370" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="process2" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1" value="2&#xa;&#xa;MANAJEMEN&#xa;EVENT &amp; TIKET" vertex="1">
+          <mxGeometry height="170" width="170" x="310" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="process3" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1" value="3&#xa;&#xa;PENCARIAN &amp;&#xa;PEMESANAN&#xa;TIKET" vertex="1">
+          <mxGeometry height="120" width="120" x="580" y="85" as="geometry" />
+        </mxCell>
+        <mxCell id="process4" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1" value="4&#xa;&#xa;PROSES&#xa;CHECKOUT" vertex="1">
+          <mxGeometry height="120" width="120" x="860" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="process5" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1" value="5&#xa;&#xa;PROSES&#xa;PEMBAYARAN" vertex="1">
+          <mxGeometry height="120" width="120" x="1020" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="process6" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1" value="6&#xa;&#xa;MANAJEMEN&#xa;TRANSAKSI" vertex="1">
+          <mxGeometry height="120" width="120" x="860" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="process7" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1" value="7&#xa;&#xa;NOTIFIKASI&#xa;&amp; EMAIL" vertex="1">
+          <mxGeometry height="120" width="120" x="1020" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="process8" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1" value="8&#xa;&#xa;VALIDASI &amp;&#xa;CETAK TIKET" vertex="1">
+          <mxGeometry height="120" width="120" x="330" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="process9" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1" value="9&#xa;&#xa;MANAJEMEN&#xa;USER &amp; ROLE" vertex="1">
+          <mxGeometry height="155" width="155" x="605" y="427.5" as="geometry" />
+        </mxCell>
+        <mxCell id="datastore1" parent="1" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="D1" vertex="1">
+          <mxGeometry height="46" width="50" x="210" y="394" as="geometry" />
+        </mxCell>
+        <mxCell id="datastore1-label" parent="1" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="Users" vertex="1">
+          <mxGeometry height="46" width="95" x="260" y="394" as="geometry" />
+        </mxCell>
+        <mxCell id="datastore2" parent="1" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="D2" vertex="1">
+          <mxGeometry height="30" width="30" x="590" y="348" as="geometry" />
+        </mxCell>
+        <mxCell id="datastore2-label" parent="1" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="Tickets" vertex="1">
+          <mxGeometry height="30" width="80" x="620" y="348" as="geometry" />
+        </mxCell>
+        <mxCell id="datastore3" parent="1" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="D3" vertex="1">
+          <mxGeometry height="30" width="30" x="340" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="datastore3-label" parent="1" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="Jenis Tiket" vertex="1">
+          <mxGeometry height="30" width="80" x="365" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="datastore4" parent="1" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="D4" vertex="1">
+          <mxGeometry height="30" width="30" x="760" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="datastore4-label" parent="1" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="Transaksi" vertex="1">
+          <mxGeometry height="30" width="80" x="790" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="datastore5" parent="1" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="D5" vertex="1">
+          <mxGeometry height="30" width="30" x="865" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="datastore5-label" parent="1" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="Transaksi Details" vertex="1">
+          <mxGeometry height="30" width="110" x="895" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="datastore6" parent="1" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="D6" vertex="1">
+          <mxGeometry height="30" width="30" x="585" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="datastore6-label" parent="1" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="Roles &amp; Permissions" vertex="1">
+          <mxGeometry height="30" width="130" x="615" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="datastore7" parent="1" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="D7" vertex="1">
+          <mxGeometry height="30" width="30" x="1025" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="datastore7-label" parent="1" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="Settings" vertex="1">
+          <mxGeometry height="30" width="80" x="1055" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="flow1" edge="1" parent="1" source="customer" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=0.875;exitY=1.005;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.029;entryY=0.387;entryDx=0;entryDy=0;entryPerimeter=0;" target="process1" value="Data Registrasi">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="160" y="240" />
+            </Array>
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow2" edge="1" parent="1" source="customer" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=0.591;exitY=1.005;exitDx=0;exitDy=0;exitPerimeter=0;" target="process1" value="Data Login">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="119" y="260" />
+            </Array>
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow3" edge="1" parent="1" source="process1" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;exitX=-0.011;exitY=0.629;exitDx=0;exitDy=0;entryX=0.333;entryY=1.05;entryDx=0;entryDy=0;entryPerimeter=0;exitPerimeter=0;" target="customer" value="Token &amp; Info User">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="80" y="280" />
+            </Array>
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow4" edge="1" parent="1" source="customer" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" target="process3" value="Query Pencarian">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="80" />
+              <mxPoint x="200" y="115" />
+            </Array>
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow5" edge="1" parent="1" source="customer" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" target="process3" value="Data Pemesanan">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="200" y="160" />
+              <mxPoint x="200" y="175" />
+            </Array>
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow6" edge="1" parent="1" source="process3" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.984;entryY=0.319;entryDx=0;entryDy=0;entryPerimeter=0;" target="customer" value="List Event &amp; Tiket">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="500" y="145" />
+              <mxPoint x="420" y="145" />
+            </Array>
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow7" edge="1" parent="1" source="admin" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="process2" value="Data Event &amp; Tiket">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow8" edge="1" parent="1" source="process2" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="admin" value="Status">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow9" edge="1" parent="1" source="admin" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=0.574;exitY=-0.037;exitDx=0;exitDy=0;exitPerimeter=0;" target="process9" value="Data User &amp; Role">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="180" y="520" />
+            </Array>
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow10" edge="1" parent="1" source="process9" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;" target="admin" value="Status">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="540" />
+            </Array>
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow11" edge="1" parent="1" source="validator" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="process8" value="Kode Tiket">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow12" edge="1" parent="1" source="process8" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="validator" value="Status &amp; PDF Tiket">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow13" edge="1" parent="1" source="process3" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" target="process4" value="Data Reservasi">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow14" edge="1" parent="1" source="process4" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="process5" value="Request Payment">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow15" edge="1" parent="1" source="process5" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" target="payment-gateway" value="Payment Request">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow16" edge="1" parent="1" source="payment-gateway" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" target="process5" value="Payment Status">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow17" edge="1" parent="1" source="process5" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" target="process6" value="Update Status">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow18" edge="1" parent="1" source="process6" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="process7" value="Data Notifikasi">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow19" edge="1" parent="1" source="process7" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="email-service" value="Email Data">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow20" edge="1" parent="1" source="email-service" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" target="process7" value="Status">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow21" edge="1" parent="1" source="process1" style="endArrow=classic;html=1;rounded=0;fontSize=9;entryX=0.25;entryY=0;entryDx=0;entryDy=0;exitX=0.077;exitY=0.748;exitDx=0;exitDy=0;exitPerimeter=0;" target="datastore1" value="User Data">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="320" />
+            </Array>
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow22" edge="1" parent="1" source="datastore1" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;entryX=0;entryY=1;entryDx=0;entryDy=0;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" target="process1" value="User Info">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow23" edge="1" parent="1" source="process2" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" target="datastore2-label" value="Ticket Data">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow24" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;" value="Ticket Info">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="590" y="380" as="sourcePoint" />
+            <mxPoint x="444.25952184060293" y="585.2287974116523" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow25" edge="1" parent="1" source="process3" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="datastore2" value="Query">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="570" y="280" />
+            </Array>
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow26" edge="1" parent="1" source="datastore2-label" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;entryX=0.616;entryY=0.956;entryDx=0;entryDy=0;exitX=0.352;exitY=0.016;exitDx=0;exitDy=0;entryPerimeter=0;exitPerimeter=0;" target="process3" value="Tickets">
+          <mxGeometry height="50" relative="1" width="50" x="0.0633" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="680" y="280" />
+            </Array>
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow27" edge="1" parent="1" source="process4" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="datastore4" value="Transaksi">
+          <mxGeometry height="50" relative="1" width="50" x="-0.3148" y="-1" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow28" edge="1" parent="1" source="datastore4-label" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;exitX=0.341;exitY=-0.115;exitDx=0;exitDy=0;exitPerimeter=0;" target="process4" value="Transaksi">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow29" edge="1" parent="1" source="process6" style="endArrow=classic;html=1;rounded=0;fontSize=9;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0;exitY=0;exitDx=0;exitDy=0;" target="datastore4" value="Update">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="870" y="470" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow30" edge="1" parent="1" source="datastore4-label" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.352;entryY=0.054;entryDx=0;entryDy=0;entryPerimeter=0;" target="process6" value="Transaksi">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow31" edge="1" parent="1" source="process6" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="datastore5" value="Details">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow32" edge="1" parent="1" source="datastore5-label" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;exitX=0.25;exitY=0;exitDx=0;exitDy=0;" target="process6" value="Details">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow33" edge="1" parent="1" source="process9" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=0.26;exitY=0.07;exitDx=0;exitDy=0;exitPerimeter=0;" target="datastore1-label" value="User Data">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="360" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow34" edge="1" parent="1" source="datastore1-label" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" target="process9" value="User Info">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow35" edge="1" parent="1" source="process9" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="datastore6" value="Role Data">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow36" edge="1" parent="1" source="datastore6-label" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" target="process9" value="Role Info">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow37" edge="1" parent="1" source="process2" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="datastore3" value="Jenis">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow38" edge="1" parent="1" source="datastore3-label" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" target="process2" value="Jenis">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow39" edge="1" parent="1" source="process8" style="endArrow=classic;html=1;rounded=0;fontSize=9;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="datastore5" value="Query Kode">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow40" edge="1" parent="1" source="datastore5-label" style="endArrow=classic;html=1;rounded=0;fontSize=9;dashed=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" target="process8" value="Detail Tiket">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="530" y="450" as="sourcePoint" />
+            <mxPoint x="580" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
