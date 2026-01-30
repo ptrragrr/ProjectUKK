@@ -155,12 +155,13 @@ function submit() {
         method: props.selected ? "put" : "post",
         url: props.selected
             ? `/master/roles/${props.selected}`
-            : "/master/roles/store",
+            : "/master/roles",
         data: formData.value,
     })
         .then(() => {
-            window.location.reload();
             toast.success("Data berhasil disimpan");
+            emit("close");
+            emit("refresh");
         })
         .catch((err: any) => {
             formRef.value.setErrors(err.response.data.errors);

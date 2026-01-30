@@ -26,10 +26,7 @@ interface ProfileDetails {
 
 const submitButton = ref<HTMLElement | null>(null);
 const router = useRouter();
-const roles = ref<Role[]>([
-    { id: 1, name: "admin" },
-    { id: 2, name: "Panitia 1" },
-]);
+const roles = ref<Role[]>([]);
 const profileDetails = ref<ProfileDetails>({
     photo: getAssetPath("media/avatars/blank.png"),
     name: "",
@@ -39,24 +36,6 @@ const profileDetails = ref<ProfileDetails>({
 
 onMounted(async () => {
     try {
-        const rolesResponse = await axios.get("/master/roles");
-        if (rolesResponse.data.success && rolesResponse.data.data) {
-            roles.value = rolesResponse.data.data;
-        }
-
-        // const profileResponse = await axios.get("/me");
-        // if (profileResponse.data.success && profileResponse.data.data) {
-        //     const userData = profileResponse.data.data;
-        //     profileDetails.value = {
-        //         photo: userData.photo_url || getAssetPath("media/avatars/blank.png"),
-        //         photo_url: userData.photo_url,
-        //         name: userData.name || "",
-        //         role: userData.role || "",
-        //         role_id: userData.role_id || null,
-        //         phone: userData.phone || "",
-        //     };
-        // }
-
         const profileResponse = await axios.get("/me");
         const userData = profileResponse.data.data;
 
